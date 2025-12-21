@@ -1,0 +1,56 @@
+"use client"
+
+import * as React from "react"
+import { HexColorPicker } from "react-colorful"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+interface ColorPickerProps {
+    color: string
+    onChange: (color: string) => void
+    label?: string
+}
+
+export function ColorPicker({ color, onChange, label }: ColorPickerProps) {
+    const [localColor, setLocalColor] = React.useState(color)
+
+    React.useEffect(() => {
+        setLocalColor(color)
+    }, [color])
+
+    const handleChange = (newColor: string) => {
+        setLocalColor(newColor)
+        onChange(newColor)
+    }
+
+    return (
+        <div className="space-y-2">
+            {label && <Label>{label}</Label>}
+            <div className="flex gap-2">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className="w-20 h-10 p-1 border-white/20"
+                            style={{ backgroundColor: localColor }}
+                        >
+                            <span className="sr-only">Pick color</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-3 bg-slate-900 border-white/20">
+                        <HexColorPicker color={localColor} onChange={handleChange} />
+                    </PopoverContent>
+                </Popover>
+
+                <Input
+                    value={localColor}
+                    onChange={(e) => handleChange(e.target.value)}
+                    className="flex-1 bg-white/5 border-white/20"
+                    placeholder="#000000"
+                />
+            </div>
+        </div>
+    )
+}
