@@ -590,8 +590,10 @@ saveTheme(newTheme)
 - Added admin-only gate for /admin layout and server actions
 - Made Google provider optional (only when env is set)
 - Login page hides Google button if provider is unavailable
+- Fixed login page provider typing to avoid next-auth ClientSafeProvider export error
 - Homepage admin/dashboard links now require an authenticated session
 - Docker image sets writable uploads directory
+- Docker base image installs OpenSSL so Prisma can generate/use correct engines on Alpine
 - Docker compose expects auth env vars and mounts uploads volume
 - Added /uploads route handler to serve uploaded media with range support
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { signIn, getProviders } from "next-auth/react"
-import type { ClientSafeProvider } from "next-auth/react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -15,6 +14,8 @@ import { Loader2, Mail, Lock } from "lucide-react"
 import { Language, loadLanguage } from "@/lib/i18n-config"
 import { getTranslations } from "@/lib/translations"
 
+type AuthProviders = Record<string, { id: string; name?: string }>
+
 export default function LoginPage() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
@@ -23,7 +24,7 @@ export default function LoginPage() {
         email: "",
         password: ""
     })
-    const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null)
+    const [providers, setProviders] = useState<AuthProviders | null>(null)
 
     const [language, setLanguage] = useState<Language>('en')
     const [t, setT] = useState(getTranslations('en'))
