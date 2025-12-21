@@ -81,6 +81,6 @@ echo "Building and starting containers..."
 docker compose --env-file .env up -d --build
 
 echo "Applying Prisma schema..."
-docker compose exec -T web sh -lc "HOME=/tmp npx -y prisma@5.22.0 db push --schema /app/prisma/schema.prisma"
+docker compose exec -T web sh -lc "HOME=/tmp npx -y prisma@5.22.0 db push --skip-generate --schema /app/prisma/schema.prisma"
 
 echo "Done. Logs: docker compose logs -f web"

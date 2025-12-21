@@ -597,6 +597,7 @@ saveTheme(newTheme)
 - Docker compose expects auth env vars and mounts uploads volume
 - Deploy script prompts for Google OAuth credentials, writes .env, and runs Prisma db push
 - Deploy script pins Prisma CLI to v5 to avoid Prisma 7 schema URL validation errors
+- Deploy script skips Prisma generate inside container to avoid missing generator files
 - Runtime image includes Prisma schema for db push
 - Added /uploads route handler to serve uploaded media with range support
 
