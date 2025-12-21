@@ -34,6 +34,9 @@ COPY --from=builder /app/public ./public
 RUN mkdir -p public/uploads
 RUN chown -R nextjs:nodejs /app/public
 
+# Keep Prisma schema available for db push inside the container.
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next

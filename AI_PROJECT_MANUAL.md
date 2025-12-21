@@ -595,6 +595,8 @@ saveTheme(newTheme)
 - Docker image sets writable uploads directory
 - Docker base image installs OpenSSL so Prisma can generate/use correct engines on Alpine
 - Docker compose expects auth env vars and mounts uploads volume
+- Deploy script prompts for Google OAuth credentials, writes .env, and runs Prisma db push
+- Runtime image includes Prisma schema for db push
 - Added /uploads route handler to serve uploaded media with range support
 
 ### 2025-12-20
