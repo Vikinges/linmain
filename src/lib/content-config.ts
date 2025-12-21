@@ -33,6 +33,12 @@ export interface HomepageContent {
         linkedinUrl: string
         youtubeUrl: string
     }
+    nav: {
+        getStarted: string
+    }
+    footer: {
+        copyright: string
+    }
 }
 
 export interface TextStyles {
