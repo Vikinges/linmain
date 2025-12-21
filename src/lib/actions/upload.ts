@@ -3,9 +3,15 @@
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
+import { getAdminSession } from "@/lib/admin"
 
 export async function uploadFile(formData: FormData) {
     try {
+        const session = await getAdminSession()
+        if (!session) {
+            return { success: false, error: "Unauthorized" }
+        }
+
         const file = formData.get('file') as File
         if (!file) {
             throw new Error('No file uploaded')

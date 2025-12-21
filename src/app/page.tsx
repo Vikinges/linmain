@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,9 @@ export default function HomePage() {
   const [translations, setTranslations] = useState<Translations | null>(null)
   const [styles, setStyles] = useState<TextStyles | null>(null)
   const [content, setContent] = useState<any>(null)
+  const { data: session } = useSession()
+  const isAdmin = Boolean(session?.user?.isAdmin || session?.user?.role === "ADMIN")
+  const isAuthenticated = Boolean(session?.user)
 
   useEffect(() => {
     setTheme(loadTheme())
@@ -273,12 +277,16 @@ export default function HomePage() {
                 {content.footer?.copyright || "© 2025 Vladimir Linartas. All rights reserved."}
               </p>
               <div className="flex items-center gap-6 text-sm text-gray-500">
-                <Link href="/admin" className="hover:text-gray-300 transition">
-                  Admin
-                </Link>
-                <Link href="/dashboard" className="hover:text-gray-300 transition">
-                  Dashboard
-                </Link>
+                {isAdmin && (
+                  <Link href="/admin" className="hover:text-gray-300 transition">
+                    Admin
+                  </Link>
+                )}
+                {isAuthenticated && (
+                  <Link href="/dashboard" className="hover:text-gray-300 transition">
+                    Dashboard
+                  </Link>
+                )}
               </div>
             </div>
           </div>

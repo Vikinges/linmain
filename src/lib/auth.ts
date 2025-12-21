@@ -4,6 +4,11 @@ import { prisma } from "@/lib/db"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
+import { isAdminUser } from "@/lib/admin"
+
+const googleClientId = process.env.GOOGLE_CLIENT_ID
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET
+const debugEnabled = process.env.NEXTAUTH_DEBUG === "true"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma) as any,
@@ -11,12 +16,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: "/login",
     },
-    debug: true,
+    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+    debug: debugEnabled || process.env.NODE_ENV !== "production",
+    trustHost: process.env.AUTH_TRUST_HOST === "true",
     providers: [
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        }),
+        ...(googleClientId && googleClientSecret
+            ? [
+                Google({
+                    clientId: googleClientId,
+                    clientSecret: googleClientSecret,
+                }),
+            ]
+            : []),
         Credentials({
             name: "credentials",
             credentials: {
@@ -60,12 +71,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (token.sub && session.user) {
                 session.user.id = token.sub
                 session.user.role = token.role as string
+                session.user.isAdmin = token.isAdmin === true
             }
             return session
         },
         async jwt({ token, user }) {
             if (user) {
                 token.role = user.role
+                token.isAdmin = isAdminUser({ email: user.email, role: user.role })
+            }
+            if (token.email && token.isAdmin === undefined) {
+                token.isAdmin = isAdminUser({ email: token.email as string, role: token.role as string })
             }
             return token
         }

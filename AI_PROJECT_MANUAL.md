@@ -65,6 +65,8 @@ linart_main_site/
 │   │       ├── users/              # User management
 │   │       ├── chat/               # Chat messages
 │   │       └── settings/           # Admin settings
+│   │   └── uploads/                # Uploaded media route
+│   │       ├── [...path]/route.ts  # Serves /uploads/* with range support
 │   ├── components/
 │   │   ├── admin/
 │   │   │   ├── sidebar.tsx         # Admin navigation
@@ -72,8 +74,11 @@ linart_main_site/
 │   │   │   └── media-uploader.tsx  # Drag-and-drop file upload
 │   │   ├── layout/
 │   │   │   └── background-video.tsx # Background video with blur
+│   │   ├── providers/
+│   │   │   └── app-providers.tsx    # SessionProvider wrapper
 │   │   └── ui/                     # Shadcn UI components
 │   ├── lib/
+│   │   ├── admin.ts               # Admin auth helpers (email/role gate)
 │   │   ├── theme-config.ts         # ⭐ Theme system (colors, transparency, etc.)
 │   │   ├── utils.ts                # Shared utilities
 │   │   └── actions/                # Server actions
@@ -219,13 +224,13 @@ Sections:
 
 ### 6. Authentication
 
-**Current:** Mock login for Windows development
-```
-Admin: admin@example.com / admin
-User: user@example.com / user
-```
-
-**Future:** Full NextAuth integration in Docker
+**Current:** NextAuth (Credentials + optional Google)
+- Credentials uses Prisma user email/password
+- Google provider enabled only when GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are set
+- Admin access requires a valid session (server-side guard on /admin)
+- Admin allowlist: ADMIN_EMAILS (comma-separated) or role ADMIN
+ - Session includes `isAdmin` flag for client UI gating
+ - Root layout wraps app in SessionProvider
 
 ---
 
@@ -270,8 +275,19 @@ Default theme uses dark gray color scheme matching Linart logo.
 ### `docker-compose.yml`
 
 Services:
-- `app`: Next.js application
+- `web`: Next.js application
 - `db`: PostgreSQL database
+
+Auth-related env vars (set in the shell or .env for Docker):
+- NEXTAUTH_URL
+- NEXTAUTH_SECRET
+- AUTH_SECRET
+- AUTH_TRUST_HOST
+- GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
+- ADMIN_EMAILS
+
+Uploads:
+- Host volume mounted to `/app/public/uploads` for persistence
 
 ### `prisma/schema.prisma`
 
@@ -442,6 +458,28 @@ saveTheme(newTheme)
 - Check `accept` prop matches file type
 - File creates blob URL (temporary in dev mode)
 
+### Uploads Return 404
+
+**Issue:** `GET /uploads/*.mp4` returns 404 even when the file exists.
+
+**Solution:**
+- Route handler serves uploads from disk: `src/app/uploads/[...path]/route.ts`
+- Ensure the host path `public/uploads` is mounted into the container
+- Verify permissions allow the app user to read files
+
+### Google OAuth "invalid_client"
+
+**Issue:** Google sign-in shows `invalid_client`
+
+**Likely Causes:**
+- GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET not set inside the container
+- OAuth client type is not "Web application"
+- Redirect URI missing: `https://<domain>/api/auth/callback/google`
+
+**Fix:**
+- Rotate secret in Google Cloud and update Docker env
+- Rebuild container after updating env
+
 ### Sidebar Button Missing
 
 **Issue:** Don't see Appearance button
@@ -490,19 +528,17 @@ saveTheme(newTheme)
 
 ## 🔐 Security Notes
 
-**Current State (Development):**
-- Mock authentication (insecure, for dev only)
-- No real password hashing
-- No CSRF protection
-- LocalStorage for theme (client-side only)
+**Current State (Development/Prod):**
+- NextAuth with Credentials and optional Google
+- Admin access enforced server-side on /admin
+- Server actions that modify data require admin session
+- Theme persists in localStorage (client-side only)
 
 **Production Recommendations:**
-- Enable full NextAuth with OAuth providers
-- Move theme to database
-- Add proper session management
-- Implement RBAC for admin features
-- Add rate limiting
-- Use environment variables for secrets
+- Use strong AUTH_SECRET and rotate regularly
+- Restrict ADMIN_EMAILS to a short allowlist
+- Add rate limiting for auth endpoints
+- Move theme settings to database
 
 ---
 
@@ -550,6 +586,15 @@ saveTheme(newTheme)
 
 ## 🔄 Change Log
 
+### 2025-12-21
+- Added admin-only gate for /admin layout and server actions
+- Made Google provider optional (only when env is set)
+- Login page hides Google button if provider is unavailable
+- Homepage admin/dashboard links now require an authenticated session
+- Docker image sets writable uploads directory
+- Docker compose expects auth env vars and mounts uploads volume
+- Added /uploads route handler to serve uploaded media with range support
+
 ### 2025-12-20
 - ✅ Created theme customization system
 - ✅ Added background video support
@@ -592,11 +637,12 @@ This project uses:
 
 **Key Files to Remember:**
 - Theme: `src/lib/theme-config.ts`
+- Admin Auth: `src/lib/admin.ts`
 - Homepage: `src/app/page.tsx`
 - Admin: `src/components/admin/sidebar.tsx`
 - Appearance: `src/app/admin/appearance/page.tsx`
 
 ---
 
-*Last Updated: 2025-12-20 by AI Assistant*
+*Last Updated: 2025-12-21 by AI Assistant*
 *Keep this manual updated with each significant change!*

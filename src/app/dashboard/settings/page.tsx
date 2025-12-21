@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
+import { auth } from "@/lib/auth"
+import { isAdminUser } from "@/lib/admin"
+import { redirect } from "next/navigation"
 import {
     User,
     Bell,
@@ -17,16 +20,21 @@ import {
     Save
 } from "lucide-react"
 
-export default function SettingsPage() {
-    const mockUser = {
-        name: "Test User",
-        email: "test@example.com",
-        image: "https://github.com/shadcn.png"
+export default async function SettingsPage() {
+    const session = await auth()
+    if (!session?.user) {
+        redirect("/login")
+    }
+
+    const user = {
+        name: session.user.name || "User",
+        email: session.user.email || "",
+        image: session.user.image || ""
     }
 
     return (
         <>
-            <UserNav user={mockUser} isAdmin={true} />
+            <UserNav user={user} isAdmin={isAdminUser(session.user)} />
             <GlassShell>
                 <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
 
@@ -59,7 +67,7 @@ export default function SettingsPage() {
                                     <Label htmlFor="name">Display Name</Label>
                                     <Input
                                         id="name"
-                                        defaultValue={mockUser.name}
+                                        defaultValue={user.name}
                                         className="bg-white/5 border-white/20"
                                     />
                                 </div>
@@ -68,7 +76,7 @@ export default function SettingsPage() {
                                     <Input
                                         id="email"
                                         type="email"
-                                        defaultValue={mockUser.email}
+                                        defaultValue={user.email}
                                         className="bg-white/5 border-white/20"
                                     />
                                 </div>

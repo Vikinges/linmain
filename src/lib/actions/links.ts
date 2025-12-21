@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { redirect } from "next/navigation"
+import { getAdminSession } from "@/lib/admin"
 
 const LinkSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -14,6 +15,11 @@ const LinkSchema = z.object({
 })
 
 export async function createLink(formData: FormData) {
+    const session = await getAdminSession()
+    if (!session) {
+        throw new Error("Unauthorized")
+    }
+
     const rawData = {
         title: formData.get("title"),
         url: formData.get("url"),
@@ -37,6 +43,11 @@ export async function createLink(formData: FormData) {
 }
 
 export async function deleteLink(id: string) {
+    const session = await getAdminSession()
+    if (!session) {
+        throw new Error("Unauthorized")
+    }
+
     await prisma.serviceLink.delete({
         where: { id }
     })

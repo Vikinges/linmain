@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { UserNav } from "@/components/navigation/user-nav"
 import { LinkCard } from "@/components/ui/link-card"
 import { Button } from "@/components/ui/button"
+import { auth } from "@/lib/auth"
+import { isAdminUser } from "@/lib/admin"
+import { redirect } from "next/navigation"
 import {
     TrendingUp,
     MessageSquare,
@@ -16,11 +19,16 @@ import {
 } from "lucide-react"
 
 // Mock version for Windows testing
-export default function DashboardPage() {
-    const mockUser = {
-        name: "Test User",
-        email: "test@example.com",
-        image: "https://github.com/shadcn.png"
+export default async function DashboardPage() {
+    const session = await auth()
+    if (!session?.user) {
+        redirect("/login")
+    }
+
+    const user = {
+        name: session.user.name || "User",
+        email: session.user.email || "",
+        image: session.user.image || ""
     }
 
     const mockLinks = [
@@ -29,11 +37,11 @@ export default function DashboardPage() {
         { id: "3", title: "Private Cloud", url: "https://cloud.example.com", icon: "Cloud" },
     ]
 
-    const isAdmin = true
+    const isAdmin = isAdminUser(session.user)
 
     return (
         <>
-            <UserNav user={mockUser} isAdmin={isAdmin} />
+            <UserNav user={user} isAdmin={isAdmin} />
             <GlassShell>
                 <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
 
@@ -49,7 +57,7 @@ export default function DashboardPage() {
                                 <span className="text-sm font-semibold text-yellow-200 uppercase tracking-wider">Premium Dashboard</span>
                             </div>
                             <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white">
-                                Welcome back, {mockUser.name}! 👋
+                                Welcome back, {user.name}! 👋
                             </h1>
                             <p className="text-xl text-purple-100 max-w-2xl">
                                 Your personal command center is ready. Track your performance and engage with your community.
