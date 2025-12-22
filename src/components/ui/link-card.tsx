@@ -5,7 +5,6 @@ import Link from "next/link"
 import React from "react"
 import { cn } from "@/lib/utils"
 import * as Icons from "lucide-react"
-import type { LucideIcon } from "lucide-react"
 
 interface LinkCardProps {
     title: string
@@ -15,7 +14,7 @@ interface LinkCardProps {
 }
 
 export function LinkCard({ title, url, icon, className }: LinkCardProps) {
-    const iconRegistry = Icons as Record<string, LucideIcon>
+    const iconRegistry = Icons as unknown as Record<string, React.ElementType>
     const IconComponent = icon && iconRegistry[icon] ? iconRegistry[icon] : Icons.Link
 
     return (
