@@ -90,8 +90,8 @@ export default function ContentPage() {
         value: unknown
     ): T => {
         const keys = path.split(".")
-        const updated = { ...base } as Record<string, unknown>
-        let cursor = updated
+        const updated = { ...base } as T
+        let cursor = updated as Record<string, unknown>
 
         for (let i = 0; i < keys.length - 1; i++) {
             const key = keys[i]
@@ -103,15 +103,15 @@ export default function ContentPage() {
         }
 
         cursor[keys[keys.length - 1]] = value
-        return updated as T
+        return updated
     }
 
     const updateContent = (path: string, value: string) => {
-        setContent((current) => updateNestedValue(current, path, value))
+        setContent((current) => updateNestedValue<HomepageContent>(current, path, value))
     }
 
     const updateStyle = (path: string, value: string | number) => {
-        setStyles((current) => updateNestedValue(current, path, value))
+        setStyles((current) => updateNestedValue<TextStyles>(current, path, value))
     }
 
     return (
