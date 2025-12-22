@@ -592,6 +592,7 @@ saveTheme(newTheme)
 - Added admin API for OAuth settings: `/api/admin/auth-settings`
 - Sign out now redirects to `/login` in admin and dashboard
 - Lint cleanup (typed editors, removed unused imports, image preview uses Next Image)
+- NextAuth type augmentation made role optional to avoid adapter build conflicts
 
 ### 2025-12-21
 - Added admin-only gate for /admin layout and server actions
