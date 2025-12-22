@@ -14,6 +14,7 @@ import {
   saveContent,
   loadContentStyles,
   saveContentStyles,
+  type HomepageContent,
   type TextStyles,
 } from "@/lib/content-config"
 import { loadLanguage, type Language } from "@/lib/i18n-config"
@@ -30,23 +31,16 @@ import {
 } from "lucide-react"
 
 export default function HomePage() {
-  const [theme, setTheme] = useState<ThemeConfig | null>(null)
-  const [language, setLanguage] = useState<Language>('en')
-  const [translations, setTranslations] = useState<Translations | null>(null)
-  const [styles, setStyles] = useState<TextStyles | null>(null)
-  const [content, setContent] = useState<any>(null)
+  const [theme, setTheme] = useState<ThemeConfig>(() => loadTheme())
+  const [language, setLanguage] = useState<Language>(() => loadLanguage())
+  const [translations, setTranslations] = useState<Translations>(() => getTranslations(loadLanguage()))
+  const [styles, setStyles] = useState<TextStyles>(() => loadContentStyles())
+  const [content, setContent] = useState<HomepageContent>(() => loadContent())
   const { data: session } = useSession()
   const isAdmin = Boolean(session?.user?.isAdmin || session?.user?.role === "ADMIN")
   const isAuthenticated = Boolean(session?.user)
 
   useEffect(() => {
-    setTheme(loadTheme())
-    const lang = loadLanguage()
-    setLanguage(lang)
-    setTranslations(getTranslations(lang))
-    setStyles(loadContentStyles())
-    setContent(loadContent())
-
     let active = true
     const loadRemoteConfig = async () => {
       try {
@@ -81,10 +75,6 @@ export default function HomePage() {
   const handleLanguageChange = (newLang: Language) => {
     setLanguage(newLang)
     setTranslations(getTranslations(newLang))
-  }
-
-  if (!translations || !styles || !content) {
-    return null
   }
 
   const linkedinUrl = (content.social?.linkedinUrl || "").trim()
@@ -313,7 +303,7 @@ export default function HomePage() {
           <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-sm text-gray-500">
-                {content.footer?.copyright || "© 2025 Vladimir Linartas. All rights reserved."}
+                {content.footer?.copyright || "(c) 2025 Vladimir Linartas. All rights reserved."}
               </p>
               <div className="flex items-center gap-6 text-sm text-gray-500">
                 {isAdmin && (

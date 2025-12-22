@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AuthSettingsForm } from "@/components/admin/auth-settings-form"
 
 export default function AdminSettingsPage() {
     const nextauthUrl = process.env.NEXTAUTH_URL || "Not set"
@@ -50,6 +51,8 @@ export default function AdminSettingsPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            <AuthSettingsForm />
         </div>
     )
 }

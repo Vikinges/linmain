@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -172,9 +173,12 @@ export function MediaUploader({
                                         muted
                                     />
                                 ) : (
-                                    <img
+                                    <Image
                                         src={preview}
                                         alt="Preview"
+                                        width={640}
+                                        height={160}
+                                        unoptimized
                                         className="w-full h-40 object-cover"
                                     />
                                 )}

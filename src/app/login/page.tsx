@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Mail, Lock } from "lucide-react"
-import { Language, loadLanguage } from "@/lib/i18n-config"
+import { loadLanguage } from "@/lib/i18n-config"
 import { getTranslations } from "@/lib/translations"
 
 type AuthProviders = Record<string, { id: string; name?: string }>
@@ -25,14 +25,9 @@ export default function LoginPage() {
         password: ""
     })
     const [providers, setProviders] = useState<AuthProviders | null>(null)
-
-    const [language, setLanguage] = useState<Language>('en')
-    const [t, setT] = useState(getTranslations('en'))
+    const [t] = useState(() => getTranslations(loadLanguage()))
 
     useEffect(() => {
-        const lang = loadLanguage()
-        setLanguage(lang)
-        setT(getTranslations(lang))
         getProviders().then(setProviders).catch(() => setProviders(null))
     }, [])
 
@@ -44,7 +39,7 @@ export default function LoginPage() {
         setIsLoading(true)
         try {
             await signIn("google", { callbackUrl: "/dashboard" })
-        } catch (error) {
+        } catch {
             setError(t.auth.errors.googleData)
             setIsLoading(false)
         }
@@ -68,7 +63,7 @@ export default function LoginPage() {
             } else {
                 router.push("/dashboard")
             }
-        } catch (error) {
+        } catch {
             setError(t.auth.errors.generic)
             setIsLoading(false)
         }
@@ -168,7 +163,7 @@ export default function LoginPage() {
                                     <Input
                                         id="password"
                                         type="password"
-                                        placeholder="••••••••"
+                                        placeholder="********"
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                         className="pl-10 bg-white/5 border-white/20 text-white"
@@ -201,3 +196,4 @@ export default function LoginPage() {
         </div>
     )
 }
+

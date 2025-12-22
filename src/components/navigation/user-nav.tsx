@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Home, LayoutDashboard, LogOut, Settings, User } from "lucide-react"
+import { signOut } from "next-auth/react"
 
 interface UserNavProps {
     user: {
@@ -29,9 +30,9 @@ export function UserNav({ user, isAdmin }: UserNavProps) {
                 {/* Logo */}
                 <Link href="/" className="flex items-center space-x-2">
                     <div className="relative w-8 h-8">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-lg" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-gray-600 to-gray-700 rounded-lg" />
                     </div>
-                    <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                    <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                         Linart
                     </span>
                 </Link>
@@ -102,7 +103,13 @@ export function UserNav({ user, isAdmin }: UserNavProps) {
                             )}
 
                             <DropdownMenuSeparator className="bg-white/10" />
-                            <DropdownMenuItem className="cursor-pointer text-red-400">
+                            <DropdownMenuItem
+                                className="cursor-pointer text-red-400"
+                                onSelect={(event) => {
+                                    event.preventDefault()
+                                    signOut({ callbackUrl: "/login" })
+                                }}
+                            >
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Sign Out
                             </DropdownMenuItem>

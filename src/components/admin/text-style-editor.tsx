@@ -15,12 +15,15 @@ interface TextStyleEditorProps {
         subtitleGradientFrom: string
         subtitleGradientTo: string
     }
-    onChange: (styles: any) => void
+    onChange: (styles: TextStyleEditorProps["styles"]) => void
     title?: string
 }
 
 export function HeroTextStyleEditor({ styles, onChange, title = "Hero Text Styling" }: TextStyleEditorProps) {
-    const updateStyle = (key: string, value: any) => {
+    const updateStyle = <K extends keyof TextStyleEditorProps["styles"]>(
+        key: K,
+        value: TextStyleEditorProps["styles"][K]
+    ) => {
         onChange({ ...styles, [key]: value })
     }
 
@@ -115,13 +118,16 @@ interface SimpleStyleEditorProps {
         backgroundColor?: string
         borderColor?: string
     }
-    onChange: (styles: any) => void
+    onChange: (styles: SimpleStyleEditorProps["styles"]) => void
     title: string
     description?: string
 }
 
 export function SimpleTextStyleEditor({ styles, onChange, title, description }: SimpleStyleEditorProps) {
-    const updateStyle = (key: string, value: any) => {
+    const updateStyle = <K extends keyof SimpleStyleEditorProps["styles"]>(
+        key: K,
+        value: SimpleStyleEditorProps["styles"][K]
+    ) => {
         onChange({ ...styles, [key]: value })
     }
 

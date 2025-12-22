@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function TestPage() {
     let dbStatus = "Checking..."
@@ -10,19 +10,20 @@ export default async function TestPage() {
     try {
         const count = await prisma.user.count()
         userCount = count
-        dbStatus = "Connected ✅"
-    } catch (e: any) {
-        dbStatus = `Failed ❌: ${e.message}`
+        dbStatus = "Connected"
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Unknown error"
+        dbStatus = `Failed: ${message}`
     }
 
     try {
         envStatus = `
-      NEXTAUTH_URL: ${process.env.NEXTAUTH_URL ? "Set ✅" : "Missing ❌"}
-      AUTH_SECRET: ${process.env.AUTH_SECRET ? "Set ✅" : "Missing ❌"}
-      GOOGLE_ID: ${process.env.GOOGLE_CLIENT_ID ? "Set ✅" : "Missing ❌"}
-      GOOGLE_SECRET: ${process.env.GOOGLE_CLIENT_SECRET ? "Set ✅" : "Missing ❌"}
+      NEXTAUTH_URL: ${process.env.NEXTAUTH_URL ? "Set" : "Missing"}
+      AUTH_SECRET: ${process.env.AUTH_SECRET ? "Set" : "Missing"}
+      GOOGLE_ID: ${process.env.GOOGLE_CLIENT_ID ? "Set" : "Missing"}
+      GOOGLE_SECRET: ${process.env.GOOGLE_CLIENT_SECRET ? "Set" : "Missing"}
     `
-    } catch (e) {
+    } catch {
         envStatus = "Error reading env"
     }
 

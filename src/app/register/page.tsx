@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Mail, Lock, User } from "lucide-react"
-import { Language, loadLanguage } from "@/lib/i18n-config"
+import { loadLanguage } from "@/lib/i18n-config"
 import { getTranslations } from "@/lib/translations"
 
 export default function RegisterPage() {
@@ -25,20 +25,13 @@ export default function RegisterPage() {
     confirmPassword: ""
   })
 
-  const [language, setLanguage] = useState<Language>('en')
-  const [t, setT] = useState(getTranslations('en'))
-
-  useEffect(() => {
-    const lang = loadLanguage()
-    setLanguage(lang)
-    setT(getTranslations(lang))
-  }, [])
+  const [t] = useState(() => getTranslations(loadLanguage()))
 
   const handleGoogleSignUp = async () => {
     setIsLoading(true)
     try {
       await signIn("google", { callbackUrl: "/dashboard" })
-    } catch (error) {
+    } catch {
       setError(t.auth.errors.googleData)
       setIsLoading(false)
     }
@@ -99,7 +92,7 @@ export default function RegisterPage() {
       } else {
         router.push("/dashboard")
       }
-    } catch (error) {
+    } catch {
       setError(t.auth.errors.generic)
       setIsLoading(false)
     }

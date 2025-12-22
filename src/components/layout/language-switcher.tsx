@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -9,7 +8,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Check, ChevronDown, Globe } from "lucide-react"
-import { Language, languages, getLanguageFlag, saveLanguage } from "@/lib/i18n-config"
+import { Language, languages, saveLanguage } from "@/lib/i18n-config"
 
 interface LanguageSwitcherProps {
     currentLanguage: Language

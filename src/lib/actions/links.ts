@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import { redirect } from "next/navigation"
 import { getAdminSession } from "@/lib/admin"
 
 const LinkSchema = z.object({

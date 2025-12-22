@@ -81,7 +81,7 @@ export const defaultContent: HomepageContent = {
     hero: {
         badge: "20+ Years of Experience",
         name: "VLADIMIR LINARTAS",
-        subtitle: "Entrepreneur • Creator • Developer",
+        subtitle: "Entrepreneur - Creator - Developer",
         description: "Transforming ideas into reality through innovation in business, content creation, and technology"
     },
     pillars: {
@@ -114,7 +114,7 @@ export const defaultContent: HomepageContent = {
         getStarted: "Get Started"
     },
     footer: {
-        copyright: "© 2025 Vladimir Linartas. All rights reserved."
+        copyright: "(c) 2025 Vladimir Linartas. All rights reserved."
     }
 }
 
@@ -150,7 +150,7 @@ export const defaultStyles: TextStyles = {
         getStarted: "Get Started"
     },
     footer: {
-        copyright: "© 2025 Vladimir Linartas. All rights reserved."
+        copyright: "(c) 2025 Vladimir Linartas. All rights reserved."
     }
 }
 
@@ -243,3 +243,4 @@ export function saveContentStyles(styles: TextStyles) {
         console.error('Failed to save styles:', error)
     }
 }
+

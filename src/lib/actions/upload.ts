@@ -29,7 +29,7 @@ export async function uploadFile(formData: FormData) {
         const uploadDir = join(process.cwd(), 'public', 'uploads')
         try {
             await mkdir(uploadDir, { recursive: true })
-        } catch (e) {
+        } catch {
             // Ignore error if directory exists
         }
 

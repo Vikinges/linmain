@@ -21,13 +21,10 @@ import { ThemeConfig, defaultTheme, loadTheme, saveTheme } from "@/lib/theme-con
 import { uploadFile } from "@/lib/actions/upload"
 
 export default function AppearancePage() {
-    const [theme, setTheme] = useState<ThemeConfig>(defaultTheme)
+    const [theme, setTheme] = useState<ThemeConfig>(() => loadTheme())
     const [isSaving, setIsSaving] = useState(false)
 
     useEffect(() => {
-        const loaded = loadTheme()
-        setTheme(loaded)
-
         let active = true
         const loadRemoteConfig = async () => {
             try {
@@ -81,17 +78,18 @@ export default function AppearancePage() {
         }
     }
 
-    const updateTheme = (path: string, value: any) => {
-        const keys = path.split('.')
-        const newTheme = { ...theme }
-        let current: any = newTheme
-
-        for (let i = 0; i < keys.length - 1; i++) {
-            current = current[keys[i]]
-        }
-        current[keys[keys.length - 1]] = value
-
-        setTheme(newTheme)
+    const updateTheme = <K extends keyof ThemeConfig, P extends keyof ThemeConfig[K]>(
+        section: K,
+        key: P,
+        value: ThemeConfig[K][P]
+    ) => {
+        setTheme((current) => ({
+            ...current,
+            [section]: {
+                ...current[section],
+                [key]: value
+            }
+        }))
     }
 
     return (
@@ -157,22 +155,22 @@ export default function AppearancePage() {
                                 <ColorPicker
                                     label="Primary Color"
                                     color={theme.colors.primary}
-                                    onChange={(c) => updateTheme('colors.primary', c)}
+                                    onChange={(c) => updateTheme("colors", "primary", c)}
                                 />
                                 <ColorPicker
                                     label="Secondary Color"
                                     color={theme.colors.secondary}
-                                    onChange={(c) => updateTheme('colors.secondary', c)}
+                                    onChange={(c) => updateTheme("colors", "secondary", c)}
                                 />
                                 <ColorPicker
                                     label="Accent Color"
                                     color={theme.colors.accent}
-                                    onChange={(c) => updateTheme('colors.accent', c)}
+                                    onChange={(c) => updateTheme("colors", "accent", c)}
                                 />
                                 <ColorPicker
                                     label="Background Color"
                                     color={theme.colors.background}
-                                    onChange={(c) => updateTheme('colors.background', c)}
+                                    onChange={(c) => updateTheme("colors", "background", c)}
                                 />
                             </div>
                         </CardContent>
@@ -196,7 +194,7 @@ export default function AppearancePage() {
                                     maxSize={100}
                                     type="video"
                                     currentUrl={theme.background.videoUrl}
-                                    onUrlChange={(url) => updateTheme('background.videoUrl', url)}
+                                    onUrlChange={(url) => updateTheme("background", "videoUrl", url)}
                                     uploadAction={uploadFile}
                                 />
                                 <p className="text-xs text-muted-foreground">
@@ -218,7 +216,7 @@ export default function AppearancePage() {
                                 <Label>Video URL</Label>
                                 <Input
                                     value={theme.background.videoUrl}
-                                    onChange={(e) => updateTheme('background.videoUrl', e.target.value)}
+                                    onChange={(e) => updateTheme("background", "videoUrl", e.target.value)}
                                     placeholder="https://example.com/video.mp4"
                                     className="bg-white/5 border-white/20"
                                 />
@@ -235,7 +233,7 @@ export default function AppearancePage() {
                                     maxSize={10}
                                     type="image"
                                     currentUrl={theme.background.fallbackImage}
-                                    onUrlChange={(url) => updateTheme('background.fallbackImage', url)}
+                                    onUrlChange={(url) => updateTheme("background", "fallbackImage", url)}
                                     uploadAction={uploadFile}
                                 />
                                 <p className="text-xs text-muted-foreground">
@@ -253,7 +251,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.background.blurAmount]}
-                                    onValueChange={([v]) => updateTheme('background.blurAmount', v)}
+                                    onValueChange={([v]) => updateTheme("background", "blurAmount", v)}
                                     min={0}
                                     max={100}
                                     step={1}
@@ -272,7 +270,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.background.opacity]}
-                                    onValueChange={([v]) => updateTheme('background.opacity', v)}
+                                    onValueChange={([v]) => updateTheme("background", "opacity", v)}
                                     min={0}
                                     max={100}
                                     step={1}
@@ -298,7 +296,7 @@ export default function AppearancePage() {
                                 <Label>Font Family</Label>
                                 <select
                                     value={theme.typography.fontFamily}
-                                    onChange={(e) => updateTheme('typography.fontFamily', e.target.value)}
+                                    onChange={(e) => updateTheme("typography", "fontFamily", e.target.value)}
                                     className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
                                 >
                                     <option value="Inter">Inter</option>
@@ -316,7 +314,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.typography.fontSize]}
-                                    onValueChange={([v]) => updateTheme('typography.fontSize', v)}
+                                    onValueChange={([v]) => updateTheme("typography", "fontSize", v)}
                                     min={12}
                                     max={20}
                                     step={1}
@@ -342,7 +340,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.transparency.menu]}
-                                    onValueChange={([v]) => updateTheme('transparency.menu', v)}
+                                    onValueChange={([v]) => updateTheme("transparency", "menu", v)}
                                     min={0}
                                     max={100}
                                     step={1}
@@ -357,7 +355,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.transparency.cards]}
-                                    onValueChange={([v]) => updateTheme('transparency.cards', v)}
+                                    onValueChange={([v]) => updateTheme("transparency", "cards", v)}
                                     min={0}
                                     max={100}
                                     step={1}
@@ -372,7 +370,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.transparency.buttons]}
-                                    onValueChange={([v]) => updateTheme('transparency.buttons', v)}
+                                    onValueChange={([v]) => updateTheme("transparency", "buttons", v)}
                                     min={0}
                                     max={100}
                                     step={1}
@@ -395,7 +393,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.borders.radius]}
-                                    onValueChange={([v]) => updateTheme('borders.radius', v)}
+                                    onValueChange={([v]) => updateTheme("borders", "radius", v)}
                                     min={0}
                                     max={50}
                                     step={1}
@@ -410,7 +408,7 @@ export default function AppearancePage() {
                                 </div>
                                 <Slider
                                     value={[theme.borders.width]}
-                                    onValueChange={([v]) => updateTheme('borders.width', v)}
+                                    onValueChange={([v]) => updateTheme("borders", "width", v)}
                                     min={0}
                                     max={5}
                                     step={1}
@@ -426,7 +424,7 @@ export default function AppearancePage() {
             <Card className="glass-card border-blue-500/20 bg-blue-500/10">
                 <CardContent className="pt-6">
                     <p className="text-sm text-blue-400">
-                        <strong>💡 Tip:</strong> Changes are automatically applied. Click "Save Changes" to persist your settings.
+                        <strong>Tip:</strong> Changes are automatically applied. Click Save Changes to persist your settings.
                     </p>
                 </CardContent>
             </Card>
@@ -434,3 +432,5 @@ export default function AppearancePage() {
         </div>
     )
 }
+
+

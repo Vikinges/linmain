@@ -21,14 +21,11 @@ import {
 } from "@/lib/content-config"
 
 export default function ContentPage() {
-    const [content, setContent] = useState<HomepageContent>(defaultContent)
-    const [styles, setStyles] = useState<TextStyles>(defaultStyles)
+    const [content, setContent] = useState<HomepageContent>(() => loadContent())
+    const [styles, setStyles] = useState<TextStyles>(() => loadContentStyles())
     const [isSaving, setIsSaving] = useState(false)
 
     useEffect(() => {
-        setContent(loadContent())
-        setStyles(loadContentStyles())
-
         let active = true
         const loadRemoteConfig = async () => {
             try {
@@ -87,23 +84,34 @@ export default function ContentPage() {
         }
     }
 
-    // Helper to update state deeply
-    const updateContent = (path: string, value: string) => {
-        const keys = path.split('.')
-        const newContent = { ...content }
-        let current: any = newContent
-        for (let i = 0; i < keys.length - 1; i++) current = current[keys[i]]
-        current[keys[keys.length - 1]] = value
-        setContent(newContent)
+    const updateNestedValue = <T extends Record<string, unknown>>(
+        base: T,
+        path: string,
+        value: unknown
+    ): T => {
+        const keys = path.split(".")
+        const updated: Record<string, unknown> = { ...base }
+        let cursor = updated
+
+        for (let i = 0; i < keys.length - 1; i++) {
+            const key = keys[i]
+            const next = cursor[key]
+            cursor[key] = typeof next === "object" && next !== null && !Array.isArray(next)
+                ? { ...(next as Record<string, unknown>) }
+                : {}
+            cursor = cursor[key] as Record<string, unknown>
+        }
+
+        cursor[keys[keys.length - 1]] = value
+        return updated as T
     }
 
-    const updateStyle = (path: string, value: any) => {
-        const keys = path.split('.')
-        const newStyles = { ...styles }
-        let current: any = newStyles
-        for (let i = 0; i < keys.length - 1; i++) current = current[keys[i]]
-        current[keys[keys.length - 1]] = value
-        setStyles(newStyles)
+    const updateContent = (path: string, value: string) => {
+        setContent((current) => updateNestedValue(current as Record<string, unknown>, path, value) as HomepageContent)
+    }
+
+    const updateStyle = (path: string, value: string | number) => {
+        setStyles((current) => updateNestedValue(current as Record<string, unknown>, path, value) as TextStyles)
     }
 
     return (

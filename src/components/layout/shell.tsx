@@ -1,10 +1,9 @@
-import React from "react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import React from "react"
+import { cn } from "@/lib/utils"
 
 interface ShellProps {
-    children: React.ReactNode;
-    className?: string;
+    children: React.ReactNode
+    className?: string
 }
 
 export function Shell({ children, className }: ShellProps) {
@@ -12,7 +11,7 @@ export function Shell({ children, className }: ShellProps) {
         <div className={cn("min-h-screen bg-background font-sans antialiased", className)}>
             {children}
         </div>
-    );
+    )
 }
 
 export function GlassShell({ children, className }: ShellProps) {

@@ -14,7 +14,6 @@ import {
     Bell,
     Shield,
     Palette,
-    Mail,
     Key,
     Globe,
     Save

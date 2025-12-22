@@ -186,7 +186,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <Button
                     variant="ghost"
                     className="w-full justify-start text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                    onClick={() => signOut({ callbackUrl: "/" })}
+                    onClick={() => signOut({ callbackUrl: "/login" })}
                 >
                     <LogOut className="h-5 w-5 mr-3" />
                     Sign Out
@@ -196,7 +196,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     <p className="text-xs text-gray-400">
                         <span className="font-semibold text-primary">Linart v1.0</span>
                         <br />
-                        © 2025 All rights reserved
+                        (c) 2025 All rights reserved
                     </p>
                 </div>
             </div>

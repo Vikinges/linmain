@@ -137,7 +137,7 @@ Content:
 - Subtitle: "Entrepreneur • Creator • Developer"
 - Description: "Transforming ideas into reality through innovation in business, content creation, and technology"
 - CTA buttons: "View My Work", "Contact Me"
-- Social links: LinkedIn, YouTube
+- Social links: LinkedIn, YouTube (editable in Admin > Content > Links & Footer)
 
 Three Pillars Section:
 1. **Business**: 20+ years managing multi-profile companies
@@ -178,22 +178,18 @@ Features:
 - Border Width: 0-5px
 
 **Persistence:**
-- Saves to browser localStorage
+- Saves to database (SiteConfig via `/api/site-config`) and caches in localStorage
 - Key: `linart-theme`
 - Auto-applies on page load
 - Save/Reset buttons
 
 ### 3. User Dashboard (`/dashboard`)
 
-**Vibrant user statistics and activity**
+**Neutral user statistics and activity**
 
 Features:
-- Welcome banner with gradient
-- Stats cards:
-  - Total Views (blue gradient)
-  - Link Clicks (purple gradient)
-  - Messages (orange gradient)
-  - Active Links (green gradient)
+- Welcome banner with dark neutral gradient
+- Stats cards in the same gray palette as the main site
 - "Your Links" section with service icons
 - "Recent Activity" feed
 - "Community Chat" placeholder
@@ -216,7 +212,7 @@ Sections:
 - Content
 - Database
 - **Appearance** ⭐
-- Settings
+- Settings (env summary + Google OAuth overrides)
 
 **Quick Access:**
 - Home Page (/)
@@ -226,11 +222,12 @@ Sections:
 
 **Current:** NextAuth (Credentials + optional Google)
 - Credentials uses Prisma user email/password
-- Google provider enabled only when GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are set
+- Google provider enabled when keys exist in env or SiteConfig override
+- Admin Settings can store Google OAuth keys in DB (overrides env)
 - Admin access requires a valid session (server-side guard on /admin)
 - Admin allowlist: ADMIN_EMAILS (comma-separated) or role ADMIN
- - Session includes `isAdmin` flag for client UI gating
- - Root layout wraps app in SessionProvider
+- Session includes `isAdmin` flag for client UI gating
+- Root layout wraps app in SessionProvider
 
 ---
 
@@ -286,6 +283,8 @@ Auth-related env vars (set in the shell or .env for Docker):
 - GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
 - ADMIN_EMAILS
 
+Admin can override Google OAuth keys in Settings (stored in SiteConfig).
+
 Uploads:
 - Host volume mounted to `/app/public/uploads` for persistence
 
@@ -295,7 +294,7 @@ Database models:
 - User
 - Link
 - ChatMessage
-- (Future: Media, Theme settings in DB)
+- SiteConfig (theme/content/styles + auth overrides)
 
 ---
 
@@ -446,7 +445,7 @@ saveTheme(newTheme)
 
 **Solution:** 
 - Check browser localStorage for `linart-theme` key
-- Verify `saveTheme()` is called on save button click
+- Verify `/api/site-config` returns theme data (DB persistence)
 - Clear cache and reload
 
 ### Upload Not Working
@@ -477,8 +476,9 @@ saveTheme(newTheme)
 - Redirect URI missing: `https://<domain>/api/auth/callback/google`
 
 **Fix:**
-- Rotate secret in Google Cloud and update Docker env
-- Rebuild container after updating env
+- Rotate secret in Google Cloud and update Docker env or Admin Settings
+- Admin Settings can store Google OAuth keys in DB (overrides env)
+- Rebuild container only if env variables changed
 
 ### Sidebar Button Missing
 
@@ -532,13 +532,12 @@ saveTheme(newTheme)
 - NextAuth with Credentials and optional Google
 - Admin access enforced server-side on /admin
 - Server actions that modify data require admin session
-- Theme persists in localStorage (client-side only)
+- Theme/content/styles persist in SiteConfig (DB) and cache in localStorage
 
 **Production Recommendations:**
 - Use strong AUTH_SECRET and rotate regularly
 - Restrict ADMIN_EMAILS to a short allowlist
 - Add rate limiting for auth endpoints
-- Move theme settings to database
 
 ---
 
@@ -585,6 +584,14 @@ saveTheme(newTheme)
 ---
 
 ## 🔄 Change Log
+
+### 2025-12-22
+- Dashboard palette aligned with the main site's neutral gray styling
+- Homepage initializes theme/content from local storage for all visitors (background video loads immediately)
+- Admin Settings can store Google OAuth keys in DB (auth now reads DB overrides first)
+- Added admin API for OAuth settings: `/api/admin/auth-settings`
+- Sign out now redirects to `/login` in admin and dashboard
+- Lint cleanup (typed editors, removed unused imports, image preview uses Next Image)
 
 ### 2025-12-21
 - Added admin-only gate for /admin layout and server actions
