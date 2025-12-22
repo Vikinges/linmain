@@ -1,69 +1,114 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart3, TrendingUp, Users, Eye } from "lucide-react"
+import { prisma } from "@/lib/db"
+import { BarChart3, Link as LinkIcon, MessageSquare, Users } from "lucide-react"
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+    const [userCount, linkCount, messageCount, groupCount] = await Promise.all([
+        prisma.user.count(),
+        prisma.serviceLink.count(),
+        prisma.chatMessage.count(),
+        prisma.group.count(),
+    ])
+
+    const topLinks = await prisma.serviceLink.findMany({
+        orderBy: { order: "asc" },
+        take: 5,
+    })
+
+    const groups = await prisma.group.findMany({
+        orderBy: { name: "asc" },
+        include: { users: true },
+        take: 5,
+    })
+
+    const recentMessages = await prisma.chatMessage.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        include: { user: true },
+    })
+
     return (
         <div className="space-y-6">
             <div>
                 <h2 className="text-3xl font-bold tracking-tight">Analytics</h2>
-                <p className="text-muted-foreground">Track your site performance and visitor statistics.</p>
+                <p className="text-muted-foreground">Live stats from your database.</p>
             </div>
 
             {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-4">
                 <Card className="glass-card">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">12,458</div>
-                        <p className="text-xs text-muted-foreground">+20% from last month</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="glass-card">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Users</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">2,350</div>
-                        <p className="text-xs text-muted-foreground">+15% from last month</p>
+                        <div className="text-2xl font-bold">{userCount}</div>
+                        <p className="text-xs text-muted-foreground">Registered accounts</p>
                     </CardContent>
                 </Card>
 
                 <Card className="glass-card">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Link Clicks</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Total Links</CardTitle>
+                        <LinkIcon className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">8,245</div>
-                        <p className="text-xs text-muted-foreground">+32% from last month</p>
+                        <div className="text-2xl font-bold">{linkCount}</div>
+                        <p className="text-xs text-muted-foreground">Service links stored</p>
                     </CardContent>
                 </Card>
 
                 <Card className="glass-card">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Engagement Rate</CardTitle>
+                        <CardTitle className="text-sm font-medium">Chat Messages</CardTitle>
+                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{messageCount}</div>
+                        <p className="text-xs text-muted-foreground">Messages stored</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="glass-card">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Groups</CardTitle>
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">68%</div>
-                        <p className="text-xs text-muted-foreground">+8% from last month</p>
+                        <div className="text-2xl font-bold">{groupCount}</div>
+                        <p className="text-xs text-muted-foreground">Defined groups</p>
                     </CardContent>
                 </Card>
             </div>
 
             <Card className="glass-card">
                 <CardHeader>
-                    <CardTitle>Visitor Traffic</CardTitle>
-                    <CardDescription>Daily visitor analytics and trends.</CardDescription>
+                    <CardTitle>Latest Messages</CardTitle>
+                    <CardDescription>Recent chat activity from users.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="h-[400px] flex items-center justify-center text-muted-foreground">
-                        Analytics Chart Placeholder - Integration with analytics service needed
+                    <div className="space-y-4">
+                        {recentMessages.length === 0 && (
+                            <div className="text-muted-foreground">No messages yet</div>
+                        )}
+                        {recentMessages.map((message) => (
+                            <div key={message.id} className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                    {(message.user.name || message.user.email || "U").charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium">
+                                        {message.user.name || message.user.email || "Unknown User"}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {message.content.slice(0, 160)}
+                                    </p>
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                    {message.createdAt.toLocaleDateString()}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </CardContent>
             </Card>
@@ -72,18 +117,17 @@ export default function AnalyticsPage() {
                 <Card className="glass-card">
                     <CardHeader>
                         <CardTitle>Top Links</CardTitle>
-                        <CardDescription>Most clicked links this month.</CardDescription>
+                        <CardDescription>Links configured in the system.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {[
-                                { name: "LinkedIn", clicks: 1245 },
-                                { name: "My Portfolio", clicks: 987 },
-                                { name: "YouTube Channel", clicks: 756 },
-                            ].map((item) => (
-                                <div key={item.name} className="flex items-center justify-between">
-                                    <span className="font-medium">{item.name}</span>
-                                    <span className="text-primary">{item.clicks} clicks</span>
+                            {topLinks.length === 0 && (
+                                <div className="text-muted-foreground">No links configured</div>
+                            )}
+                            {topLinks.map((link) => (
+                                <div key={link.id} className="flex items-center justify-between">
+                                    <span className="font-medium">{link.title}</span>
+                                    <span className="text-xs text-muted-foreground">{link.url}</span>
                                 </div>
                             ))}
                         </div>
@@ -92,27 +136,18 @@ export default function AnalyticsPage() {
 
                 <Card className="glass-card">
                     <CardHeader>
-                        <CardTitle>Traffic Sources</CardTitle>
-                        <CardDescription>Where your visitors come from.</CardDescription>
+                        <CardTitle>Groups Overview</CardTitle>
+                        <CardDescription>Active groups and member counts.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {[
-                                { source: "Direct", percentage: 45 },
-                                { source: "Social Media", percentage: 32 },
-                                { source: "Search Engines", percentage: 23 },
-                            ].map((item) => (
-                                <div key={item.source} className="space-y-2">
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span>{item.source}</span>
-                                        <span className="font-medium">{item.percentage}%</span>
-                                    </div>
-                                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-primary rounded-full transition-all"
-                                            style={{ width: `${item.percentage}%` }}
-                                        />
-                                    </div>
+                            {groups.length === 0 && (
+                                <div className="text-muted-foreground">No groups configured</div>
+                            )}
+                            {groups.map((group) => (
+                                <div key={group.id} className="flex items-center justify-between text-sm">
+                                    <span>{group.name}</span>
+                                    <span className="font-medium">{group.users.length} members</span>
                                 </div>
                             ))}
                         </div>

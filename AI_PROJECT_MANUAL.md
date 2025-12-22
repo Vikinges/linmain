@@ -594,12 +594,21 @@ saveTheme(newTheme)
 - Homepage admin/dashboard links now require an authenticated session
 - Docker image sets writable uploads directory
 - Docker base image installs OpenSSL so Prisma can generate/use correct engines on Alpine
+- Docker build now runs prisma generate before next build to sync schema changes
 - Docker compose expects auth env vars and mounts uploads volume
 - Deploy script prompts for Google OAuth credentials, writes .env, and runs Prisma db push
 - Deploy script pins Prisma CLI to v5 to avoid Prisma 7 schema URL validation errors
 - Deploy script skips Prisma generate inside container to avoid missing generator files
 - Runtime image includes Prisma schema for db push
 - Added /uploads route handler to serve uploaded media with range support
+- Added DB-backed site config at /api/site-config (theme, content, styles) for global changes
+- Admin Content/Appearance now load and save site config for all visitors
+- Homepage pulls social links and background video from site config
+- Added SiteConfig model for persistent site settings
+- Admin dashboard/analytics/users/chat now pull live data from the database
+- Database page exports a JSON snapshot via /api/admin/db-export
+- Admin settings page surfaces key environment configuration (no secrets)
+- Admin sidebar Sign Out now triggers NextAuth signOut
 
 ### 2025-12-20
 - ✅ Created theme customization system

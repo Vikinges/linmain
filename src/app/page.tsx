@@ -8,8 +8,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { BackgroundVideo } from "@/components/layout/background-video"
 import { LanguageSwitcher } from "@/components/layout/language-switcher"
-import { loadTheme, type ThemeConfig } from "@/lib/theme-config"
-import { loadContentStyles, type TextStyles } from "@/lib/content-config"
+import { loadTheme, saveTheme, type ThemeConfig } from "@/lib/theme-config"
+import {
+  loadContent,
+  saveContent,
+  loadContentStyles,
+  saveContentStyles,
+  type TextStyles,
+} from "@/lib/content-config"
 import { loadLanguage, type Language } from "@/lib/i18n-config"
 import { getTranslations, type Translations } from "@/lib/translations"
 import {
@@ -39,11 +45,37 @@ export default function HomePage() {
     setLanguage(lang)
     setTranslations(getTranslations(lang))
     setStyles(loadContentStyles())
+    setContent(loadContent())
 
-    // Load dynamic content
-    import("@/lib/content-config").then(mod => {
-      setContent(mod.loadContent())
-    })
+    let active = true
+    const loadRemoteConfig = async () => {
+      try {
+        const response = await fetch("/api/site-config", { cache: "no-store" })
+        if (!response.ok) return
+        const data = await response.json()
+        if (!active) return
+
+        if (data.theme) {
+          setTheme(data.theme)
+          saveTheme(data.theme)
+        }
+        if (data.styles) {
+          setStyles(data.styles)
+          saveContentStyles(data.styles)
+        }
+        if (data.content) {
+          setContent(data.content)
+          saveContent(data.content)
+        }
+      } catch (error) {
+        console.error("Failed to load site config:", error)
+      }
+    }
+
+    loadRemoteConfig()
+    return () => {
+      active = false
+    }
   }, [])
 
   const handleLanguageChange = (newLang: Language) => {
@@ -54,6 +86,9 @@ export default function HomePage() {
   if (!translations || !styles || !content) {
     return null
   }
+
+  const linkedinUrl = (content.social?.linkedinUrl || "").trim()
+  const youtubeUrl = (content.social?.youtubeUrl || "").trim()
 
   return (
     <>
@@ -167,22 +202,26 @@ export default function HomePage() {
 
               {/* Social Links */}
               <div className="flex items-center justify-center gap-4 pt-6">
-                <a
-                  href="https://linkedin.com/in/vladimir-linartas"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600 transition-all group"
-                >
-                  <Linkedin className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition" />
-                </a>
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600 transition-all group"
-                >
-                  <Youtube className="w-5 h-5 text-gray-400 group-hover:text-red-400 transition" />
-                </a>
+                {linkedinUrl && (
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600 transition-all group"
+                  >
+                    <Linkedin className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition" />
+                  </a>
+                )}
+                {youtubeUrl && (
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600 transition-all group"
+                  >
+                    <Youtube className="w-5 h-5 text-gray-400 group-hover:text-red-400 transition" />
+                  </a>
+                )}
               </div>
             </div>
           </div>

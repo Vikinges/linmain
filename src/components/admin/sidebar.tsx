@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { signOut } from "next-auth/react"
 import {
     LayoutDashboard,
     Users,
@@ -185,6 +186,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <Button
                     variant="ghost"
                     className="w-full justify-start text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    onClick={() => signOut({ callbackUrl: "/" })}
                 >
                     <LogOut className="h-5 w-5 mr-3" />
                     Sign Out

@@ -28,18 +28,63 @@ export default function ContentPage() {
     useEffect(() => {
         setContent(loadContent())
         setStyles(loadContentStyles())
+
+        let active = true
+        const loadRemoteConfig = async () => {
+            try {
+                const response = await fetch("/api/site-config", { cache: "no-store" })
+                if (!response.ok) return
+                const data = await response.json()
+                if (!active) return
+                if (data.content) {
+                    setContent(data.content)
+                    saveContent(data.content)
+                }
+                if (data.styles) {
+                    setStyles(data.styles)
+                    saveContentStyles(data.styles)
+                }
+            } catch (error) {
+                console.error("Failed to load site config:", error)
+            }
+        }
+
+        loadRemoteConfig()
+        return () => {
+            active = false
+        }
     }, [])
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaving(true)
         saveContent(content)
         saveContentStyles(styles)
+        try {
+            await fetch("/api/site-config", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content, styles })
+            })
+        } catch (error) {
+            console.error("Failed to save site config:", error)
+        }
         setTimeout(() => setIsSaving(false), 500)
     }
 
-    const handleReset = () => {
+    const handleReset = async () => {
         setContent(defaultContent)
         setStyles(defaultStyles)
+        saveContent(defaultContent)
+        saveContentStyles(defaultStyles)
+        try {
+            await fetch("/api/site-config", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: defaultContent, styles: defaultStyles })
+            })
+        } catch (error) {
+            console.error("Failed to reset site config:", error)
+        }
     }
 
     // Helper to update state deeply

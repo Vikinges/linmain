@@ -1,32 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { prisma } from "@/lib/db"
 import { UserPlus, Shield, Mail, Calendar } from "lucide-react"
 
 export default async function UsersPage() {
-    // Mock data for now - replace with real DB query
-    const users = [
-        { id: "1", name: "John Doe", email: "john@example.com", role: "USER", groups: ["Family"], createdAt: new Date() },
-        { id: "2", name: "Jane Smith", email: "jane@example.com", role: "ADMIN", groups: ["Work", "Family"], createdAt: new Date() },
-    ]
-
-    const groups = [
-        { id: "1", name: "Family", userCount: 5 },
-        { id: "2", name: "Work", userCount: 12 },
-        { id: "3", name: "Friends", userCount: 8 },
-        { id: "4", name: "Customers", userCount: 23 },
-    ]
+    const [users, groups] = await Promise.all([
+        prisma.user.findMany({
+            include: { groups: true },
+            orderBy: { createdAt: "desc" },
+        }),
+        prisma.group.findMany({
+            include: { users: true },
+            orderBy: { name: "asc" },
+        }),
+    ])
 
     return (
         <div className="space-y-6">
@@ -49,8 +38,8 @@ export default async function UsersPage() {
                         <Shield className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">48</div>
-                        <p className="text-xs text-muted-foreground">+3 this week</p>
+                        <div className="text-2xl font-bold">{users.length}</div>
+                        <p className="text-xs text-muted-foreground">Registered accounts</p>
                     </CardContent>
                 </Card>
 
@@ -89,7 +78,7 @@ export default async function UsersPage() {
                                     <TableCell>
                                         <div className="flex items-center">
                                             <Mail className="w-3 h-3 mr-2 text-muted-foreground" />
-                                            {user.email}
+                                            {user.email || "No email"}
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -100,11 +89,17 @@ export default async function UsersPage() {
                                         )}
                                     </TableCell>
                                     <TableCell>
-                                        <div className="flex gap-1">
-                                            {user.groups.map((group) => (
-                                                <Badge key={group} variant="outline" className="text-xs">{group}</Badge>
-                                            ))}
-                                        </div>
+                                        {user.groups.length === 0 ? (
+                                            <span className="text-xs text-muted-foreground">No groups</span>
+                                        ) : (
+                                            <div className="flex gap-1">
+                                                {user.groups.map((group) => (
+                                                    <Badge key={group.id} variant="outline" className="text-xs">
+                                                        {group.name}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center text-sm text-muted-foreground">
@@ -136,7 +131,7 @@ export default async function UsersPage() {
                                     <CardTitle className="text-base">{group.name}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-2xl font-bold text-primary">{group.userCount}</p>
+                                    <p className="text-2xl font-bold text-primary">{group.users.length}</p>
                                     <p className="text-xs text-muted-foreground">members</p>
                                     <Button variant="outline" size="sm" className="mt-3 w-full">
                                         Manage

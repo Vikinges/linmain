@@ -108,7 +108,7 @@ export const defaultContent: HomepageContent = {
     },
     social: {
         linkedinUrl: "https://linkedin.com/in/vladimir-linartas",
-        youtubeUrl: "#"
+        youtubeUrl: "https://www.youtube.com"
     },
     nav: {
         getStarted: "Get Started"

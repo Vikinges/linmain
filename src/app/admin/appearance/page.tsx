@@ -27,19 +27,58 @@ export default function AppearancePage() {
     useEffect(() => {
         const loaded = loadTheme()
         setTheme(loaded)
+
+        let active = true
+        const loadRemoteConfig = async () => {
+            try {
+                const response = await fetch("/api/site-config", { cache: "no-store" })
+                if (!response.ok) return
+                const data = await response.json()
+                if (!active) return
+                if (data.theme) {
+                    setTheme(data.theme)
+                    saveTheme(data.theme)
+                }
+            } catch (error) {
+                console.error("Failed to load site config:", error)
+            }
+        }
+
+        loadRemoteConfig()
+        return () => {
+            active = false
+        }
     }, [])
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaving(true)
         saveTheme(theme)
+        try {
+            await fetch("/api/site-config", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ theme })
+            })
+        } catch (error) {
+            console.error("Failed to save site config:", error)
+        }
         setTimeout(() => {
             setIsSaving(false)
         }, 500)
     }
 
-    const handleReset = () => {
+    const handleReset = async () => {
         setTheme(defaultTheme)
         saveTheme(defaultTheme)
+        try {
+            await fetch("/api/site-config", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ theme: defaultTheme })
+            })
+        } catch (error) {
+            console.error("Failed to reset site config:", error)
+        }
     }
 
     const updateTheme = (path: string, value: any) => {
