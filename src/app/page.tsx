@@ -128,6 +128,7 @@ export default function HomePage() {
     setTranslations(getTranslations(newLang))
   }
 
+  const localeOverrides = content.locales?.[language]
   const portfolioContent = content.portfolio ?? defaultContent.portfolio
   const portfolioOverrides = portfolioContent.locales?.[language]
   const portfolioFallback = translations.portfolio
@@ -141,6 +142,32 @@ export default function HomePage() {
   }
   const pickText = (value: string | undefined, fallback: string) =>
     isReadableText(value) ? value!.trim() : fallback
+  const legacyEnabled = language === "en"
+  const heroLegacy = legacyEnabled ? content.hero : undefined
+  const ctaLegacy = legacyEnabled ? content.cta : undefined
+  const calloutLegacy = legacyEnabled ? content.callout : undefined
+  const navLegacy = legacyEnabled ? content.nav : undefined
+  const footerLegacy = legacyEnabled ? content.footer : undefined
+  const heroText = {
+    badge: pickText(localeOverrides?.hero?.badge, pickText(heroLegacy?.badge, translations.hero.badge)),
+    name: pickText(localeOverrides?.hero?.name, pickText(heroLegacy?.name, translations.hero.name)),
+    subtitle: pickText(localeOverrides?.hero?.subtitle, pickText(heroLegacy?.subtitle, translations.hero.subtitle)),
+    description: pickText(localeOverrides?.hero?.description, pickText(heroLegacy?.description, translations.hero.description)),
+  }
+  const ctaText = {
+    primaryButton: pickText(localeOverrides?.cta?.primaryButton, pickText(ctaLegacy?.primaryButton, translations.cta.primary)),
+    secondaryButton: pickText(localeOverrides?.cta?.secondaryButton, pickText(ctaLegacy?.secondaryButton, translations.cta.secondary)),
+  }
+  const calloutText = {
+    title: pickText(localeOverrides?.callout?.title, pickText(calloutLegacy?.title, translations.callout.title)),
+    description: pickText(localeOverrides?.callout?.description, pickText(calloutLegacy?.description, translations.callout.description)),
+  }
+  const navText = {
+    getStarted: pickText(localeOverrides?.nav?.getStarted, pickText(navLegacy?.getStarted, translations.nav.getStarted)),
+  }
+  const footerText = {
+    copyright: pickText(localeOverrides?.footer?.copyright, pickText(footerLegacy?.copyright, translations.footer.copyright)),
+  }
   const portfolioText = {
     title: pickText(portfolioOverrides?.title, portfolioFallback.title),
     subtitle: pickText(portfolioOverrides?.subtitle, portfolioFallback.subtitle),
@@ -168,6 +195,9 @@ export default function HomePage() {
   const commercialLinkUrl = (portfolioContent.commercial?.linkUrl || "").trim()
   const linkedinUrl = (content.social?.linkedinUrl || "").trim()
   const youtubeUrl = (content.social?.youtubeUrl || "").trim()
+  const logoUrl = (content.media?.logoUrl || "/logo.png").trim() || "/logo.png"
+  const heroImageUrl = (content.media?.heroImageUrl || "").trim()
+  const heroImageAlt = content.media?.heroImageAlt?.trim() || heroText.name
 
   return (
     <>
@@ -188,7 +218,7 @@ export default function HomePage() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
               <Image
-                src="/logo.png"
+                src={logoUrl}
                 alt="Linart Logo"
                 width={48}
                 height={48}
@@ -209,7 +239,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Button size="sm" className="bg-gray-700 hover:bg-gray-600 text-white">
-                {content.nav?.getStarted || "Get Started"}
+                {navText.getStarted}
               </Button>
             </div>
           </div>
@@ -230,8 +260,22 @@ export default function HomePage() {
                 }}
               >
                 <Sparkles className="w-4 h-4" />
-                <span className="text-sm font-medium">{translations.hero.badge}</span>
+                <span className="text-sm font-medium">{heroText.badge}</span>
               </div>
+
+              {heroImageUrl && (
+                <div className="flex justify-center">
+                  <div className="relative h-28 w-28 rounded-full border border-white/20 bg-black/30 shadow-xl shadow-black/40 overflow-hidden">
+                    <Image
+                      src={heroImageUrl}
+                      alt={heroImageAlt}
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Main Headline */}
               <div className="space-y-4">
@@ -248,7 +292,7 @@ export default function HomePage() {
                         : 'none'
                     }}
                   >
-                    {translations.hero.name}
+                    {heroText.name}
                   </span>
                   <span
                     className="block bg-clip-text text-transparent"
@@ -256,14 +300,14 @@ export default function HomePage() {
                       backgroundImage: `linear-gradient(to right, ${styles.hero.subtitleGradientFrom}, ${styles.hero.subtitleGradientTo})`
                     }}
                   >
-                    {translations.hero.subtitle}
+                    {heroText.subtitle}
                   </span>
                 </h1>
                 <p
                   className="text-xl md:text-2xl max-w-3xl mx-auto"
                   style={{ color: styles.description.textColor }}
                 >
-                  {translations.hero.description}
+                  {heroText.description}
                 </p>
               </div>
 
@@ -275,13 +319,13 @@ export default function HomePage() {
                   className="bg-gray-700 hover:bg-gray-600 shadow-lg shadow-gray-900/50 text-lg h-14 px-8 text-white"
                 >
                   <a href="#projects">
-                    {translations.cta.primary}
+                    {ctaText.primaryButton}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </a>
                 </Button>
                 <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-800/50 text-lg h-14 px-8 text-gray-300">
                   <Mail className="mr-2 h-5 w-5" />
-                  {translations.cta.secondary}
+                  {ctaText.secondaryButton}
                 </Button>
               </div>
 
@@ -479,10 +523,10 @@ export default function HomePage() {
             >
               <CardContent className="pt-12 pb-12 text-center space-y-6">
                 <h2 className="text-4xl font-bold" style={{ color: styles.callout.titleColor }}>
-                  {content.callout.title || translations.callout.title}
+                  {calloutText.title}
                 </h2>
                 <p className="text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: styles.callout.descriptionColor }}>
-                  {content.callout.description || translations.callout.description}
+                  {calloutText.description}
                 </p>
                 <div className="pt-4">
                   <Link href="/login">
@@ -502,7 +546,7 @@ export default function HomePage() {
           <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-sm text-gray-500">
-                {content.footer?.copyright || "(c) 2025 Vladimir Linartas. All rights reserved."}
+                {footerText.copyright}
               </p>
               <div className="flex items-center gap-6 text-sm text-gray-500">
                 {isAdmin && (

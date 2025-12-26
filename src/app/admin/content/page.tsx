@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Slider } from "@/components/ui/slider"
 import { ColorPicker } from "@/components/admin/color-picker"
-import { Save, RotateCcw, LayoutTemplate, Type, MessageSquare, Briefcase, Server } from "lucide-react"
+import { MediaUploader } from "@/components/admin/media-uploader"
+import { Save, RotateCcw, LayoutTemplate, Type, MessageSquare, Briefcase, Server, Image as ImageIcon } from "lucide-react"
 import {
     HomepageContent,
     TextStyles,
@@ -22,12 +24,15 @@ import {
 } from "@/lib/content-config"
 import { getTranslations } from "@/lib/translations"
 import { loadLanguage, type Language } from "@/lib/i18n-config"
+import { ThemeConfig, defaultTheme, loadTheme, saveTheme } from "@/lib/theme-config"
+import { uploadFile } from "@/lib/actions/upload"
 
 export default function ContentPage() {
     const [content, setContent] = useState<HomepageContent>(() => loadContent())
     const [styles, setStyles] = useState<TextStyles>(() => loadContentStyles())
+    const [theme, setTheme] = useState<ThemeConfig>(() => loadTheme())
     const [isSaving, setIsSaving] = useState(false)
-    const [portfolioLanguage, setPortfolioLanguage] = useState<Language>(() => loadLanguage())
+    const [contentLanguage, setContentLanguage] = useState<Language>(() => loadLanguage())
 
     useEffect(() => {
         let active = true
@@ -45,6 +50,10 @@ export default function ContentPage() {
                     setStyles(data.styles)
                     saveContentStyles(data.styles)
                 }
+                if (data.theme) {
+                    setTheme(data.theme)
+                    saveTheme(data.theme)
+                }
             } catch (error) {
                 console.error("Failed to load site config:", error)
             }
@@ -60,11 +69,12 @@ export default function ContentPage() {
         setIsSaving(true)
         saveContent(content)
         saveContentStyles(styles)
+        saveTheme(theme)
         try {
             await fetch("/api/site-config", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content, styles })
+                body: JSON.stringify({ content, styles, theme })
             })
         } catch (error) {
             console.error("Failed to save site config:", error)
@@ -75,13 +85,15 @@ export default function ContentPage() {
     const handleReset = async () => {
         setContent(defaultContent)
         setStyles(defaultStyles)
+        setTheme(defaultTheme)
         saveContent(defaultContent)
         saveContentStyles(defaultStyles)
+        saveTheme(defaultTheme)
         try {
             await fetch("/api/site-config", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: defaultContent, styles: defaultStyles })
+                body: JSON.stringify({ content: defaultContent, styles: defaultStyles, theme: defaultTheme })
             })
         } catch (error) {
             console.error("Failed to reset site config:", error)
@@ -117,19 +129,50 @@ export default function ContentPage() {
     const updateStyle = (path: string, value: string | number) => {
         setStyles((current) => updateNestedValue(current, path, value))
     }
+    const updateThemeValue = (path: string, value: string | number) => {
+        setTheme((current) => updateNestedValue(current, path, value))
+    }
 
-    const portfolioFallback = getTranslations(portfolioLanguage).portfolio
-    const portfolioOverrides = content.portfolio?.locales?.[portfolioLanguage]
+    const translations = getTranslations(contentLanguage)
+    const localeOverrides = content.locales?.[contentLanguage]
+    const portfolioFallback = translations.portfolio
+    const portfolioOverrides = content.portfolio?.locales?.[contentLanguage]
     const isReadableText = (value: string | undefined) => {
         if (!value) return false
         const trimmed = value.trim()
         if (!trimmed) return false
         if (/^\?+$/.test(trimmed)) return false
-        if (/[ÐÑ]/.test(trimmed)) return false
+        if (/[\u00d0\u00d1]/.test(trimmed)) return false
         return /[\p{L}\p{N}]/u.test(trimmed)
     }
     const pickText = (value: string | undefined, fallback: string) =>
         isReadableText(value) ? value!.trim() : fallback
+    const legacyEnabled = contentLanguage === "en"
+    const heroLegacy = legacyEnabled ? content.hero : undefined
+    const ctaLegacy = legacyEnabled ? content.cta : undefined
+    const calloutLegacy = legacyEnabled ? content.callout : undefined
+    const navLegacy = legacyEnabled ? content.nav : undefined
+    const footerLegacy = legacyEnabled ? content.footer : undefined
+    const heroText = {
+        badge: pickText(localeOverrides?.hero?.badge, pickText(heroLegacy?.badge, translations.hero.badge)),
+        name: pickText(localeOverrides?.hero?.name, pickText(heroLegacy?.name, translations.hero.name)),
+        subtitle: pickText(localeOverrides?.hero?.subtitle, pickText(heroLegacy?.subtitle, translations.hero.subtitle)),
+        description: pickText(localeOverrides?.hero?.description, pickText(heroLegacy?.description, translations.hero.description))
+    }
+    const ctaText = {
+        primaryButton: pickText(localeOverrides?.cta?.primaryButton, pickText(ctaLegacy?.primaryButton, translations.cta.primary)),
+        secondaryButton: pickText(localeOverrides?.cta?.secondaryButton, pickText(ctaLegacy?.secondaryButton, translations.cta.secondary))
+    }
+    const calloutText = {
+        title: pickText(localeOverrides?.callout?.title, pickText(calloutLegacy?.title, translations.callout.title)),
+        description: pickText(localeOverrides?.callout?.description, pickText(calloutLegacy?.description, translations.callout.description))
+    }
+    const navText = {
+        getStarted: pickText(localeOverrides?.nav?.getStarted, pickText(navLegacy?.getStarted, translations.nav.getStarted))
+    }
+    const footerText = {
+        copyright: pickText(localeOverrides?.footer?.copyright, pickText(footerLegacy?.copyright, translations.footer.copyright))
+    }
     const portfolioText = {
         title: pickText(portfolioOverrides?.title, portfolioFallback.title),
         subtitle: pickText(portfolioOverrides?.subtitle, portfolioFallback.subtitle),
@@ -153,12 +196,28 @@ export default function ContentPage() {
     return (
         <div className="space-y-6 max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight text-white">Homepage Editor</h2>
                     <p className="text-muted-foreground mt-1">Manage text and colors visually</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                        <Label className="text-xs text-muted-foreground">Language</Label>
+                        <Select
+                            value={contentLanguage}
+                            onValueChange={(value) => setContentLanguage(value as Language)}
+                        >
+                            <SelectTrigger className="h-8 w-24">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="en">EN</SelectItem>
+                                <SelectItem value="de">DE</SelectItem>
+                                <SelectItem value="ru">RU</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <Button variant="outline" onClick={handleReset} className="border-white/20 hover:bg-white/10">
                         <RotateCcw className="h-4 w-4 mr-2" /> Reset
                     </Button>
@@ -169,12 +228,13 @@ export default function ContentPage() {
             </div>
 
             <Tabs defaultValue="callout" className="w-full">
-                <TabsList className="grid w-full grid-cols-5 bg-white/5">
+                <TabsList className="grid w-full grid-cols-6 bg-white/5">
                     <TabsTrigger value="hero"><LayoutTemplate className="h-4 w-4 mr-2" /> Hero</TabsTrigger>
                     <TabsTrigger value="portfolio"><Briefcase className="h-4 w-4 mr-2" /> Portfolio</TabsTrigger>
                     <TabsTrigger value="callout"><MessageSquare className="h-4 w-4 mr-2" /> Callout</TabsTrigger>
                     <TabsTrigger value="meta"><Type className="h-4 w-4 mr-2" /> Badge & Other</TabsTrigger>
                     <TabsTrigger value="links"><Type className="h-4 w-4 mr-2" /> Links & Footer</TabsTrigger>
+                    <TabsTrigger value="media"><ImageIcon className="h-4 w-4 mr-2" /> Media</TabsTrigger>
                 </TabsList>
 
                 {/* Callout Tab (Priority) */}
@@ -187,8 +247,8 @@ export default function ContentPage() {
                                 <div className="space-y-2">
                                     <Label>Title Text</Label>
                                     <Input
-                                        value={content.callout.title}
-                                        onChange={(e) => updateContent('callout.title', e.target.value)}
+                                        value={calloutText.title}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.callout.title`, e.target.value)}
                                         className="bg-white/5"
                                     />
                                 </div>
@@ -211,8 +271,8 @@ export default function ContentPage() {
                                 <div className="space-y-2">
                                     <Label>Description Text</Label>
                                     <Textarea
-                                        value={content.callout.description}
-                                        onChange={(e) => updateContent('callout.description', e.target.value)}
+                                        value={calloutText.description}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.callout.description`, e.target.value)}
                                         className="bg-white/5 h-32"
                                     />
                                 </div>
@@ -241,10 +301,10 @@ export default function ContentPage() {
                                     style={{ backgroundColor: styles.callout.backgroundColor || 'rgba(255, 255, 255, 0.05)' }}
                                 >
                                     <h2 className="text-4xl font-bold" style={{ color: styles.callout.titleColor }}>
-                                        {content.callout.title}
+                                        {calloutText.title}
                                     </h2>
                                     <p className="text-xl leading-relaxed max-w-lg mx-auto" style={{ color: styles.callout.descriptionColor }}>
-                                        {content.callout.description}
+                                        {calloutText.description}
                                     </p>
                                     <div className="pt-4 opacity-50 grayscale">
                                         <Button size="lg" className="bg-gradient-to-r from-gray-700 to-gray-600 text-white pointer-events-none">
@@ -266,8 +326,8 @@ export default function ContentPage() {
                                 <div className="space-y-2">
                                     <Label>Main Name</Label>
                                     <Input
-                                        value={content.hero.name}
-                                        onChange={(e) => updateContent('hero.name', e.target.value)}
+                                        value={heroText.name}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.hero.name`, e.target.value)}
                                         className="bg-white/5"
                                     />
                                     <ColorPicker
@@ -279,16 +339,16 @@ export default function ContentPage() {
                                 <div className="space-y-2">
                                     <Label>Subtitle</Label>
                                     <Input
-                                        value={content.hero.subtitle}
-                                        onChange={(e) => updateContent('hero.subtitle', e.target.value)}
+                                        value={heroText.subtitle}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.hero.subtitle`, e.target.value)}
                                         className="bg-white/5"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Description</Label>
                                     <Textarea
-                                        value={content.hero.description}
-                                        onChange={(e) => updateContent('hero.description', e.target.value)}
+                                        value={heroText.description}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.hero.description`, e.target.value)}
                                         className="bg-white/5 h-24"
                                     />
                                     <ColorPicker
@@ -304,13 +364,13 @@ export default function ContentPage() {
                             <CardContent className="flex items-center justify-center min-h-[300px] p-8">
                                 <div className="text-center space-y-4">
                                     <h1 className="text-4xl font-bold" style={{ color: styles.hero.nameColor }}>
-                                        {content.hero.name}
+                                        {heroText.name}
                                     </h1>
                                     <p className="text-xl bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-600">
-                                        {content.hero.subtitle}
+                                        {heroText.subtitle}
                                     </p>
                                     <p style={{ color: styles.description.textColor }}>
-                                        {content.hero.description}
+                                        {heroText.description}
                                     </p>
                                 </div>
                             </CardContent>
@@ -324,25 +384,6 @@ export default function ContentPage() {
                         <Card className="glass-card border-white/20">
                             <CardHeader><CardTitle>Portfolio Content</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
-                                <div className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 md:flex-row md:items-center md:justify-between">
-                                    <div>
-                                        <Label className="text-sm font-medium">Editing Language</Label>
-                                        <p className="text-xs text-muted-foreground">Empty fields use the default translation.</p>
-                                    </div>
-                                    <Select
-                                        value={portfolioLanguage}
-                                        onValueChange={(value) => setPortfolioLanguage(value as Language)}
-                                    >
-                                        <SelectTrigger className="w-28">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="en">EN</SelectItem>
-                                            <SelectItem value="de">DE</SelectItem>
-                                            <SelectItem value="ru">RU</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <ColorPicker
                                         label="Title Color"
@@ -369,14 +410,14 @@ export default function ContentPage() {
                                         <Label>Title</Label>
                                         <Input
                                             value={portfolioText.title}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.title`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.title`, e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Subtitle</Label>
                                         <Textarea
                                             value={portfolioText.subtitle}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.subtitle`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.subtitle`, e.target.value)}
                                             className="h-20"
                                         />
                                     </div>
@@ -388,14 +429,14 @@ export default function ContentPage() {
                                         <Label>Title</Label>
                                         <Input
                                             value={portfolioText.minecraft.title}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.minecraft.title`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.minecraft.title`, e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Description</Label>
                                         <Textarea
                                             value={portfolioText.minecraft.description}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.minecraft.description`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.minecraft.description`, e.target.value)}
                                             className="h-24"
                                         />
                                     </div>
@@ -411,7 +452,7 @@ export default function ContentPage() {
                                             <Label>Button Label</Label>
                                             <Input
                                                 value={portfolioText.minecraft.linkLabel}
-                                                onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.minecraft.linkLabel`, e.target.value)}
+                                                onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.minecraft.linkLabel`, e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -430,14 +471,14 @@ export default function ContentPage() {
                                         <Label>Title</Label>
                                         <Input
                                             value={portfolioText.sensorHub.title}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.sensorHub.title`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.sensorHub.title`, e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Description</Label>
                                         <Textarea
                                             value={portfolioText.sensorHub.description}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.sensorHub.description`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.sensorHub.description`, e.target.value)}
                                             className="h-24"
                                         />
                                     </div>
@@ -453,7 +494,7 @@ export default function ContentPage() {
                                             <Label>Button Label</Label>
                                             <Input
                                                 value={portfolioText.sensorHub.linkLabel}
-                                                onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.sensorHub.linkLabel`, e.target.value)}
+                                                onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.sensorHub.linkLabel`, e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -472,14 +513,14 @@ export default function ContentPage() {
                                         <Label>Title</Label>
                                         <Input
                                             value={portfolioText.commercial.title}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.commercial.title`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.commercial.title`, e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Description</Label>
                                         <Textarea
                                             value={portfolioText.commercial.description}
-                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.commercial.description`, e.target.value)}
+                                            onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.commercial.description`, e.target.value)}
                                             className="h-24"
                                         />
                                     </div>
@@ -488,7 +529,7 @@ export default function ContentPage() {
                                             <Label>Button Label</Label>
                                             <Input
                                                 value={portfolioText.commercial.linkLabel}
-                                                onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.commercial.linkLabel`, e.target.value)}
+                                                onChange={(e) => updateContent(`portfolio.locales.${contentLanguage}.commercial.linkLabel`, e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -540,8 +581,8 @@ export default function ContentPage() {
                             <div className="space-y-2">
                                 <Label>Experience Badge Text</Label>
                                 <Input
-                                    value={content.hero.badge}
-                                    onChange={(e) => updateContent('hero.badge', e.target.value)}
+                                    value={heroText.badge}
+                                    onChange={(e) => updateContent(`locales.${contentLanguage}.hero.badge`, e.target.value)}
                                 />
                             </div>
                             <div className="grid md:grid-cols-3 gap-4">
@@ -583,28 +624,28 @@ export default function ContentPage() {
                                 <h3 className="text-lg font-semibold border-b border-white/10 pb-2">Buttons & Labels</h3>
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>Primary CTA (Hero)</Label>
-                                        <Input
-                                            value={content.cta.primaryButton}
-                                            onChange={(e) => updateContent('cta.primaryButton', e.target.value)}
-                                            className="bg-white/5"
-                                        />
+                                    <Label>Primary CTA (Hero)</Label>
+                                    <Input
+                                        value={ctaText.primaryButton}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.cta.primaryButton`, e.target.value)}
+                                        className="bg-white/5"
+                                    />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Secondary CTA (Hero)</Label>
-                                        <Input
-                                            value={content.cta.secondaryButton}
-                                            onChange={(e) => updateContent('cta.secondaryButton', e.target.value)}
-                                            className="bg-white/5"
-                                        />
+                                    <Label>Secondary CTA (Hero)</Label>
+                                    <Input
+                                        value={ctaText.secondaryButton}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.cta.secondaryButton`, e.target.value)}
+                                        className="bg-white/5"
+                                    />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Nav Button</Label>
-                                        <Input
-                                            value={content.nav?.getStarted || ""}
-                                            onChange={(e) => updateContent('nav.getStarted', e.target.value)}
-                                            className="bg-white/5"
-                                        />
+                                    <Label>Nav Button</Label>
+                                    <Input
+                                        value={navText.getStarted}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.nav.getStarted`, e.target.value)}
+                                        className="bg-white/5"
+                                    />
                                     </div>
                                 </div>
                             </div>
@@ -614,14 +655,119 @@ export default function ContentPage() {
                                 <div className="space-y-2">
                                     <Label>Copyright Text</Label>
                                     <Input
-                                        value={content.footer?.copyright || ""}
-                                        onChange={(e) => updateContent('footer.copyright', e.target.value)}
+                                        value={footerText.copyright}
+                                        onChange={(e) => updateContent(`locales.${contentLanguage}.footer.copyright`, e.target.value)}
                                         className="bg-white/5"
                                     />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
+                </TabsContent>
+
+                {/* Media Tab */}
+                <TabsContent value="media" className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <Card className="glass-card border-white/20">
+                            <CardHeader>
+                                <CardTitle>Branding & Hero Media</CardTitle>
+                                <CardDescription>Upload logo and hero photo for the homepage</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <MediaUploader
+                                    label="Site Logo"
+                                    accept="image/*"
+                                    maxSize={5}
+                                    type="image"
+                                    currentUrl={content.media.logoUrl}
+                                    onUrlChange={(url) => updateContent("media.logoUrl", url)}
+                                    uploadAction={uploadFile}
+                                />
+                                <MediaUploader
+                                    label="Hero Photo"
+                                    accept="image/*"
+                                    maxSize={10}
+                                    type="image"
+                                    currentUrl={content.media.heroImageUrl}
+                                    onUrlChange={(url) => updateContent("media.heroImageUrl", url)}
+                                    uploadAction={uploadFile}
+                                />
+                                <div className="space-y-2">
+                                    <Label>Hero Image Alt Text</Label>
+                                    <Input
+                                        value={content.media.heroImageAlt}
+                                        onChange={(e) => updateContent("media.heroImageAlt", e.target.value)}
+                                        className="bg-white/5"
+                                        placeholder="Alt text for accessibility"
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="glass-card border-white/20">
+                            <CardHeader>
+                                <CardTitle>Background Media</CardTitle>
+                                <CardDescription>Control the homepage background video</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <MediaUploader
+                                    label="Background Video"
+                                    accept="video/mp4,video/webm"
+                                    maxSize={100}
+                                    type="video"
+                                    currentUrl={theme.background.videoUrl}
+                                    onUrlChange={(url) => updateThemeValue("background.videoUrl", url)}
+                                    uploadAction={uploadFile}
+                                />
+                                <div className="space-y-2">
+                                    <Label>Video URL</Label>
+                                    <Input
+                                        value={theme.background.videoUrl}
+                                        onChange={(e) => updateThemeValue("background.videoUrl", e.target.value)}
+                                        placeholder="https://example.com/video.mp4"
+                                        className="bg-white/5"
+                                    />
+                                </div>
+                                <MediaUploader
+                                    label="Fallback Image"
+                                    accept="image/*"
+                                    maxSize={10}
+                                    type="image"
+                                    currentUrl={theme.background.fallbackImage}
+                                    onUrlChange={(url) => updateThemeValue("background.fallbackImage", url)}
+                                    uploadAction={uploadFile}
+                                />
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label>Blur Amount</Label>
+                                        <span className="text-sm text-muted-foreground">{theme.background.blurAmount}px</span>
+                                    </div>
+                                    <Slider
+                                        value={[theme.background.blurAmount]}
+                                        onValueChange={([v]) => updateThemeValue("background.blurAmount", v)}
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label>Opacity</Label>
+                                        <span className="text-sm text-muted-foreground">{theme.background.opacity}%</span>
+                                    </div>
+                                    <Slider
+                                        value={[theme.background.opacity]}
+                                        onValueChange={([v]) => updateThemeValue("background.opacity", v)}
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        className="w-full"
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

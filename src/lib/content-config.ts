@@ -20,6 +20,29 @@ export interface PortfolioLocaleOverrides {
     }
 }
 
+export interface HomepageLocaleOverrides {
+    hero: {
+        badge: string
+        name: string
+        subtitle: string
+        description: string
+    }
+    cta: {
+        primaryButton: string
+        secondaryButton: string
+    }
+    callout: {
+        title: string
+        description: string
+    }
+    nav: {
+        getStarted: string
+    }
+    footer: {
+        copyright: string
+    }
+}
+
 export interface HomepageContent {
     hero: {
         badge: string
@@ -59,6 +82,11 @@ export interface HomepageContent {
             linkUrl: string
         }
     }
+    locales: {
+        en: HomepageLocaleOverrides
+        de: HomepageLocaleOverrides
+        ru: HomepageLocaleOverrides
+    }
     cta: {
         primaryButton: string
         secondaryButton: string
@@ -66,6 +94,11 @@ export interface HomepageContent {
     callout: {
         title: string
         description: string
+    }
+    media: {
+        logoUrl: string
+        heroImageUrl: string
+        heroImageAlt: string
     }
     social: {
         linkedinUrl: string
@@ -228,6 +261,74 @@ export const defaultContent: HomepageContent = {
             linkUrl: "https://hub.linart.club"
         }
     },
+    locales: {
+        en: {
+            hero: {
+                badge: "",
+                name: "",
+                subtitle: "",
+                description: ""
+            },
+            cta: {
+                primaryButton: "",
+                secondaryButton: ""
+            },
+            callout: {
+                title: "",
+                description: ""
+            },
+            nav: {
+                getStarted: ""
+            },
+            footer: {
+                copyright: ""
+            }
+        },
+        de: {
+            hero: {
+                badge: "",
+                name: "",
+                subtitle: "",
+                description: ""
+            },
+            cta: {
+                primaryButton: "",
+                secondaryButton: ""
+            },
+            callout: {
+                title: "",
+                description: ""
+            },
+            nav: {
+                getStarted: ""
+            },
+            footer: {
+                copyright: ""
+            }
+        },
+        ru: {
+            hero: {
+                badge: "",
+                name: "",
+                subtitle: "",
+                description: ""
+            },
+            cta: {
+                primaryButton: "",
+                secondaryButton: ""
+            },
+            callout: {
+                title: "",
+                description: ""
+            },
+            nav: {
+                getStarted: ""
+            },
+            footer: {
+                copyright: ""
+            }
+        }
+    },
     cta: {
         primaryButton: "View My Work",
         secondaryButton: "Contact Me"
@@ -235,6 +336,11 @@ export const defaultContent: HomepageContent = {
     callout: {
         title: "Team Up",
         description: "Looking for good people for interesting projects. The main thing is not quantity, but quality. If you are interesting in creating useful things together - let's get acquainted!"
+    },
+    media: {
+        logoUrl: "",
+        heroImageUrl: "",
+        heroImageAlt: ""
     },
     social: {
         linkedinUrl: "https://linkedin.com/in/vladimir-linartas",

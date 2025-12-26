@@ -15,8 +15,7 @@ import {
     Shield,
     BarChart3,
     FileText,
-    Database,
-    Palette
+    Database
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -74,13 +73,6 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             description: "Data management"
         },
         {
-            label: "Appearance",
-            icon: Palette,
-            href: "/admin/appearance",
-            color: "text-purple-500",
-            description: "Theme & Design"
-        },
-        {
             label: "Settings",
             icon: Settings,
             href: "/admin/settings",
@@ -90,8 +82,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     ]
 
     return (
-        <div className="space-y-4 py-4 flex flex-col h-full bg-slate-900 text-white">
-            <div className="px-3 py-2 flex-1">
+        <div className="space-y-4 py-4 flex flex-col h-full min-h-0 bg-slate-900 text-white">
+            <div className="px-3 py-2 flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                 {/* Header */}
                 <Link href="/admin" className="flex items-center pl-3 mb-8">
                     <div className="relative w-10 h-10 mr-3">
