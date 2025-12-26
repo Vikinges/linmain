@@ -23,6 +23,30 @@ export const de: Translations = {
             description: "Vom Konzept zum fertigen Produkt — ich liebe es, Dinge selbst zu bauen. Elektronik, Software, alles was man anfassen kann."
         }
     },
+    portfolio: {
+        title: "Projekte ansehen",
+        subtitle: "Live-Karten, eingebettete Demos und private Infrastruktur an einem Ort.",
+        minecraft: {
+            title: "Minecraft-Server-Karte",
+            description: "Mein eigener Server für Abonnenten und Kinder. Diese Seite zeigt die Live-Karte – hier kann man in Echtzeit zuschauen, wie andere spielen. Mit einem Klick öffnet sich die Karte im Vollbild. Java Edition: IP 85.215.32.66:25565. Bedrock Edition: IP 85.215.32.66:19132. Ein Testprojekt und eines meiner privaten DevOps-Builds.",
+            linkLabel: "Karte öffnen"
+        },
+        sensorHub: {
+            title: "SensorHub",
+            description: "SensorHub ist ein Hardware-/Firmware-Projekt für Smart-Things-Hosting: ein stromsparender ESP32-C3-Knoten mit Luftqualitäts- sowie Temperatur-/Feuchte-Sensoren. OLED per Tastendruck, lokales JSON-Log, sichere Web-Konfiguration und regelmäßiger Upload zur API.",
+            linkLabel: "YouTube-Kanal"
+        },
+        commercial: {
+            title: "Commercial Hub",
+            description: "Kommerzielle Projekte und Hosting unter hub.linart.club. Zugriff ist passwortgeschützt.",
+            linkLabel: "Hub öffnen"
+        },
+        placeholders: {
+            mapMissing: "Map-Embed-URL im Admin-Bereich hinzufügen.",
+            videoMissing: "YouTube-Videolink im Admin-Bereich hinzufügen, um den Player zu zeigen.",
+            lockedHint: "Privater Zugriff. Passwort erforderlich."
+        }
+    },
     cta: {
         primary: "Projekte ansehen",
         secondary: "Kontaktieren"

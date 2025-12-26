@@ -1,5 +1,25 @@
 // Homepage content configuration and defaults
 
+export interface PortfolioLocaleOverrides {
+    title: string
+    subtitle: string
+    minecraft: {
+        title: string
+        description: string
+        linkLabel: string
+    }
+    sensorHub: {
+        title: string
+        description: string
+        linkLabel: string
+    }
+    commercial: {
+        title: string
+        description: string
+        linkLabel: string
+    }
+}
+
 export interface HomepageContent {
     hero: {
         badge: string
@@ -19,6 +39,24 @@ export interface HomepageContent {
         tech: {
             title: string
             description: string
+        }
+    }
+    portfolio: {
+        locales: {
+            en: PortfolioLocaleOverrides
+            de: PortfolioLocaleOverrides
+            ru: PortfolioLocaleOverrides
+        }
+        minecraft: {
+            mapUrl: string
+            linkUrl: string
+        }
+        sensorHub: {
+            videoUrl: string
+            linkUrl: string
+        }
+        commercial: {
+            linkUrl: string
         }
     }
     cta: {
@@ -77,6 +115,26 @@ export interface TextStyles {
     }
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+    return Boolean(value) && typeof value === "object" && !Array.isArray(value)
+}
+
+function deepMerge<T>(base: T, override: Partial<T>): T {
+    if (!isPlainObject(base) || !isPlainObject(override)) {
+        return (override as T) ?? base
+    }
+
+    const result = { ...(base as Record<string, unknown>) }
+    for (const [key, value] of Object.entries(override)) {
+        if (value === undefined) continue
+        const baseValue = result[key]
+        result[key] = isPlainObject(baseValue) && isPlainObject(value)
+            ? deepMerge(baseValue, value)
+            : value
+    }
+    return result as T
+}
+
 export const defaultContent: HomepageContent = {
     hero: {
         badge: "20+ Years of Experience",
@@ -96,6 +154,78 @@ export const defaultContent: HomepageContent = {
         tech: {
             title: "Tech Development",
             description: "Developing innovative electronics and software products from concept to market, pushing boundaries of technology"
+        }
+    },
+    portfolio: {
+        locales: {
+            en: {
+                title: "",
+                subtitle: "",
+                minecraft: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                sensorHub: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                commercial: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                }
+            },
+            de: {
+                title: "",
+                subtitle: "",
+                minecraft: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                sensorHub: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                commercial: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                }
+            },
+            ru: {
+                title: "",
+                subtitle: "",
+                minecraft: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                sensorHub: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                commercial: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                }
+            }
+        },
+        minecraft: {
+            mapUrl: "https://linart.club/map/",
+            linkUrl: "https://linart.club/map/"
+        },
+        sensorHub: {
+            videoUrl: "",
+            linkUrl: "https://www.youtube.com/@LinArt"
+        },
+        commercial: {
+            linkUrl: "https://hub.linart.club"
         }
     },
     cta: {
@@ -197,8 +327,8 @@ export function loadContent(): HomepageContent {
         const stored = localStorage.getItem('linart-homepage-content')
         if (!stored) return defaultContent
 
-        const parsed = JSON.parse(stored)
-        return { ...defaultContent, ...parsed } as HomepageContent
+        const parsed = JSON.parse(stored) as Partial<HomepageContent>
+        return deepMerge(defaultContent, parsed)
     } catch {
         return defaultContent
     }

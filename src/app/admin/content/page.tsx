@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ColorPicker } from "@/components/admin/color-picker"
-import { Save, RotateCcw, LayoutTemplate, Type, MessageSquare, Briefcase } from "lucide-react"
+import { Save, RotateCcw, LayoutTemplate, Type, MessageSquare, Briefcase, Server } from "lucide-react"
 import {
     HomepageContent,
     TextStyles,
@@ -19,11 +20,14 @@ import {
     loadContentStyles,
     saveContentStyles
 } from "@/lib/content-config"
+import { getTranslations } from "@/lib/translations"
+import { loadLanguage, type Language } from "@/lib/i18n-config"
 
 export default function ContentPage() {
     const [content, setContent] = useState<HomepageContent>(() => loadContent())
     const [styles, setStyles] = useState<TextStyles>(() => loadContentStyles())
     const [isSaving, setIsSaving] = useState(false)
+    const [portfolioLanguage, setPortfolioLanguage] = useState<Language>(() => loadLanguage())
 
     useEffect(() => {
         let active = true
@@ -114,6 +118,30 @@ export default function ContentPage() {
         setStyles((current) => updateNestedValue(current, path, value))
     }
 
+    const portfolioFallback = getTranslations(portfolioLanguage).portfolio
+    const portfolioOverrides = content.portfolio?.locales?.[portfolioLanguage]
+    const pickText = (value: string | undefined, fallback: string) =>
+        value && value.trim() ? value : fallback
+    const portfolioText = {
+        title: pickText(portfolioOverrides?.title, portfolioFallback.title),
+        subtitle: pickText(portfolioOverrides?.subtitle, portfolioFallback.subtitle),
+        minecraft: {
+            title: pickText(portfolioOverrides?.minecraft?.title, portfolioFallback.minecraft.title),
+            description: pickText(portfolioOverrides?.minecraft?.description, portfolioFallback.minecraft.description),
+            linkLabel: pickText(portfolioOverrides?.minecraft?.linkLabel, portfolioFallback.minecraft.linkLabel)
+        },
+        sensorHub: {
+            title: pickText(portfolioOverrides?.sensorHub?.title, portfolioFallback.sensorHub.title),
+            description: pickText(portfolioOverrides?.sensorHub?.description, portfolioFallback.sensorHub.description),
+            linkLabel: pickText(portfolioOverrides?.sensorHub?.linkLabel, portfolioFallback.sensorHub.linkLabel)
+        },
+        commercial: {
+            title: pickText(portfolioOverrides?.commercial?.title, portfolioFallback.commercial.title),
+            description: pickText(portfolioOverrides?.commercial?.description, portfolioFallback.commercial.description),
+            linkLabel: pickText(portfolioOverrides?.commercial?.linkLabel, portfolioFallback.commercial.linkLabel)
+        }
+    }
+
     return (
         <div className="space-y-6 max-w-6xl mx-auto">
             {/* Header */}
@@ -135,7 +163,7 @@ export default function ContentPage() {
             <Tabs defaultValue="callout" className="w-full">
                 <TabsList className="grid w-full grid-cols-5 bg-white/5">
                     <TabsTrigger value="hero"><LayoutTemplate className="h-4 w-4 mr-2" /> Hero</TabsTrigger>
-                    <TabsTrigger value="pillars"><Briefcase className="h-4 w-4 mr-2" /> Pillars</TabsTrigger>
+                    <TabsTrigger value="portfolio"><Briefcase className="h-4 w-4 mr-2" /> Portfolio</TabsTrigger>
                     <TabsTrigger value="callout"><MessageSquare className="h-4 w-4 mr-2" /> Callout</TabsTrigger>
                     <TabsTrigger value="meta"><Type className="h-4 w-4 mr-2" /> Badge & Other</TabsTrigger>
                     <TabsTrigger value="links"><Type className="h-4 w-4 mr-2" /> Links & Footer</TabsTrigger>
@@ -282,12 +310,31 @@ export default function ContentPage() {
                     </div>
                 </TabsContent>
 
-                {/* Pillars Tab */}
-                <TabsContent value="pillars" className="space-y-6">
+                {/* Portfolio Tab */}
+                <TabsContent value="portfolio" className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <Card className="glass-card border-white/20">
-                            <CardHeader><CardTitle>Pillars Styling</CardTitle></CardHeader>
+                            <CardHeader><CardTitle>Portfolio Content</CardTitle></CardHeader>
                             <CardContent className="space-y-6">
+                                <div className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 md:flex-row md:items-center md:justify-between">
+                                    <div>
+                                        <Label className="text-sm font-medium">Editing Language</Label>
+                                        <p className="text-xs text-muted-foreground">Empty fields use the default translation.</p>
+                                    </div>
+                                    <Select
+                                        value={portfolioLanguage}
+                                        onValueChange={(value) => setPortfolioLanguage(value as Language)}
+                                    >
+                                        <SelectTrigger className="w-28">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="en">EN</SelectItem>
+                                            <SelectItem value="de">DE</SelectItem>
+                                            <SelectItem value="ru">RU</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <ColorPicker
                                         label="Title Color"
@@ -307,38 +354,143 @@ export default function ContentPage() {
                                         />
                                     </div>
                                 </div>
+
                                 <div className="space-y-4 border-t border-white/10 pt-4">
-                                    <Label className="text-lg">Business Pillar</Label>
-                                    <Input
-                                        value={content.pillars.business.title}
-                                        onChange={(e) => updateContent('pillars.business.title', e.target.value)}
-                                    />
-                                    <Textarea
-                                        value={content.pillars.business.description}
-                                        onChange={(e) => updateContent('pillars.business.description', e.target.value)}
-                                    />
+                                    <Label className="text-lg">Section Header</Label>
+                                    <div className="space-y-2">
+                                        <Label>Title</Label>
+                                        <Input
+                                            value={portfolioText.title}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.title`, e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Subtitle</Label>
+                                        <Textarea
+                                            value={portfolioText.subtitle}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.subtitle`, e.target.value)}
+                                            className="h-20"
+                                        />
+                                    </div>
                                 </div>
+
                                 <div className="space-y-4 border-t border-white/10 pt-4">
-                                    <Label className="text-lg">Content Creation Pillar</Label>
-                                    <Input
-                                        value={content.pillars.content.title}
-                                        onChange={(e) => updateContent('pillars.content.title', e.target.value)}
-                                    />
-                                    <Textarea
-                                        value={content.pillars.content.description}
-                                        onChange={(e) => updateContent('pillars.content.description', e.target.value)}
-                                    />
+                                    <Label className="text-lg">Minecraft Server Map</Label>
+                                    <div className="space-y-2">
+                                        <Label>Title</Label>
+                                        <Input
+                                            value={portfolioText.minecraft.title}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.minecraft.title`, e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Description</Label>
+                                        <Textarea
+                                            value={portfolioText.minecraft.description}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.minecraft.description`, e.target.value)}
+                                            className="h-24"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Map Embed URL</Label>
+                                        <Input
+                                            value={content.portfolio.minecraft.mapUrl}
+                                            onChange={(e) => updateContent('portfolio.minecraft.mapUrl', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Button Label</Label>
+                                            <Input
+                                                value={portfolioText.minecraft.linkLabel}
+                                                onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.minecraft.linkLabel`, e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Button URL</Label>
+                                            <Input
+                                                value={content.portfolio.minecraft.linkUrl}
+                                                onChange={(e) => updateContent('portfolio.minecraft.linkUrl', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <div className="space-y-4 border-t border-white/10 pt-4">
-                                    <Label className="text-lg">Tech Development Pillar</Label>
-                                    <Input
-                                        value={content.pillars.tech.title}
-                                        onChange={(e) => updateContent('pillars.tech.title', e.target.value)}
-                                    />
-                                    <Textarea
-                                        value={content.pillars.tech.description}
-                                        onChange={(e) => updateContent('pillars.tech.description', e.target.value)}
-                                    />
+                                    <Label className="text-lg">SensorHub</Label>
+                                    <div className="space-y-2">
+                                        <Label>Title</Label>
+                                        <Input
+                                            value={portfolioText.sensorHub.title}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.sensorHub.title`, e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Description</Label>
+                                        <Textarea
+                                            value={portfolioText.sensorHub.description}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.sensorHub.description`, e.target.value)}
+                                            className="h-24"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>YouTube URL</Label>
+                                        <Input
+                                            value={content.portfolio.sensorHub.videoUrl}
+                                            onChange={(e) => updateContent('portfolio.sensorHub.videoUrl', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Button Label</Label>
+                                            <Input
+                                                value={portfolioText.sensorHub.linkLabel}
+                                                onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.sensorHub.linkLabel`, e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Button URL</Label>
+                                            <Input
+                                                value={content.portfolio.sensorHub.linkUrl}
+                                                onChange={(e) => updateContent('portfolio.sensorHub.linkUrl', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 border-t border-white/10 pt-4">
+                                    <Label className="text-lg">Commercial Hub</Label>
+                                    <div className="space-y-2">
+                                        <Label>Title</Label>
+                                        <Input
+                                            value={portfolioText.commercial.title}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.commercial.title`, e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Description</Label>
+                                        <Textarea
+                                            value={portfolioText.commercial.description}
+                                            onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.commercial.description`, e.target.value)}
+                                            className="h-24"
+                                        />
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Button Label</Label>
+                                            <Input
+                                                value={portfolioText.commercial.linkLabel}
+                                                onChange={(e) => updateContent(`portfolio.locales.${portfolioLanguage}.commercial.linkLabel`, e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Button URL</Label>
+                                            <Input
+                                                value={content.portfolio.commercial.linkUrl}
+                                                onChange={(e) => updateContent('portfolio.commercial.linkUrl', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -350,7 +502,7 @@ export default function ContentPage() {
                                     <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
                                     Live Preview
                                 </CardTitle>
-                                <CardDescription>Visual check for contrast</CardDescription>
+                                <CardDescription>Portfolio card preview</CardDescription>
                             </CardHeader>
                             <CardContent className="p-8 bg-card/50 rounded-lg border border-dashed border-white/10">
                                 <div
@@ -358,13 +510,13 @@ export default function ContentPage() {
                                     style={{ backgroundColor: styles.pillars.backgroundColor || 'rgba(17, 24, 39, 0.5)' }}
                                 >
                                     <div className="w-12 h-12 mx-auto rounded-xl bg-white/10 flex items-center justify-center">
-                                        <Briefcase className="w-6 h-6 text-white" />
+                                        <Server className="w-6 h-6 text-white" />
                                     </div>
                                     <h3 className="text-xl font-bold" style={{ color: styles.pillars.titleColor }}>
-                                        {content.pillars.business.title}
+                                        {portfolioText.minecraft.title}
                                     </h3>
                                     <p className="text-sm leading-relaxed" style={{ color: styles.pillars.descriptionColor }}>
-                                        {content.pillars.business.description}
+                                        {portfolioText.minecraft.description}
                                     </p>
                                 </div>
                             </CardContent>
