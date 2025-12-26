@@ -6,6 +6,9 @@ A premium, containerized social hub with glassmorphism design, admin panel, and 
 - **Public Profile**: Beautiful landing page with your social links.
 - **User Dashboard**: Private area for registered users with exclusive tools and Community Chat.
 - **Admin Panel**: Manage links, icons, and visibility preferences.
+- **Page Editor**: Block-based editor for public pages with multi-language content.
+- **Media Library**: Upload and reuse images/videos across blocks.
+- **Auto Translate**: Optional LibreTranslate integration for quick translations.
 - **Authentication**: Secure login via NextAuth (Social + Credentials).
 - **Chat Protection**: Rate limits, cooldowns, and link checks to reduce spam.
 - **Design**: Modern Glassmorphism UI using Tailwind CSS + Framer Motion.
@@ -63,10 +66,14 @@ npm run db:seed
 The `docker-compose.yml` sets up default variables. For production, update:
 - `NEXTAUTH_SECRET`: Generate a random string.
 - `DATABASE_URL`: Your PostgreSQL connection string (handled by Docker internal network by default).
+- `LIBRETRANSLATE_URL`: Optional translation endpoint (default https://libretranslate.com/translate).
+- `LIBRETRANSLATE_API_KEY`: Optional API key for LibreTranslate.
 
 ## Project Structure
 - `src/app`: Page routes (Public, Dashboard, Admin).
+- `src/app/admin/editor`: Page editor UI.
 - `src/components`: UI components (Glassmorphism, Chat, etc).
+- `src/components/editor`: Page renderer + editor blocks.
 - `src/lib`: Backend logic (Actions, Auth, DB).
 - `prisma`: Database schema.
 

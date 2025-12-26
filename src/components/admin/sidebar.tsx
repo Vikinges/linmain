@@ -59,11 +59,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             description: "Traffic & Stats"
         },
         {
-            label: "Content",
+            label: "Editor",
             icon: FileText,
-            href: "/admin/content",
+            href: "/admin/editor",
             color: "text-blue-500",
-            description: "Homepage Editor"
+            description: "Page editor"
         },
         {
             label: "Database",
@@ -82,7 +82,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     ]
 
     return (
-        <div className="space-y-4 py-4 flex flex-col h-full min-h-0 bg-slate-900 text-white">
+        <div className="space-y-4 py-4 flex flex-col h-screen min-h-0 overflow-hidden bg-slate-900 text-white">
             <div className="px-3 py-2 flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                 {/* Header */}
                 <Link href="/admin" className="flex items-center pl-3 mb-8">

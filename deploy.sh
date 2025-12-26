@@ -90,6 +90,8 @@ if [ "$CLEANUP_LEVEL" != "off" ]; then
   docker container prune -f
   if [ "$CLEANUP_LEVEL" = "full" ]; then
     docker image prune -a -f
+    docker volume prune -f
+    docker network prune -f
   else
     docker image prune -f
   fi

@@ -9,9 +9,9 @@ export interface LanguageOption {
 }
 
 export const languages: LanguageOption[] = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'ru', name: 'Русский', flag: '🇷🇺' }
+    { code: 'en', name: 'English', flag: '\uD83C\uDDFA\uD83C\uDDF8' },
+    { code: 'de', name: 'Deutsch', flag: '\uD83C\uDDE9\uD83C\uDDEA' },
+    { code: 'ru', name: '\u0420\u0443\u0441\u0441\u043A\u0438\u0439', flag: '\uD83C\uDDF7\uD83C\uDDFA' }
 ]
 
 export const defaultLanguage: Language = 'en'
@@ -64,5 +64,5 @@ export function getLanguageName(code: Language): string {
 
 // Get language flag
 export function getLanguageFlag(code: Language): string {
-    return languages.find(l => l.code === code)?.flag || '🇬🇧'
+    return languages.find(l => l.code === code)?.flag || '\uD83C\uDDFA\uD83C\uDDF8'
 }

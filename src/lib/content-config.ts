@@ -170,10 +170,10 @@ function deepMerge<T>(base: T, override: Partial<T>): T {
 
 export const defaultContent: HomepageContent = {
     hero: {
-        badge: "20+ Years of Experience",
+        badge: "Always curious to try new things",
         name: "VLADIMIR LINARTAS",
         subtitle: "Entrepreneur - Creator - Developer",
-        description: "Transforming ideas into reality through innovation in business, content creation, and technology"
+        description: "I've always been curious to try new things - and even better, build something useful myself. Good people, let's unite! Quality matters more than quantity."
     },
     pillars: {
         business: {
@@ -330,12 +330,12 @@ export const defaultContent: HomepageContent = {
         }
     },
     cta: {
-        primaryButton: "View My Work",
+        primaryButton: "View Projects",
         secondaryButton: "Contact Me"
     },
     callout: {
-        title: "Team Up",
-        description: "Looking for good people for interesting projects. The main thing is not quantity, but quality. If you are interesting in creating useful things together - let's get acquainted!"
+        title: "Let's Team Up",
+        description: "Looking for good people for interesting projects. Quality matters more than quantity. If you're interested in building useful things together - let's connect!"
     },
     media: {
         logoUrl: "",
@@ -344,7 +344,7 @@ export const defaultContent: HomepageContent = {
     },
     social: {
         linkedinUrl: "https://linkedin.com/in/vladimir-linartas",
-        youtubeUrl: "https://www.youtube.com"
+        youtubeUrl: "https://www.youtube.com/@LinArt"
     },
     nav: {
         getStarted: "Get Started"

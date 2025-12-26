@@ -28,6 +28,8 @@ model User {
   sessions      Session[]
   groups        Group[]   @relation("UserGroups")
   messages      ChatMessage[]
+  pageRevisions PageRevision[] @relation("PageRevisionCreatedBy")
+  mediaAssets   MediaAsset[]   @relation("MediaAssetCreatedBy")
   
   // Custom fields
   bio           String?
@@ -104,4 +106,44 @@ model SiteConfig {
   value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id                   String         @id @default(cuid())
+  slug                 String         @unique
+  title                String
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  publishedRevisionId  String?        @unique
+  draftRevisionId      String?        @unique
+
+  revisions            PageRevision[] @relation("PageRevisions")
+  publishedRevision    PageRevision?  @relation("PagePublishedRevision", fields: [publishedRevisionId], references: [id])
+  draftRevision        PageRevision?  @relation("PageDraftRevision", fields: [draftRevisionId], references: [id])
+}
+
+model PageRevision {
+  id          String   @id @default(cuid())
+  pageId      String
+  title       String
+  blocks      Json
+  createdAt   DateTime @default(now())
+  createdById String?
+
+  page        Page     @relation("PageRevisions", fields: [pageId], references: [id], onDelete: Cascade)
+  createdBy   User?    @relation("PageRevisionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  publishedFor Page?   @relation("PagePublishedRevision")
+  draftFor     Page?   @relation("PageDraftRevision")
+}
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  url          String   @unique
+  originalName String
+  mimeType     String
+  size         Int
+  createdAt    DateTime @default(now())
+  createdById  String?
+
+  createdBy    User?    @relation("MediaAssetCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 }

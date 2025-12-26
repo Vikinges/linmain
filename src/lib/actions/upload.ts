@@ -3,6 +3,7 @@
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
+import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
 
 export async function uploadFile(formData: FormData) {
@@ -37,7 +38,18 @@ export async function uploadFile(formData: FormData) {
         const path = join(uploadDir, filename)
         await writeFile(path, buffer)
 
-        return { success: true, url: `/uploads/${filename}` }
+        const url = `/uploads/${filename}`
+        await prisma.mediaAsset.create({
+            data: {
+                url,
+                originalName: originalName || filename,
+                mimeType: file.type || "application/octet-stream",
+                size: file.size,
+                createdById: session.user.id
+            }
+        })
+
+        return { success: true, url }
     } catch (error) {
         console.error('Upload error:', error)
         return { success: false, error: 'Upload failed' }
