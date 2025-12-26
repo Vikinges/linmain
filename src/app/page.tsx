@@ -8,17 +8,18 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { BackgroundVideo } from "@/components/layout/background-video"
 import { LanguageSwitcher } from "@/components/layout/language-switcher"
-import { loadTheme, saveTheme, type ThemeConfig } from "@/lib/theme-config"
+import { applyTheme, defaultTheme, loadTheme, saveTheme, type ThemeConfig } from "@/lib/theme-config"
 import {
   loadContent,
   saveContent,
   loadContentStyles,
   saveContentStyles,
   defaultContent,
+  defaultStyles,
   type HomepageContent,
   type TextStyles,
 } from "@/lib/content-config"
-import { loadLanguage, type Language } from "@/lib/i18n-config"
+import { defaultLanguage, loadLanguage, type Language } from "@/lib/i18n-config"
 import { getTranslations, type Translations } from "@/lib/translations"
 import {
   ArrowRight,
@@ -61,14 +62,34 @@ const getYoutubeEmbedUrl = (url: string) => {
 }
 
 export default function HomePage() {
-  const [theme, setTheme] = useState<ThemeConfig>(() => loadTheme())
-  const [language, setLanguage] = useState<Language>(() => loadLanguage())
-  const [translations, setTranslations] = useState<Translations>(() => getTranslations(loadLanguage()))
-  const [styles, setStyles] = useState<TextStyles>(() => loadContentStyles())
-  const [content, setContent] = useState<HomepageContent>(() => loadContent())
+  const [theme, setTheme] = useState<ThemeConfig>(defaultTheme)
+  const [language, setLanguage] = useState<Language>(defaultLanguage)
+  const [translations, setTranslations] = useState<Translations>(() => getTranslations(defaultLanguage))
+  const [styles, setStyles] = useState<TextStyles>(defaultStyles)
+  const [content, setContent] = useState<HomepageContent>(defaultContent)
   const { data: session } = useSession()
   const isAdmin = Boolean(session?.user?.isAdmin || session?.user?.role === "ADMIN")
   const isAuthenticated = Boolean(session?.user)
+
+  useEffect(() => {
+    const syncLocalConfig = () => {
+      const storedTheme = loadTheme()
+      setTheme(storedTheme)
+      applyTheme(storedTheme)
+
+      const storedStyles = loadContentStyles()
+      setStyles(storedStyles)
+
+      const storedContent = loadContent()
+      setContent(storedContent)
+
+      const storedLanguage = loadLanguage()
+      setLanguage(storedLanguage)
+      setTranslations(getTranslations(storedLanguage))
+    }
+
+    syncLocalConfig()
+  }, [])
 
   useEffect(() => {
     let active = true
