@@ -327,14 +327,14 @@ export default function HomePage() {
                 )}
               </div>
 
-              <div className="grid gap-6 md:grid-cols-3">
+              <div className="space-y-6">
                 <Card
                   className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
                   style={{ backgroundColor: styles.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)" }}
                 >
-                  <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-                      <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 h-[320px] md:h-[360px] lg:h-[420px]">
+                  <CardContent className="p-6">
+                    <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
+                      <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 h-[240px] md:h-[280px] lg:h-[320px]">
                         {minecraftMapUrl ? (
                           <iframe
                             src={minecraftMapUrl}
@@ -382,46 +382,50 @@ export default function HomePage() {
                   className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
                   style={{ backgroundColor: styles.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)" }}
                 >
-                  <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 h-[320px] md:h-[360px] lg:h-[420px]">
-                      {sensorHubEmbedUrl ? (
-                        <iframe
-                          src={sensorHubEmbedUrl}
-                          style={{ border: "none" }}
-                          className="h-full w-full"
-                          loading="lazy"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          allowFullScreen
-                          title="SensorHub Video"
-                        />
-                      ) : (
-                        <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
-                          <Cpu className="h-8 w-8 text-gray-200" />
-                          <p className="text-sm">{portfolioFallback.placeholders.videoMissing}</p>
+                  <CardContent className="p-6">
+                    <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
+                      <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 h-[240px] md:h-[280px] lg:h-[320px]">
+                        {sensorHubEmbedUrl ? (
+                          <iframe
+                            src={sensorHubEmbedUrl}
+                            style={{ border: "none" }}
+                            className="h-full w-full"
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            title="SensorHub Video"
+                          />
+                        ) : (
+                          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
+                            <Cpu className="h-8 w-8 text-gray-200" />
+                            <p className="text-sm">{portfolioFallback.placeholders.videoMissing}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex h-full flex-col gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center shadow-lg shadow-gray-900/50">
+                            <Cpu className="w-6 h-6 text-gray-200" />
+                          </div>
+                          <h3 className="text-xl font-bold" style={{ color: styles.pillars.titleColor }}>
+                            {portfolioText.sensorHub.title}
+                          </h3>
                         </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center shadow-lg shadow-gray-900/50">
-                        <Cpu className="w-6 h-6 text-gray-200" />
+                        <p className="leading-relaxed" style={{ color: styles.pillars.descriptionColor }}>
+                          {portfolioText.sensorHub.description}
+                        </p>
+                        {sensorHubLinkUrl && (
+                          <div className="pt-2 mt-auto">
+                            <Button asChild variant="outline" className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60">
+                              <a href={sensorHubLinkUrl} target="_blank" rel="noopener noreferrer">
+                                {portfolioText.sensorHub.linkLabel}
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                              </a>
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                      <h3 className="text-xl font-bold" style={{ color: styles.pillars.titleColor }}>
-                        {portfolioText.sensorHub.title}
-                      </h3>
                     </div>
-                    <p className="leading-relaxed" style={{ color: styles.pillars.descriptionColor }}>
-                      {portfolioText.sensorHub.description}
-                    </p>
-                    {sensorHubLinkUrl && (
-                      <div className="pt-2 mt-auto">
-                        <Button asChild variant="outline" className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60">
-                          <a href={sensorHubLinkUrl} target="_blank" rel="noopener noreferrer">
-                            {portfolioText.sensorHub.linkLabel}
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </a>
-                        </Button>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
 
@@ -429,32 +433,36 @@ export default function HomePage() {
                   className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
                   style={{ backgroundColor: styles.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)" }}
                 >
-                  <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="rounded-2xl border border-white/10 bg-black/40 h-[320px] md:h-[360px] lg:h-[420px] px-6 py-10 text-center text-gray-400 flex flex-col items-center justify-center">
-                      <Lock className="mx-auto h-8 w-8 text-gray-200" />
-                      <p className="mt-3 text-sm">{portfolioFallback.placeholders.lockedHint}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center shadow-lg shadow-gray-900/50">
-                        <Lock className="w-6 h-6 text-gray-200" />
+                  <CardContent className="p-6">
+                    <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
+                      <div className="rounded-2xl border border-white/10 bg-black/40 h-[240px] md:h-[280px] lg:h-[320px] px-6 py-10 text-center text-gray-400 flex flex-col items-center justify-center">
+                        <Lock className="mx-auto h-8 w-8 text-gray-200" />
+                        <p className="mt-3 text-sm">{portfolioFallback.placeholders.lockedHint}</p>
                       </div>
-                      <h3 className="text-xl font-bold" style={{ color: styles.pillars.titleColor }}>
-                        {portfolioText.commercial.title}
-                      </h3>
-                    </div>
-                    <p className="leading-relaxed" style={{ color: styles.pillars.descriptionColor }}>
-                      {portfolioText.commercial.description}
-                    </p>
-                    {commercialLinkUrl && (
-                      <div className="pt-2 mt-auto">
-                        <Button asChild variant="outline" className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60">
-                          <a href={commercialLinkUrl} target="_blank" rel="noopener noreferrer">
-                            {portfolioText.commercial.linkLabel}
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </a>
-                        </Button>
+                      <div className="flex h-full flex-col gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center shadow-lg shadow-gray-900/50">
+                            <Lock className="w-6 h-6 text-gray-200" />
+                          </div>
+                          <h3 className="text-xl font-bold" style={{ color: styles.pillars.titleColor }}>
+                            {portfolioText.commercial.title}
+                          </h3>
+                        </div>
+                        <p className="leading-relaxed" style={{ color: styles.pillars.descriptionColor }}>
+                          {portfolioText.commercial.description}
+                        </p>
+                        {commercialLinkUrl && (
+                          <div className="pt-2 mt-auto">
+                            <Button asChild variant="outline" className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60">
+                              <a href={commercialLinkUrl} target="_blank" rel="noopener noreferrer">
+                                {portfolioText.commercial.linkLabel}
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                              </a>
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
