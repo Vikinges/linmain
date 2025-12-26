@@ -131,14 +131,12 @@ export default function HomePage() {
   const portfolioContent = content.portfolio ?? defaultContent.portfolio
   const portfolioOverrides = portfolioContent.locales?.[language]
   const portfolioFallback = translations.portfolio
-  const pickText = (value: string | undefined, fallback: string) =>
-    value && value.trim() ? value : fallback
   const isReadableText = (value: string | undefined) => {
     if (!value) return false
     const trimmed = value.trim()
     if (!trimmed) return false
     if (/^\?+$/.test(trimmed)) return false
-    if (/[ÐÑ]/.test(trimmed)) return false
+    if (/[\u00d0\u00d1]/.test(trimmed)) return false
     return /[\p{L}\p{N}]/u.test(trimmed)
   }
   const pickText = (value: string | undefined, fallback: string) =>
