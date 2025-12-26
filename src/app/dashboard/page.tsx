@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { auth } from "@/lib/auth"
 import { isAdminUser } from "@/lib/admin"
 import { redirect } from "next/navigation"
-import dynamic from "next/dynamic"
+import { ChatBox } from "@/components/chat/chat-box"
 import {
     TrendingUp,
     MessageSquare,
@@ -17,8 +17,6 @@ import {
     Zap,
     Activity
 } from "lucide-react"
-
-const ChatBox = dynamic(() => import("@/components/chat/chat-box").then((mod) => mod.ChatBox), { ssr: false })
 
 // Mock version for Windows testing
 export default async function DashboardPage() {
