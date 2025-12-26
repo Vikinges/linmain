@@ -230,7 +230,7 @@ function LocalizedInput({
       <div className="flex items-center justify-between">
         <Label className="text-sm text-gray-300">{label}</Label>
         {onTranslate && (
-          <Button type="button" size="xs" variant="ghost" onClick={onTranslate}>
+          <Button type="button" size="sm" variant="ghost" onClick={onTranslate} className="h-7 px-2 text-xs">
             Translate
           </Button>
         )}
