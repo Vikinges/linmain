@@ -6,17 +6,19 @@ import { Button } from "@/components/ui/button"
 import { auth } from "@/lib/auth"
 import { isAdminUser } from "@/lib/admin"
 import { redirect } from "next/navigation"
+import dynamic from "next/dynamic"
 import {
     TrendingUp,
     MessageSquare,
     Link as LinkIcon,
     Clock,
-    Users,
     Eye,
     Plus,
     Zap,
     Activity
 } from "lucide-react"
+
+const ChatBox = dynamic(() => import("@/components/chat/chat-box").then((mod) => mod.ChatBox), { ssr: false })
 
 // Mock version for Windows testing
 export default async function DashboardPage() {
@@ -220,48 +222,7 @@ export default async function DashboardPage() {
 
                         {/* Community Chat - Large Section */}
                         <div className="lg:col-span-2">
-                            <Card className="h-[700px] flex flex-col glass-card border-white/20 shadow-2xl">
-                                <CardHeader className="border-b border-white/10">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <CardTitle className="text-2xl flex items-center gap-3">
-                                                <span className="relative flex h-3 w-3">
-                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-                                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-gray-500 shadow-lg shadow-black/40"></span>
-                                                </span>
-                                                Community Chat
-                                            </CardTitle>
-                                            <CardDescription className="text-gray-400 mt-2 flex items-center gap-2">
-                                                <Users className="h-4 w-4" />
-                                                45 members online now
-                                            </CardDescription>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <div className="px-3 py-1.5 bg-white/10 text-gray-300 text-xs font-semibold rounded-full border border-white/10">
-                                                LIVE
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="flex-1 overflow-y-auto p-6">
-                                    <div className="h-full flex items-center justify-center">
-                                        <div className="text-center space-y-4">
-                                            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center shadow-2xl shadow-black/40">
-                                                <MessageSquare className="h-10 w-10 text-white" />
-                                            </div>
-                                            <div>
-                                                <p className="text-lg font-semibold text-white mb-2">Chat Coming Soon</p>
-                                                <p className="text-sm text-gray-400 max-w-md">
-                                                    Real-time chat functionality is available in Docker deployment
-                                                </p>
-                                                <p className="text-xs text-gray-400 mt-3 bg-white/5 px-4 py-2 rounded-lg inline-block border border-white/10">
-                                                    Development Mode - Windows Testing
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <ChatBox />
                         </div>
 
                     </div>

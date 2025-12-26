@@ -59,6 +59,8 @@ if [ -z "$AUTH_SECRET" ]; then
   AUTH_SECRET="$NEXTAUTH_SECRET"
 fi
 
+CLEANUP_LEVEL="${CLEANUP_LEVEL:-safe}"
+
 cat > .env <<EOF
 NEXTAUTH_URL=$NEXTAUTH_URL
 NEXTAUTH_SECRET=$NEXTAUTH_SECRET
@@ -82,5 +84,17 @@ docker compose --env-file .env up -d --build
 
 echo "Applying Prisma schema..."
 docker compose exec -T web sh -lc "HOME=/tmp npx -y prisma@5.22.0 db push --skip-generate --schema /app/prisma/schema.prisma"
+
+if [ "$CLEANUP_LEVEL" != "off" ]; then
+  echo "Cleaning up Docker artifacts..."
+  docker container prune -f
+  if [ "$CLEANUP_LEVEL" = "full" ]; then
+    docker image prune -a -f
+  else
+    docker image prune -f
+  fi
+  docker builder prune -f
+  docker system df
+fi
 
 echo "Done. Logs: docker compose logs -f web"

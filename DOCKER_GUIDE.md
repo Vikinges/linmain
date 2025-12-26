@@ -173,6 +173,21 @@ docker-compose down
 docker-compose up -d --build
 ```
 
+### Деплой + автоочистка мусора
+
+В `deploy.sh` добавлена автоматическая очистка Docker после деплоя, чтобы освобождать место на диске.
+
+Доступные режимы:
+- `CLEANUP_LEVEL=safe` (по умолчанию) — удаляет неиспользуемые контейнеры, dangling-образы и кэш сборки.
+- `CLEANUP_LEVEL=full` — удаляет все неиспользуемые образы (`docker image prune -a`).
+- `CLEANUP_LEVEL=off` — без очистки.
+
+Пример:
+
+```bash
+CLEANUP_LEVEL=full ./deploy.sh
+```
+
 ### Очистить все данные
 
 ```powershell

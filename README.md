@@ -7,6 +7,7 @@ A premium, containerized social hub with glassmorphism design, admin panel, and 
 - **User Dashboard**: Private area for registered users with exclusive tools and Community Chat.
 - **Admin Panel**: Manage links, icons, and visibility preferences.
 - **Authentication**: Secure login via NextAuth (Social + Credentials).
+- **Chat Protection**: Rate limits, cooldowns, and link checks to reduce spam.
 - **Design**: Modern Glassmorphism UI using Tailwind CSS + Framer Motion.
 
 ## Getting Started
@@ -25,6 +26,20 @@ docker-compose up -d --build
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000).
+
+### Deployment (production)
+Use the deployment script to pull updates, build containers, and apply Prisma.
+It also supports Docker cleanup to save disk space.
+
+```bash
+./deploy.sh
+```
+
+Optional cleanup mode:
+```bash
+# safe (default), full, or off
+CLEANUP_LEVEL=full ./deploy.sh
+```
 
 ### Test Accounts
 For local development, use these credentials:

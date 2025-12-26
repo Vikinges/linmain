@@ -1,18 +1,19 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import Link from "next/link"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getMessages, sendMessage } from "@/lib/actions/chat"
 import { cn } from "@/lib/utils"
-// import { useSession } from "next-auth/react" // Client-side session
 
 type Message = {
     id: string
     content: string
-    createdAt: Date
+    createdAt: string | Date
     userId: string
     user: {
         name: string | null
@@ -21,18 +22,29 @@ type Message = {
     }
 }
 
-export function ChatBox() {
+type ChatBoxProps = {
+    className?: string
+}
+
+export function ChatBox({ className }: ChatBoxProps) {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState("")
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
     const bottomRef = useRef<HTMLDivElement>(null)
-    //   const { data: session } = useSession()
+    const { status } = useSession()
+    const isAuthenticated = status === "authenticated"
 
     // Polling for messages
     useEffect(() => {
         const fetchMessages = async () => {
-            const msgs = await getMessages()
-            setMessages(msgs)
+            try {
+                const msgs = await getMessages()
+                setMessages(msgs)
+            } catch (err) {
+                console.error("Failed to load messages", err)
+                setError("Failed to load messages. Please refresh.")
+            }
         }
 
         fetchMessages()
@@ -47,8 +59,13 @@ export function ChatBox() {
     async function handleSend(e: React.FormEvent) {
         e.preventDefault()
         if (!input.trim()) return
+        if (!isAuthenticated) {
+            setError("Please sign in to send messages.")
+            return
+        }
 
         setLoading(true)
+        setError(null)
         const originalInput = input
         setInput("") // Optimistic clear
 
@@ -58,6 +75,8 @@ export function ChatBox() {
             setMessages(msgs)
         } catch (err) {
             console.error("Failed to send", err)
+            const message = err instanceof Error ? err.message : "Failed to send message."
+            setError(message)
             setInput(originalInput) // Revert
         } finally {
             setLoading(false)
@@ -65,7 +84,7 @@ export function ChatBox() {
     }
 
     return (
-        <Card className="h-[600px] flex flex-col glass-card border-none shadow-2xl">
+        <Card className={cn("h-[700px] flex flex-col glass-card border-none shadow-2xl", className)}>
             <CardHeader className="border-b border-white/10 pb-4">
                 <CardTitle className="flex items-center">
                     <span className="relative flex h-3 w-3 mr-2">
@@ -99,14 +118,30 @@ export function ChatBox() {
                 <div ref={bottomRef} />
             </CardContent>
             <div className="p-4 border-t border-white/10 bg-black/20">
+                {!isAuthenticated && status !== "loading" && (
+                    <div className="mb-3 flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-gray-300">
+                        <span>Sign in to join the chat.</span>
+                        <Button asChild size="sm" variant="outline" className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60">
+                            <Link href="/login">Login</Link>
+                        </Button>
+                    </div>
+                )}
+                {error && (
+                    <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                        {error}
+                    </div>
+                )}
                 <form onSubmit={handleSend} className="flex gap-2">
                     <Input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type a message..."
+                        onFocus={() => setError(null)}
+                        placeholder={isAuthenticated ? "Type a message..." : "Login to start chatting"}
                         className="bg-white/5 border-white/10"
+                        maxLength={500}
+                        disabled={!isAuthenticated || loading}
                     />
-                    <Button type="submit" disabled={loading || !input.trim()}>
+                    <Button type="submit" disabled={loading || !input.trim() || !isAuthenticated}>
                         Send
                     </Button>
                 </form>
