@@ -9,6 +9,7 @@ import {
   closestCenter,
   useSensor,
   useSensors,
+  type DragEndEvent,
 } from "@dnd-kit/core"
 import {
   SortableContext,
@@ -524,12 +525,16 @@ export function PageEditor({ pageId }: PageEditorProps) {
     setBlocks((prev) => prev.filter((block) => block.id !== id))
   }
 
-  const handleDragEnd = (event: { active: { id: string }; over: { id: string } | null }) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    if (!over || active.id === over.id) return
+    if (!over) return
+    const activeId = String(active.id)
+    const overId = String(over.id)
+    if (activeId === overId) return
     setBlocks((prev) => {
-      const oldIndex = prev.findIndex((block) => block.id === active.id)
-      const newIndex = prev.findIndex((block) => block.id === over.id)
+      const oldIndex = prev.findIndex((block) => block.id === activeId)
+      const newIndex = prev.findIndex((block) => block.id === overId)
+      if (oldIndex < 0 || newIndex < 0) return prev
       return arrayMove(prev, oldIndex, newIndex)
     })
   }
