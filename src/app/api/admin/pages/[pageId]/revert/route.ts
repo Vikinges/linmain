@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
 
 export async function POST(
-  request: Request,
-  { params }: { params: { pageId: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ pageId: string }> }
 ) {
+  const { pageId } = await params
   const session = await getAdminSession()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -40,7 +41,7 @@ export async function POST(
   })
 
   const updated = await prisma.page.update({
-    where: { id: params.pageId },
+    where: { id: pageId },
     data: { draftRevisionId: newRevision.id },
     include: {
       publishedRevision: true,

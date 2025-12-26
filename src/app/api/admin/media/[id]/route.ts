@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
 import { unlink } from "fs/promises"
@@ -13,16 +13,17 @@ function getUploadPath(url: string) {
 }
 
 export async function DELETE(
-  _request: Request,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const session = await getAdminSession()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   const asset = await prisma.mediaAsset.findUnique({
-    where: { id: params.id },
+    where: { id },
   })
 
   if (!asset) {

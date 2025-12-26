@@ -1,19 +1,20 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
 import { sanitizeBlocks } from "@/lib/editor/sanitize"
 
 export async function GET(
-  _request: Request,
-  { params }: { params: { pageId: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ pageId: string }> }
 ) {
+  const { pageId } = await params
   const session = await getAdminSession()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   const page = await prisma.page.findUnique({
-    where: { id: params.pageId },
+    where: { id: pageId },
     include: {
       publishedRevision: true,
       draftRevision: true,
@@ -28,9 +29,10 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { pageId: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ pageId: string }> }
 ) {
+  const { pageId } = await params
   const session = await getAdminSession()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -43,7 +45,7 @@ export async function PUT(
     payload = {}
   }
 
-  const page = await prisma.page.findUnique({ where: { id: params.pageId } })
+  const page = await prisma.page.findUnique({ where: { id: pageId } })
   if (!page) {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
@@ -94,14 +96,15 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
-  { params }: { params: { pageId: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ pageId: string }> }
 ) {
+  const { pageId } = await params
   const session = await getAdminSession()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  await prisma.page.delete({ where: { id: params.pageId } })
+  await prisma.page.delete({ where: { id: pageId } })
   return NextResponse.json({ ok: true })
 }
