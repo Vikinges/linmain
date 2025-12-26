@@ -120,8 +120,16 @@ export default function ContentPage() {
 
     const portfolioFallback = getTranslations(portfolioLanguage).portfolio
     const portfolioOverrides = content.portfolio?.locales?.[portfolioLanguage]
+    const isReadableText = (value: string | undefined) => {
+        if (!value) return false
+        const trimmed = value.trim()
+        if (!trimmed) return false
+        if (/^\?+$/.test(trimmed)) return false
+        if (/[ÐÑ]/.test(trimmed)) return false
+        return /[\p{L}\p{N}]/u.test(trimmed)
+    }
     const pickText = (value: string | undefined, fallback: string) =>
-        value && value.trim() ? value : fallback
+        isReadableText(value) ? value!.trim() : fallback
     const portfolioText = {
         title: pickText(portfolioOverrides?.title, portfolioFallback.title),
         subtitle: pickText(portfolioOverrides?.subtitle, portfolioFallback.subtitle),

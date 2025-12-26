@@ -133,6 +133,16 @@ export default function HomePage() {
   const portfolioFallback = translations.portfolio
   const pickText = (value: string | undefined, fallback: string) =>
     value && value.trim() ? value : fallback
+  const isReadableText = (value: string | undefined) => {
+    if (!value) return false
+    const trimmed = value.trim()
+    if (!trimmed) return false
+    if (/^\?+$/.test(trimmed)) return false
+    if (/[ÐÑ]/.test(trimmed)) return false
+    return /[\p{L}\p{N}]/u.test(trimmed)
+  }
+  const pickText = (value: string | undefined, fallback: string) =>
+    isReadableText(value) ? value!.trim() : fallback
   const portfolioText = {
     title: pickText(portfolioOverrides?.title, portfolioFallback.title),
     subtitle: pickText(portfolioOverrides?.subtitle, portfolioFallback.subtitle),
@@ -319,32 +329,31 @@ export default function HomePage() {
                 )}
               </div>
 
-              <div className="grid gap-6 lg:grid-cols-12">
+              <div className="grid gap-6 md:grid-cols-3">
                 <Card
-                  className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 lg:col-span-6"
+                  className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
                   style={{ backgroundColor: styles.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)" }}
                 >
                   <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-                      <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40">
+                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+                      <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 h-[320px] md:h-[360px] lg:h-[420px]">
                         {minecraftMapUrl ? (
                           <iframe
                             src={minecraftMapUrl}
-                            width="100%"
-                            height="600"
                             style={{ border: "none" }}
+                            className="h-full w-full"
                             loading="lazy"
                             allowFullScreen
                             title="Minecraft Server Map"
                           />
                         ) : (
-                          <div className="flex min-h-[600px] flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
+                          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
                             <Server className="h-8 w-8 text-gray-200" />
                             <p className="text-sm">{portfolioFallback.placeholders.mapMissing}</p>
                           </div>
                         )}
                       </div>
-                      <div className="flex h-full flex-col gap-4 lg:min-h-[600px]">
+                      <div className="flex h-full flex-col gap-4">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-lg shadow-gray-900/50">
                             <Server className="w-6 h-6 text-gray-200" />
@@ -372,24 +381,23 @@ export default function HomePage() {
                 </Card>
 
                 <Card
-                  className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 lg:col-span-3"
+                  className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
                   style={{ backgroundColor: styles.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)" }}
                 >
                   <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40">
+                    <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 h-[320px] md:h-[360px] lg:h-[420px]">
                       {sensorHubEmbedUrl ? (
                         <iframe
                           src={sensorHubEmbedUrl}
-                          width="100%"
-                          height="600"
                           style={{ border: "none" }}
+                          className="h-full w-full"
                           loading="lazy"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                           allowFullScreen
                           title="SensorHub Video"
                         />
                       ) : (
-                        <div className="flex min-h-[600px] flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
+                        <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
                           <Cpu className="h-8 w-8 text-gray-200" />
                           <p className="text-sm">{portfolioFallback.placeholders.videoMissing}</p>
                         </div>
@@ -420,11 +428,11 @@ export default function HomePage() {
                 </Card>
 
                 <Card
-                  className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 lg:col-span-3"
+                  className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
                   style={{ backgroundColor: styles.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)" }}
                 >
                   <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="rounded-2xl border border-white/10 bg-black/40 min-h-[600px] px-6 py-16 text-center text-gray-400 flex flex-col items-center justify-center">
+                    <div className="rounded-2xl border border-white/10 bg-black/40 h-[320px] md:h-[360px] lg:h-[420px] px-6 py-10 text-center text-gray-400 flex flex-col items-center justify-center">
                       <Lock className="mx-auto h-8 w-8 text-gray-200" />
                       <p className="mt-3 text-sm">{portfolioFallback.placeholders.lockedHint}</p>
                     </div>
