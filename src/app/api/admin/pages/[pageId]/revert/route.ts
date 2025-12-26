@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
 
@@ -31,11 +32,13 @@ export async function POST(
     return NextResponse.json({ error: "Revision not found" }, { status: 404 })
   }
 
+  const blocks = (revision.blocks ?? []) as Prisma.InputJsonValue
+
   const newRevision = await prisma.pageRevision.create({
     data: {
       pageId: revision.pageId,
       title: revision.title,
-      blocks: revision.blocks,
+      blocks,
       createdById: session.user.id,
     },
   })
