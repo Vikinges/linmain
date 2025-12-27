@@ -31,7 +31,7 @@ export function ChatBox({ className }: ChatBoxProps) {
     const [input, setInput] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const bottomRef = useRef<HTMLDivElement>(null)
+    const scrollContainerRef = useRef<HTMLDivElement>(null)
     const { status } = useSession()
     const isAuthenticated = status === "authenticated"
 
@@ -53,7 +53,12 @@ export function ChatBox({ className }: ChatBoxProps) {
     }, [])
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+        const container = scrollContainerRef.current
+        if (!container) return
+        const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight
+        if (distanceFromBottom < 120) {
+            container.scrollTop = container.scrollHeight
+        }
     }, [messages])
 
     async function handleSend(e: React.FormEvent) {
@@ -94,7 +99,10 @@ export function ChatBox({ className }: ChatBoxProps) {
                     Community Chat
                 </CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10">
+            <CardContent
+                ref={scrollContainerRef}
+                className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10"
+            >
                 {messages.map((msg) => (
                     <div key={msg.id} className={cn("flex items-start gap-3", "justify-start")}>
                         <Avatar className="w-8 h-8 border border-white/20">
@@ -115,7 +123,6 @@ export function ChatBox({ className }: ChatBoxProps) {
                         </div>
                     </div>
                 ))}
-                <div ref={bottomRef} />
             </CardContent>
             <div className="p-4 border-t border-white/10 bg-black/20">
                 {!isAuthenticated && status !== "loading" && (
