@@ -30,6 +30,15 @@ docker-compose up -d --build
 
 4. Open [http://localhost:3000](http://localhost:3000).
 
+### Local Testing (Windows, Docker)
+Run one command to build, start, wait for Postgres, apply Prisma, and seed test accounts:
+
+```powershell
+.\scripts\local-test.ps1
+```
+
+This uses `docker-compose.local.yml` (port 3000) and creates `.env.local` if needed.
+
 ### Deployment (production)
 Use the deployment script to pull updates, build containers, and apply Prisma.
 It also supports Docker cleanup to save disk space.
