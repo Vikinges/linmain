@@ -4,6 +4,8 @@ import { getPublishedPage } from "@/lib/editor/pages"
 import { readSiteConfig } from "@/lib/editor/site-config"
 import type { PageBlock } from "@/lib/editor/types"
 
+export const dynamic = "force-dynamic"
+
 export default async function HomePage() {
   await ensureDefaultPages()
   const page = await getPublishedPage("home")
