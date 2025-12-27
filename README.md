@@ -28,7 +28,11 @@ A premium, containerized social hub with glassmorphism design, admin panel, and 
 docker-compose up -d --build
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000).
+4. Open [http://localhost:8080](http://localhost:8080) (default). To use another port:
+
+```bash
+LINART_PORT=3000 docker-compose up -d --build
+```
 
 ### Local Testing (Windows, Docker)
 Run one command to build, start, wait for Postgres, apply Prisma, and seed test accounts:
