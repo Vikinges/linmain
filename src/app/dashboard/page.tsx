@@ -43,7 +43,7 @@ export default async function DashboardPage() {
         <>
             <UserNav user={user} isAdmin={isAdmin} />
             <GlassShell>
-                <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+                <div className="space-y-8 max-w-[1600px] mx-auto">
 
                     {/* Hero Welcome Section */}
                     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 md:p-12 shadow-2xl shadow-black/40 border border-white/10">
@@ -68,7 +68,7 @@ export default async function DashboardPage() {
                     {/* Stats Grid - Colorful Cards */}
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                         {/* Total Views Card */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-slate-900/80 p-6 shadow-xl shadow-black/30 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
+                        <div className="group relative overflow-hidden rounded-2xl glass-card border p-6 shadow-xl shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-border/70">
                             <div className="absolute inset-0 bg-black/20" />
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-4">
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Link Clicks Card */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-slate-900/80 p-6 shadow-xl shadow-black/30 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
+                        <div className="group relative overflow-hidden rounded-2xl glass-card border p-6 shadow-xl shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-border/70">
                             <div className="absolute inset-0 bg-black/20" />
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-4">
@@ -108,7 +108,7 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Messages Card */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-slate-900/80 p-6 shadow-xl shadow-black/30 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
+                        <div className="group relative overflow-hidden rounded-2xl glass-card border p-6 shadow-xl shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-border/70">
                             <div className="absolute inset-0 bg-black/20" />
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-4">
@@ -126,7 +126,7 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Active Links Card */}
-                        <div className="group relative overflow-hidden rounded-2xl bg-slate-900/80 p-6 shadow-xl shadow-black/30 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
+                        <div className="group relative overflow-hidden rounded-2xl glass-card border p-6 shadow-xl shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:border-border/70">
                             <div className="absolute inset-0 bg-black/20" />
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-4">

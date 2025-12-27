@@ -35,7 +35,7 @@ export default async function SettingsPage() {
         <>
             <UserNav user={user} isAdmin={isAdminUser(session.user)} />
             <GlassShell>
-                <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
+                <div className="max-w-5xl mx-auto space-y-8">
 
                     {/* Header */}
                     <div>
@@ -253,7 +253,7 @@ export default async function SettingsPage() {
                     {/* Info */}
                     <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                         <p className="text-sm text-blue-400">
-                            <strong>ℹ️ Mock Settings:</strong> These settings are for demonstration.
+                            <strong>Mock Settings:</strong> These settings are for demonstration.
                             Full functionality available in production deployment.
                         </p>
                     </div>

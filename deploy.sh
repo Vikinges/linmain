@@ -88,8 +88,20 @@ fi
 echo "Building and starting containers..."
 docker compose --env-file .env up -d --build
 
+echo "Waiting for database..."
+max_tries=30
+count=0
+until docker compose exec -T db pg_isready -U postgres >/dev/null 2>&1; do
+  count=$((count + 1))
+  if [ "$count" -ge "$max_tries" ]; then
+    echo "ERROR: Database not ready after $((max_tries * 2))s."
+    exit 1
+  fi
+  sleep 2
+done
+
 echo "Applying Prisma schema..."
-docker compose exec -T web sh -lc "HOME=/tmp npx -y prisma@5.22.0 db push --skip-generate --schema /app/prisma/schema.prisma"
+docker compose exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma"
 
 if [ "$CLEANUP_LEVEL" != "off" ]; then
   echo "Cleaning up Docker artifacts..."

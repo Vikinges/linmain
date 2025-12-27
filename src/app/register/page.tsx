@@ -4,13 +4,13 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Mail, Lock, User } from "lucide-react"
+import { BrandLogo } from "@/components/layout/brand-logo"
 import { loadLanguage } from "@/lib/i18n-config"
 import { getTranslations } from "@/lib/translations"
 
@@ -103,15 +103,12 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo.png"
-              alt="Linart"
-              width={48}
-              height={48}
-            />
-            <span className="text-2xl font-bold text-white">LINART</span>
-          </Link>
+          <BrandLogo
+            href="/"
+            label="LINART"
+            size={48}
+            labelClassName="text-2xl font-bold text-white"
+          />
         </div>
 
         <Card className="glass-card border-white/20">

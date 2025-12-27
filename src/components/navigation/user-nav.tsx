@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { BrandLogo } from "@/components/layout/brand-logo"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -28,14 +29,12 @@ export function UserNav({ user, isAdmin }: UserNavProps) {
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-16 items-center justify-between px-4">
                 {/* Logo */}
-                <Link href="/" className="flex items-center space-x-2">
-                    <div className="relative w-8 h-8">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-gray-600 to-gray-700 rounded-lg" />
-                    </div>
-                    <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                        Linart
-                    </span>
-                </Link>
+                <BrandLogo
+                    href="/"
+                    label="LINART"
+                    size={32}
+                    labelClassName="text-xl font-bold text-gray-200"
+                />
 
                 {/* Navigation */}
                 <nav className="flex items-center space-x-2">

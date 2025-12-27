@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { BrandLogo } from "@/components/layout/brand-logo"
 import { signOut } from "next-auth/react"
 import {
     LayoutDashboard,
@@ -12,7 +13,6 @@ import {
     MessageSquare,
     Settings,
     LogOut,
-    Shield,
     BarChart3,
     FileText,
     Database
@@ -85,18 +85,16 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         <div className="space-y-4 py-4 flex flex-col h-screen min-h-0 overflow-hidden bg-slate-900 text-white">
             <div className="px-3 py-2 flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                 {/* Header */}
-                <Link href="/admin" className="flex items-center pl-3 mb-8">
-                    <div className="relative w-10 h-10 mr-3">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-lg shadow-lg shadow-violet-500/50" />
-                        <Shield className="absolute inset-0 m-auto h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
-                            Linart Admin
-                        </h1>
-                        <p className="text-xs text-gray-400">Control Panel</p>
-                    </div>
-                </Link>
+                <div className="pl-3 mb-8">
+                    <BrandLogo
+                        href="/admin"
+                        label="LINART"
+                        size={40}
+                        subLabel="Admin Panel"
+                        labelClassName="text-xl font-bold text-white"
+                        subLabelClassName="text-xs text-gray-400"
+                    />
+                </div>
 
                 {/* Quick Navigation */}
                 <div className="mb-6 space-y-2">

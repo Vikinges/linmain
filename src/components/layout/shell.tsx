@@ -1,5 +1,6 @@
 import React from "react"
 import { cn } from "@/lib/utils"
+import { AppBackground } from "@/components/layout/app-background"
 
 interface ShellProps {
     children: React.ReactNode
@@ -17,9 +18,7 @@ export function Shell({ children, className }: ShellProps) {
 export function GlassShell({ children, className }: ShellProps) {
     return (
         <div className={cn("min-h-screen relative overflow-hidden bg-background font-sans antialiased selection:bg-primary selection:text-primary-foreground", className)}>
-            <div className="absolute inset-0 z-[-1] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background opacity-50 blur-3xl pointer-events-none" />
-            <div className="absolute top-[-20%] right-[-20%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl pointer-events-none mix-blend-screen" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl pointer-events-none mix-blend-screen" />
+            <AppBackground />
 
             <main className="relative z-10 container mx-auto px-4 py-8">
                 {children}
