@@ -24,6 +24,26 @@ const emptyLocalized = () => ({
   ru: "",
 })
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value)
+}
+
+function deepMerge<T>(base: T, override: Partial<T>): T {
+  if (!isPlainObject(base) || !isPlainObject(override)) {
+    return (override as T) ?? base
+  }
+
+  const result = { ...(base as Record<string, unknown>) }
+  for (const [key, value] of Object.entries(override)) {
+    if (value === undefined) continue
+    const baseValue = result[key]
+    result[key] = isPlainObject(baseValue) && isPlainObject(value)
+      ? deepMerge(baseValue, value)
+      : value
+  }
+  return result as T
+}
+
 const buildLocalized = (
   getter: (lang: Language) => string
 ) => {
@@ -34,8 +54,9 @@ const buildLocalized = (
   return result
 }
 
-function readContent(): HomepageContent {
-  return defaultContent
+function readContent(value?: unknown): HomepageContent {
+  if (!isPlainObject(value)) return defaultContent
+  return deepMerge(defaultContent, value as Partial<HomepageContent>)
 }
 
 export async function ensureDefaultPages() {
@@ -43,7 +64,7 @@ export async function ensureDefaultPages() {
   if (count > 0) return
 
   const contentRow = await prisma.siteConfig.findUnique({ where: { key: "content" } })
-  const content = (contentRow?.value as HomepageContent) || readContent()
+  const content = readContent(contentRow?.value)
 
   const heroText = {
     badge: buildLocalized((lang) => {
