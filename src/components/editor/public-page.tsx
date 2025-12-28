@@ -57,6 +57,8 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
   const legacyFooter = language === "en" ? globalContent.footer : undefined
   const navLabel = pickText(localeOverrides?.nav?.getStarted, pickText(legacyNav?.getStarted, translations.nav.getStarted))
   const footerText = pickText(localeOverrides?.footer?.copyright, pickText(legacyFooter?.copyright, translations.footer.copyright))
+  const hasProjects = useMemo(() => blocks.some((block) => block.type === "portfolio"), [blocks])
+  const navHref = hasProjects ? "#projects" : "/#projects"
 
   const logoUrl = (globalContent.media?.logoUrl || "/logo.png").trim() || "/logo.png"
 
@@ -87,8 +89,8 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
                   {translations.nav.login}
                 </Button>
               </Link>
-              <Button size="sm" className="bg-gray-700 hover:bg-gray-600 text-white">
-                {navLabel}
+              <Button size="sm" className="bg-gray-700 hover:bg-gray-600 text-white" asChild>
+                <Link href={navHref}>{navLabel}</Link>
               </Button>
             </div>
           </div>
