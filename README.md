@@ -51,6 +51,23 @@ It also supports Docker cleanup to save disk space.
 ./deploy.sh
 ```
 
+### Deployment (prebuilt image)
+To avoid building on the VPS, build an image in CI and deploy by pulling it:
+
+```bash
+USE_PREBUILT_IMAGE=1 ./deploy.sh
+```
+
+If the GHCR package is private, login first:
+```bash
+docker login ghcr.io -u <github-username> -p <token-with-read:packages>
+```
+
+Override the image if needed:
+```bash
+USE_PREBUILT_IMAGE=1 IMAGE_REF=ghcr.io/vikinges/linmain:latest ./deploy.sh
+```
+
 Optional cleanup mode:
 ```bash
 # safe (default), full, or off

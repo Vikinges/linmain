@@ -64,6 +64,9 @@ if [ -z "$LINART_PORT" ]; then
   LINART_PORT="8080"
 fi
 
+USE_PREBUILT_IMAGE="${USE_PREBUILT_IMAGE:-$(get_env_value USE_PREBUILT_IMAGE)}"
+IMAGE_REF="${IMAGE_REF:-$(get_env_value IMAGE_REF)}"
+
 CLEANUP_LEVEL="${CLEANUP_LEVEL:-safe}"
 
 cat > .env <<EOF
@@ -85,8 +88,17 @@ if [ "$(id -u)" = "0" ]; then
   chown -R 1001:1001 public/uploads || true
 fi
 
-echo "Building and starting containers..."
-docker compose --env-file .env up -d --build
+if [ "$USE_PREBUILT_IMAGE" = "1" ] || [ "$USE_PREBUILT_IMAGE" = "true" ]; then
+  IMAGE_REF="${IMAGE_REF:-ghcr.io/vikinges/linmain:latest}"
+  export IMAGE_REF
+  echo "Pulling prebuilt image: $IMAGE_REF"
+  docker compose --env-file .env pull web
+  echo "Starting containers (no build)..."
+  docker compose --env-file .env up -d --no-build
+else
+  echo "Building and starting containers..."
+  docker compose --env-file .env up -d --build
+fi
 
 echo "Waiting for database..."
 max_tries=30

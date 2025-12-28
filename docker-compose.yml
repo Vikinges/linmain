@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   web:
+    image: ${IMAGE_REF:-linart-web}
     build:
       context: .
       dockerfile: Dockerfile
