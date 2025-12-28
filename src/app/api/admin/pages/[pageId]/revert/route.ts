@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
+import { getPageIdByIdOrSlug } from "@/lib/editor/pages"
 
 export async function POST(
   request: NextRequest,
@@ -32,6 +33,11 @@ export async function POST(
     return NextResponse.json({ error: "Revision not found" }, { status: 404 })
   }
 
+  const page = await getPageIdByIdOrSlug(pageId)
+  if (!page || page.id !== revision.pageId) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
   const blocks = (revision.blocks ?? []) as Prisma.InputJsonValue
 
   const newRevision = await prisma.pageRevision.create({
@@ -44,7 +50,7 @@ export async function POST(
   })
 
   const updated = await prisma.page.update({
-    where: { id: pageId },
+    where: { id: page.id },
     data: { draftRevisionId: newRevision.id },
     include: {
       publishedRevision: true,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
 import { sanitizeBlocks } from "@/lib/editor/sanitize"
+import { getPageByIdOrSlug } from "@/lib/editor/pages"
 
 export async function GET(
   _request: NextRequest,
@@ -13,13 +14,7 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const page = await prisma.page.findUnique({
-    where: { id: pageId },
-    include: {
-      publishedRevision: true,
-      draftRevision: true,
-    },
-  })
+  const page = await getPageByIdOrSlug(pageId)
 
   if (!page) {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
@@ -45,7 +40,7 @@ export async function PUT(
     payload = {}
   }
 
-  const page = await prisma.page.findUnique({ where: { id: pageId } })
+  const page = await getPageByIdOrSlug(pageId)
   if (!page) {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
@@ -105,6 +100,11 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  await prisma.page.delete({ where: { id: pageId } })
+  const page = await getPageByIdOrSlug(pageId)
+  if (!page) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  await prisma.page.delete({ where: { id: page.id } })
   return NextResponse.json({ ok: true })
 }

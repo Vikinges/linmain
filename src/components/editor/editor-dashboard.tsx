@@ -193,11 +193,12 @@ export function EditorDashboard() {
             <div className="space-y-3">
               {pages.map((page) => {
                 const isPublished = Boolean(page.publishedRevisionId)
-                const editHref = `/admin/editor/${page.id}`
+                const editId = page.id || page.slug
+                const editHref = editId ? `/admin/editor/${editId}` : "/admin/editor"
                 const previewHref = page.slug === "home" ? "/" : `/p/${page.slug}`
                 return (
                   <div
-                    key={page.id}
+                    key={page.id || page.slug}
                     className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-white/5 px-4 py-3 cursor-pointer transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                     role="button"
                     tabIndex={0}

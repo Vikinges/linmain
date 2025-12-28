@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { getAdminSession } from "@/lib/admin"
+import { getPageByIdOrSlug } from "@/lib/editor/pages"
 
 export async function POST(
   _request: NextRequest,
@@ -12,10 +13,7 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const page = await prisma.page.findUnique({
-    where: { id: pageId },
-    include: { draftRevision: true },
-  })
+  const page = await getPageByIdOrSlug(pageId)
 
   if (!page) {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
