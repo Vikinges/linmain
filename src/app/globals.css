@@ -88,9 +88,9 @@
   --background: oklch(0.12 0.03 260);
   --foreground: oklch(0.98 0.01 260);
   
-  --card: oklch(0.15 0.04 260);
+  --card: color-mix(in oklab, var(--background) 88%, white);
   --card-foreground: oklch(0.98 0.01 260);
-  --popover: oklch(0.15 0.04 260);
+  --popover: color-mix(in oklab, var(--background) 90%, white);
   --popover-foreground: oklch(0.98 0.01 260);
   
   --primary: oklch(0.6 0.2 290);
@@ -128,6 +128,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: var(--font-size-base, 16px);
   }
 }
 
@@ -136,6 +137,6 @@
     @apply bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-xl;
   }
   .glass-card {
-    @apply bg-card/60 backdrop-blur-md border-border/50 shadow-sm;
+    @apply bg-card/80 backdrop-blur-md border-border/60 shadow-sm;
   }
 }

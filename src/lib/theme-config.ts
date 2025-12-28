@@ -59,6 +59,10 @@ export const defaultTheme: ThemeConfig = {
 // Convert theme to CSS variables
 export function themeToCssVariables(theme: ThemeConfig): Record<string, string> {
     return {
+        '--primary': theme.colors.primary,
+        '--secondary': theme.colors.secondary,
+        '--accent': theme.colors.accent,
+        '--background': theme.colors.background,
         '--color-primary': theme.colors.primary,
         '--color-secondary': theme.colors.secondary,
         '--color-accent': theme.colors.accent,
@@ -70,6 +74,7 @@ export function themeToCssVariables(theme: ThemeConfig): Record<string, string> 
         '--overlay-opacity': `${theme.background.opacity}%`,
         '--font-family': theme.typography.fontFamily,
         '--font-size-base': `${theme.typography.fontSize}px`,
+        '--radius': `${theme.borders.radius}px`,
         '--border-radius': `${theme.borders.radius}px`,
         '--border-width': `${theme.borders.width}px`
     }

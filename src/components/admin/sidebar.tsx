@@ -82,7 +82,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     ]
 
     return (
-        <div className="space-y-4 py-4 flex flex-col h-screen min-h-0 overflow-hidden bg-slate-900 text-white">
+        <div className="space-y-4 py-4 flex flex-col h-screen min-h-0 overflow-hidden bg-transparent text-foreground">
             <div className="px-3 py-2 flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                 {/* Header */}
                 <div className="pl-3 mb-8">
@@ -91,19 +91,19 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                         label="LINART"
                         size={40}
                         subLabel="Admin Panel"
-                        labelClassName="text-xl font-bold text-white"
-                        subLabelClassName="text-xs text-gray-400"
+                        labelClassName="text-xl font-bold text-foreground"
+                        subLabelClassName="text-xs text-muted-foreground"
                     />
                 </div>
 
                 {/* Quick Navigation */}
                 <div className="mb-6 space-y-2">
-                    <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                         Quick Access
                     </p>
                     <Link
                         href="/"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all duration-200"
                     >
                         <div className="p-1.5 bg-blue-500/20 rounded-lg">
                             <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +114,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     </Link>
                     <Link
                         href="/dashboard"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all duration-200"
                     >
                         <div className="p-1.5 bg-green-500/20 rounded-lg">
                             <LayoutDashboard className="w-4 h-4 text-green-400" />
@@ -125,7 +125,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
                 {/* User Info */}
                 {user && (
-                    <div className="mb-6 px-3 py-3 bg-white/5 rounded-lg border border-white/10">
+                    <div className="mb-6 px-3 py-3 bg-white/5 rounded-lg border border-border/60">
                         <div className="flex items-center space-x-3">
                             <Avatar className="h-10 w-10 border-2 border-primary/50">
                                 <AvatarImage src={user.image || ""} />
@@ -134,10 +134,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white truncate">
+                                <p className="text-sm font-medium text-foreground truncate">
                                     {user.name || "Admin"}
                                 </p>
-                                <p className="text-xs text-gray-400 truncate">
+                                <p className="text-xs text-muted-foreground truncate">
                                     {user.email || "admin@linart.com"}
                                 </p>
                             </div>
@@ -147,7 +147,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
                 {/* Navigation Links */}
                 <div className="space-y-1">
-                    <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                         Main Menu
                     </p>
                     {routes.map((route) => (
@@ -158,14 +158,14 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                                 "group flex flex-col p-3 rounded-lg transition-all duration-200",
                                 pathname === route.href
                                     ? "bg-white/10 text-white shadow-lg"
-                                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                             )}
                         >
                             <div className="flex items-center">
                                 <route.icon className={cn("h-5 w-5 mr-3 transition-transform group-hover:scale-110", route.color)} />
                                 <span className="font-medium">{route.label}</span>
                             </div>
-                            <span className="text-xs text-gray-500 ml-8 mt-0.5">{route.description}</span>
+                            <span className="text-xs text-muted-foreground/70 ml-8 mt-0.5">{route.description}</span>
                         </Link>
                     ))}
                 </div>
@@ -175,7 +175,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             <div className="px-3 py-2 border-t border-white/10">
                 <Button
                     variant="ghost"
-                    className="w-full justify-start text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="w-full justify-start text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     onClick={() => signOut({ callbackUrl: "/login" })}
                 >
                     <LogOut className="h-5 w-5 mr-3" />

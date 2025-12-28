@@ -12,7 +12,7 @@ export default async function AdminLayout({
     return (
         <Shell className="h-full relative overflow-hidden selection:bg-primary selection:text-primary-foreground">
             <AppBackground />
-            <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-[80] bg-gray-900">
+            <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-[80] bg-background/80 backdrop-blur-xl border-r border-border/60">
                 <AdminSidebar user={session.user} />
             </div>
             <main className="md:pl-72 pb-10 flex justify-center">

@@ -30,7 +30,7 @@ import {
 import { MediaLibrary } from "@/components/editor/media-library"
 import { defaultLanguage, languages, type Language } from "@/lib/i18n-config"
 import type { HomepageContent } from "@/lib/content-config"
-import type { ThemeConfig } from "@/lib/theme-config"
+import { applyTheme, type ThemeConfig } from "@/lib/theme-config"
 
 type PageSummary = {
   id: string
@@ -121,7 +121,7 @@ export function EditorDashboard() {
           </TabsTrigger>
           <TabsTrigger value="global" className="data-[state=active]:bg-white/10">
             <Settings2 className="mr-2 h-4 w-4" />
-            Global Settings
+            Design & Theme
           </TabsTrigger>
           <TabsTrigger value="media" className="data-[state=active]:bg-white/10">
             <ImageIcon className="mr-2 h-4 w-4" />
@@ -181,6 +181,9 @@ export function EditorDashboard() {
         <Card className="glass-card border-white/10">
           <CardContent className="pt-6 space-y-4">
             <h2 className="text-lg font-semibold text-white">Pages List</h2>
+            <p className="text-sm text-muted-foreground">
+              Click a page row or the Edit button to open the editor.
+            </p>
             {loading && (
               <div className="text-sm text-gray-400">Loading...</div>
             )}
@@ -190,14 +193,28 @@ export function EditorDashboard() {
             <div className="space-y-3">
               {pages.map((page) => {
                 const isPublished = Boolean(page.publishedRevisionId)
+                const editHref = `/admin/editor/${page.id}`
+                const previewHref = page.slug === "home" ? "/" : `/p/${page.slug}`
                 return (
                   <div
                     key={page.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/20 px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-white/5 px-4 py-3 cursor-pointer transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      window.location.href = editHref
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault()
+                        window.location.href = editHref
+                      }
+                    }}
+                    aria-label={`Edit page ${page.title}`}
                   >
                     <div>
                       <p className="text-sm text-white">{page.title}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-muted-foreground">
                         {page.slug === "home" ? "/" : `/p/${page.slug}`}
                       </p>
                     </div>
@@ -211,8 +228,21 @@ export function EditorDashboard() {
                       >
                         {isPublished ? "Published" : "Draft"}
                       </span>
-                      <Button asChild variant="outline">
-                        <Link href={`/admin/editor/${page.id}`}>Edit</Link>
+                      <Button
+                        asChild
+                        variant="default"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <Link href={editHref}>Edit</Link>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <Link href={previewHref} target="_blank" rel="noreferrer">
+                          Preview
+                        </Link>
                       </Button>
                     </div>
                   </div>
@@ -231,6 +261,86 @@ export function EditorDashboard() {
         <MediaLibrary />
       </TabsContent>
     </Tabs>
+  )
+}
+
+const clampNumber = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value))
+
+function ColorField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+}) {
+  const swatchValue = /^#[0-9a-f]{6}$/i.test(value) ? value : "#000000"
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm text-gray-300">{label}</Label>
+      <div className="flex items-center gap-3">
+        <input
+          type="color"
+          value={swatchValue}
+          onChange={(event) => onChange(event.target.value)}
+          className="h-10 w-12 rounded-md border border-white/20 bg-transparent"
+        />
+        <Input
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="bg-white/5 border-white/10"
+        />
+      </div>
+    </div>
+  )
+}
+
+function RangeField({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+}: {
+  label: string
+  value: number
+  onChange: (value: number) => void
+  min: number
+  max: number
+  step?: number
+}) {
+  const clampedValue = clampNumber(value, min, max)
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm text-gray-300">{label}</Label>
+      <div className="flex items-center gap-3">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={clampedValue}
+          onChange={(event) => onChange(Number(event.target.value))}
+          className="w-full accent-primary"
+        />
+        <Input
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={clampedValue}
+          onChange={(event) =>
+            onChange(clampNumber(Number(event.target.value), min, max))
+          }
+          className="w-24 bg-white/5 border-white/10"
+        />
+      </div>
+    </div>
   )
 }
 
@@ -263,6 +373,12 @@ function GlobalSettingsEditor() {
     }
     loadConfig()
   }, [])
+
+  useEffect(() => {
+    if (theme) {
+      applyTheme(theme)
+    }
+  }, [theme])
 
   const updateContent = (updater: (value: HomepageContent) => HomepageContent) => {
     setContent((prev) => (prev ? updater(prev) : prev))
@@ -446,6 +562,82 @@ function GlobalSettingsEditor() {
 
       <Card className="glass-card border-white/10">
         <CardContent className="pt-6 space-y-4">
+          <h2 className="text-lg font-semibold text-white">Theme & Colors</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <ColorField
+              label="Primary"
+              value={theme.colors.primary}
+              onChange={(value) =>
+                updateTheme((prev) => ({
+                  ...prev,
+                  colors: { ...prev.colors, primary: value },
+                }))
+              }
+            />
+            <ColorField
+              label="Secondary"
+              value={theme.colors.secondary}
+              onChange={(value) =>
+                updateTheme((prev) => ({
+                  ...prev,
+                  colors: { ...prev.colors, secondary: value },
+                }))
+              }
+            />
+            <ColorField
+              label="Accent"
+              value={theme.colors.accent}
+              onChange={(value) =>
+                updateTheme((prev) => ({
+                  ...prev,
+                  colors: { ...prev.colors, accent: value },
+                }))
+              }
+            />
+            <ColorField
+              label="Background"
+              value={theme.colors.background}
+              onChange={(value) =>
+                updateTheme((prev) => ({
+                  ...prev,
+                  colors: { ...prev.colors, background: value },
+                }))
+              }
+            />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <RangeField
+              label="Base font size"
+              value={theme.typography.fontSize}
+              min={12}
+              max={20}
+              step={1}
+              onChange={(value) =>
+                updateTheme((prev) => ({
+                  ...prev,
+                  typography: { ...prev.typography, fontSize: value },
+                }))
+              }
+            />
+            <RangeField
+              label="Corner radius"
+              value={theme.borders.radius}
+              min={6}
+              max={20}
+              step={1}
+              onChange={(value) =>
+                updateTheme((prev) => ({
+                  ...prev,
+                  borders: { ...prev.borders, radius: value },
+                }))
+              }
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="glass-card border-white/10">
+        <CardContent className="pt-6 space-y-4">
           <h2 className="text-lg font-semibold text-white">Background</h2>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
@@ -475,32 +667,33 @@ function GlobalSettingsEditor() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm text-gray-300">Blur (px)</Label>
-              <Input
-                type="number"
+              <RangeField
+                label="Blur (px)"
                 value={theme.background.blurAmount}
-                onChange={(event) =>
+                min={0}
+                max={60}
+                step={1}
+                onChange={(value) =>
                   updateTheme((prev) => ({
                     ...prev,
-                    background: { ...prev.background, blurAmount: Number(event.target.value) },
+                    background: { ...prev.background, blurAmount: value },
                   }))
                 }
-                className="bg-white/5 border-white/10"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm text-gray-300">Opacity (0-1)</Label>
-              <Input
-                type="number"
-                step="0.05"
+              <RangeField
+                label="Opacity (0-100)"
                 value={theme.background.opacity}
-                onChange={(event) =>
+                min={0}
+                max={100}
+                step={1}
+                onChange={(value) =>
                   updateTheme((prev) => ({
                     ...prev,
-                    background: { ...prev.background, opacity: Number(event.target.value) },
+                    background: { ...prev.background, opacity: value },
                   }))
                 }
-                className="bg-white/5 border-white/10"
               />
             </div>
           </div>

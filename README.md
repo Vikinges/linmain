@@ -51,6 +51,16 @@ It also supports Docker cleanup to save disk space.
 ./deploy.sh
 ```
 
+### One-command install (fresh VPS)
+```bash
+INSTALL_DIR=/opt/linart ./install.sh
+```
+
+Deploy a specific commit or tag:
+```bash
+DEPLOY_REF=4b7f707 ./deploy.sh
+```
+
 ### Deployment (prebuilt image)
 To avoid building on the VPS, build an image in CI and deploy by pulling it:
 

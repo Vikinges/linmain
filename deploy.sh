@@ -11,8 +11,15 @@ get_env_value() {
   fi
 }
 
-echo "Pulling latest changes..."
-git pull origin master
+DEPLOY_REF="${DEPLOY_REF:-$(get_env_value DEPLOY_REF)}"
+if [ -n "$DEPLOY_REF" ]; then
+  echo "Checking out $DEPLOY_REF..."
+  git fetch --all --tags
+  git checkout "$DEPLOY_REF"
+else
+  echo "Pulling latest changes..."
+  git pull origin master
+fi
 
 printf "Google Client ID: " >&2
 read -r GOOGLE_CLIENT_ID
@@ -78,6 +85,9 @@ ADMIN_EMAILS=$ADMIN_EMAILS
 GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 LINART_PORT=$LINART_PORT
+USE_PREBUILT_IMAGE=$USE_PREBUILT_IMAGE
+IMAGE_REF=$IMAGE_REF
+DEPLOY_REF=$DEPLOY_REF
 EOF
 
 chmod 600 .env

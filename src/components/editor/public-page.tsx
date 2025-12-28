@@ -70,7 +70,7 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
       />
 
       <div className="min-h-screen flex flex-col">
-        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur-md bg-black/30">
+        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/60 backdrop-blur-md bg-background/70">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <BrandLogo
               href="/"
@@ -98,11 +98,11 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
           <PageRenderer blocks={blocks} language={language} styles={styles} />
         </main>
 
-        <footer className="relative z-10 border-t border-gray-700/50 bg-black/50 backdrop-blur-xl">
-          <div className="container mx-auto px-4 py-8 flex flex-col items-center gap-4 text-gray-400 text-sm">
+        <footer className="relative z-10 border-t border-border/60 bg-background/80 backdrop-blur-xl">
+          <div className="container mx-auto px-4 py-8 flex flex-col items-center gap-4 text-muted-foreground text-sm">
             <p>{footerText}</p>
             {isAdmin && (
-              <Link href="/admin" className="text-xs text-gray-500 hover:text-gray-200">
+              <Link href="/admin" className="text-xs text-muted-foreground/70 hover:text-foreground">
                 Admin
               </Link>
             )}
