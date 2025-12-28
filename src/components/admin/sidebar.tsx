@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BrandLogo } from "@/components/layout/brand-logo"
 import { signOut } from "next-auth/react"
+import { APP_VERSION } from "@/lib/app-version"
 import {
     LayoutDashboard,
     Users,
@@ -184,7 +185,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
                 <div className="mt-3 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20">
                     <p className="text-xs text-gray-400">
-                        <span className="font-semibold text-primary">Linart v1.0</span>
+                        <span className="font-semibold text-primary">Linart v{APP_VERSION}</span>
                         <br />
                         (c) 2025 All rights reserved
                     </p>
