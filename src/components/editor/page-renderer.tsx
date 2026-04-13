@@ -195,8 +195,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             return (
               <section
                 key={block.id}
-                id="projects"
-                className="relative z-10 px-4 py-20 bg-gradient-to-b from-transparent to-black/60 scroll-mt-24"
+                id={block.id}
+                className="relative z-10 px-4 scroll-mt-24"
               >
                 <div className="container mx-auto max-w-6xl space-y-10">
                   <div className="text-center space-y-3">
@@ -321,80 +321,86 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const description = getLocalizedValue(block.data.description, language)
             const linkLabel = getLocalizedValue(block.data.linkLabel, language)
             const alt = getLocalizedValue(block.data.image.alt, language)
-            const imageNode = block.data.image.url ? (
-              <Image
-                src={block.data.image.url}
-                alt={alt || title}
-                width={1200}
-                height={900}
-                className="h-full w-full rounded-2xl object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center rounded-2xl border border-white/10 bg-black/40 text-gray-300">
-                <QrCode className="h-10 w-10" />
-              </div>
-            )
-
-            const contentNode = (
-              <div className="space-y-4">
-                <h3
-                  className="text-3xl font-bold"
-                  style={{ color: palette.pillars.titleColor }}
-                >
-                  {title}
-                </h3>
-                <div
-                  className="leading-relaxed"
-                  style={{ color: palette.pillars.descriptionColor }}
-                  dangerouslySetInnerHTML={{ __html: description }}
-                />
-                {block.data.linkUrl && (
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60"
-                  >
-                    <a href={block.data.linkUrl} target="_blank" rel="noopener noreferrer">
-                      {linkLabel}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                )}
-              </div>
-            )
-
-            const isLeft = block.data.align === "left"
 
             return (
               <section key={block.id} className="px-4">
                 <div className="mx-auto max-w-6xl">
-                <Card className="glass-card border-white/10">
-                  <CardContent className="pt-10 pb-10">
-                    <div className="grid gap-8 lg:grid-cols-2 items-center">
-                      {isLeft ? (
-                        <>
-                          {imageNode}
-                          {contentNode}
-                        </>
-                      ) : (
-                        <>
-                          {contentNode}
-                          {imageNode}
-                        </>
-                      )}
+                  <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-gray-900 via-gray-800/80 to-gray-900 p-8 md:p-12 lg:p-16">
+                    {/* Glow decorations */}
+                    <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-purple-600/10 blur-3xl" />
+
+                    <div className="relative grid gap-10 lg:grid-cols-[1fr_auto] items-start">
+                      <div className="space-y-6 max-w-2xl">
+                        {/* Live badge */}
+                        <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-sm font-medium text-green-400">
+                          <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
+                          Live
+                        </div>
+
+                        <h2 className="text-4xl md:text-5xl font-bold leading-tight text-white">
+                          {title}
+                        </h2>
+
+                        <div
+                          className="prose prose-invert prose-sm md:prose-base max-w-none leading-relaxed"
+                          style={{ color: palette.pillars.descriptionColor }}
+                          dangerouslySetInnerHTML={{ __html: description }}
+                        />
+
+                        {block.data.linkUrl && (
+                          <div className="pt-2">
+                            <Button
+                              asChild
+                              size="lg"
+                              variant="outline"
+                              className="border-gray-500/60 text-gray-100 hover:bg-gray-700/50 font-semibold"
+                            >
+                              <a href={block.data.linkUrl} target="_blank" rel="noopener noreferrer">
+                                {linkLabel}
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                              </a>
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right: image or server icon */}
+                      <div className="hidden lg:flex items-center justify-center self-center">
+                        {block.data.image.url ? (
+                          <Image
+                            src={block.data.image.url}
+                            alt={alt || title}
+                            width={400}
+                            height={400}
+                            className="rounded-2xl object-cover w-64 h-64"
+                          />
+                        ) : (
+                          <div className="flex h-52 w-52 items-center justify-center rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/40 to-purple-900/40 shadow-2xl shadow-blue-900/20">
+                            <Server className="h-24 w-24 text-blue-400/60" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
                 </div>
               </section>
             )
           }
           case "richText": {
             const html = getLocalizedValue(block.data.content, language)
+            const maxW = block.data.width === "full" ? "mx-auto max-w-6xl" : "mx-auto max-w-3xl"
             return (
               <section key={block.id} className="px-4">
-                <div className={block.data.width === "full" ? "mx-auto max-w-6xl" : "mx-auto max-w-3xl"}>
-                  <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
+                <div className={maxW}>
+                  <Card className="glass-card border-white/10">
+                    <CardContent className="pt-8 pb-8 px-8 md:px-12">
+                      <div
+                        className="prose prose-invert prose-sm md:prose-base max-w-none"
+                        dangerouslySetInnerHTML={{ __html: html }}
+                      />
+                    </CardContent>
+                  </Card>
                 </div>
               </section>
             )
@@ -493,35 +499,46 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const description = getLocalizedValue(block.data.description, language)
             const buttonLabel = getLocalizedValue(block.data.buttonLabel, language)
             return (
-              <section key={block.id} className="relative py-16 px-4">
-                <Card
-                  className="glass-card border-white/20 max-w-3xl mx-auto"
-                  style={{
-                    backgroundColor:
-                      palette.callout.backgroundColor || "rgba(255, 255, 255, 0.05)",
-                  }}
-                >
-                  <CardContent className="pt-10 pb-10 text-center space-y-4">
-                    <h3
-                      className="text-3xl font-bold"
-                      style={{ color: palette.callout.titleColor }}
-                    >
-                      {title}
-                    </h3>
-                    <p style={{ color: palette.callout.descriptionColor }}>{description}</p>
-                    {block.data.buttonUrl && (
-                      <Button
-                        asChild
-                        className="bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white"
+              <section key={block.id} className="px-4">
+                <div className="mx-auto max-w-3xl">
+                  <Card
+                    className="glass-card border-white/20 overflow-hidden"
+                    style={{ backgroundColor: palette.callout.backgroundColor || "rgba(255,255,255,0.05)" }}
+                  >
+                    <CardContent className="relative pt-12 pb-12 text-center space-y-5 px-8 md:px-14">
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent" />
+                      <h3
+                        className="relative text-3xl md:text-4xl font-bold leading-tight"
+                        style={{ color: palette.callout.titleColor }}
                       >
-                        <a href={block.data.buttonUrl}>
-                          {buttonLabel}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </a>
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
+                        {title}
+                      </h3>
+                      {description && (
+                        <p
+                          className="relative text-base md:text-lg max-w-xl mx-auto"
+                          style={{ color: palette.callout.descriptionColor }}
+                        >
+                          {description}
+                        </p>
+                      )}
+                      {block.data.buttonUrl && (
+                        <div className="relative pt-2">
+                          <Button
+                            asChild
+                            size="lg"
+                            variant="outline"
+                            className="border-gray-500/60 text-gray-100 hover:bg-gray-700/50 font-semibold"
+                          >
+                            <a href={block.data.buttonUrl}>
+                              {buttonLabel}
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </a>
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               </section>
             )
           }
