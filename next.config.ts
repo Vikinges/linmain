@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '100mb',
     },
   },
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'linart.club' },
+      { protocol: 'https', hostname: '*.linart.club' },
+      { protocol: 'https', hostname: 'crm-iot.com' },
+      { protocol: 'https', hostname: '*.crm-iot.com' },
+      { protocol: 'http', hostname: 'localhost' },
+      { protocol: 'http', hostname: '127.0.0.1' },
+    ],
+  },
 };
 
 export default nextConfig;

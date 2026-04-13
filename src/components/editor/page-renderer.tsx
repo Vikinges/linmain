@@ -367,6 +367,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
 
             return (
               <section key={block.id} className="px-4">
+                <div className="mx-auto max-w-6xl">
                 <Card className="glass-card border-white/10">
                   <CardContent className="pt-10 pb-10">
                     <div className="grid gap-8 lg:grid-cols-2 items-center">
@@ -384,6 +385,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
               </section>
             )
           }

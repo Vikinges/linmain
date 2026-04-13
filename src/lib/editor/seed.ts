@@ -242,7 +242,36 @@ export async function ensureDefaultPages() {
         align: "left",
       },
     },
-    // 3. Main portfolio — serious projects
+    // 3. CRM-IoT — second, right after IoT server
+    {
+      id: "crm-iot-text",
+      type: "richText",
+      data: {
+        content: portfolioText.crmIot.description,
+        width: "full",
+      },
+    },
+    // 4. CRM-IoT — request smart lock CTA (in same section)
+    {
+      id: "crm-iot-cta",
+      type: "cta",
+      data: {
+        title: portfolioText.crmIot.ctaTitle,
+        description: portfolioText.crmIot.ctaDescription,
+        buttonLabel: portfolioText.crmIot.ctaButton,
+        buttonUrl: "mailto:info@linart.club?subject=Smart%20Lock%20Request",
+      },
+    },
+    // 5. Private cloud — Immich + Nextcloud
+    {
+      id: "cloud-services",
+      type: "richText",
+      data: {
+        content: portfolioText.cloud.description,
+        width: "full",
+      },
+    },
+    // 6. Main portfolio — other projects
     {
       id: "portfolio",
       type: "portfolio",
@@ -287,7 +316,7 @@ export async function ensureDefaultPages() {
         ],
       },
     },
-    // 4. Entertainment section — Minecraft map
+    // 7. Entertainment section — Minecraft map
     {
       id: "entertainment",
       type: "portfolio",
@@ -308,42 +337,13 @@ export async function ensureDefaultPages() {
         ],
       },
     },
-    // 5. Community chat
+    // 8. Community chat
     {
       id: "chat",
       type: "chat",
       data: {
         title: chatText.title,
         description: chatText.description,
-      },
-    },
-    // 6. CRM-IoT — coming soon + B2B description
-    {
-      id: "crm-iot-text",
-      type: "richText",
-      data: {
-        content: portfolioText.crmIot.description,
-        width: "narrow",
-      },
-    },
-    // 7. CRM-IoT — request smart lock CTA
-    {
-      id: "crm-iot-cta",
-      type: "cta",
-      data: {
-        title: portfolioText.crmIot.ctaTitle,
-        description: portfolioText.crmIot.ctaDescription,
-        buttonLabel: portfolioText.crmIot.ctaButton,
-        buttonUrl: "mailto:info@linart.club?subject=Smart%20Lock%20Request",
-      },
-    },
-    // 8. Private cloud — Immich + Nextcloud
-    {
-      id: "cloud-services",
-      type: "richText",
-      data: {
-        content: portfolioText.cloud.description,
-        width: "narrow",
       },
     },
     // 9. Callout
