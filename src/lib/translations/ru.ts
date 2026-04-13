@@ -1,11 +1,11 @@
-﻿// Russian translations
+// Russian translations
 
 import { Translations } from "./en"
 
 export const ru: Translations = {
   hero: {
     badge: "Всегда любопытен к новому",
-    name: "VLADIMIR LINARTAS",
+    name: "LInArt Labs",
     subtitle: "Предприниматель • Создатель • Разработчик",
     description:
       "Мне всегда интересно пробовать новое — и ещё лучше делать что-то полезное своими руками. Хорошие люди, давайте объединяться! Качество важнее количества.",
@@ -48,6 +48,28 @@ export const ru: Translations = {
       description:
         "<p>Коммерческие проекты и хостинг на hub.linart.club. Доступ только по паролю.</p>",
       linkLabel: "Открыть хаб",
+    },
+    qrGenerator: {
+      title: "QR Generator",
+      description:
+        "<p>QR generator dlia biznesa: digitalnye vizitki, meeting-check-in i obuchenie komandy.</p><p>Mnogo funktsii besplatno, a platnye kak chashka kofe.</p>",
+      linkLabel: "Otkryt QR Generator",
+    },
+    hostLinart: {
+      title: "Host.linart.club",
+      description:
+        "<p>IoT Hub Dashboard — многопользовательская IoT-платформа для управления устройствами. Включает контроль доступа по уровням, мониторинг в реальном времени и встроенные дашборды.</p>",
+      linkLabel: "Открыть проект",
+    },
+    crmIot: {
+      title: "CRM-IoT",
+      description:
+        "<p>Обновлённая концепция проекта с гибридной архитектурой. Система работает в двух режимах: Online (CRM синхронизирует коды через IoT) и Offline (пул кодов загружен в замок заранее на случай отсутствия связи).</p>",
+      linkLabel: "Открыть проект",
+    },
+    entertainment: {
+      title: "Развлечения",
+      subtitle: "Проекты для отдыха и экспериментов",
     },
     placeholders: {
       mapMissing: "Добавьте ссылку на карту в админке.",

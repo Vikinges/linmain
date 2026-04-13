@@ -91,6 +91,10 @@
 - Build locally, `docker save` to tar, upload to VPS, then `docker load`.
 - Start with `docker compose up -d --no-build`.
 - Remove the tar after successful load to save disk.
+- VPS target: `85.215.32.66`, app path `/opt/linart`, default port `8080`.
+- One-liners (replace only if IP/path changes):
+  - PC (PowerShell): `cd d:\Code\linart_main_site; docker buildx build --platform linux/amd64 -t linart-web:local --load .; docker save -o linart-web.tar linart-web:local; scp .\linart-web.tar root@85.215.32.66:/opt/linart/linart-web.tar; Remove-Item .\linart-web.tar -Force`
+  - VPS (bash): `cd /opt/linart && docker compose --env-file .env down && docker load -i linart-web.tar && IMAGE_REF=linart-web:local docker compose --env-file .env up -d --no-build && docker compose --env-file .env exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && rm -f /opt/linart/linart-web.tar`
 
 ## Local Testing
 
@@ -116,6 +120,19 @@
 
 - Added theme controls in admin (colors, background, font size, radius) and global theme loader.
 - Improved editor page selection UX and page id/slug fallback in admin APIs.
+- Added editor page picker + missing page id guard for the block editor.
+- Added QR Generator portfolio item to default seed with cover asset (`public/assets/qr-generator-cover.svg`).
+- Made homepage nav show Dashboard when a user is logged in to avoid re-auth prompts.
+- Auto-append QR Generator to the Home portfolio when missing (keeps published in sync if no draft).
+- Added Project Highlight block type and auto-inserted QR highlight on Home when missing.
+- Hardened editor navigation (fallback to direct link if router push fails).
+- Showed app version on the public homepage footer.
+- Replaced editor page selector with native dropdown + direct navigation to fix non-clickable list.
+- Removed auto QR highlight block; QR now stays only in portfolio to avoid duplicate info.
+- Switched editor Open/Edit navigation to use `?open=<pageId>` query fallback.
+- Made `/admin/editor` a client wrapper that reads `?open=` (avoids server searchParams quirks).
+- Bumped app version to 1.11.
+- Added VPS one-liners with current IP and path.
 - Added app version constant (`src/lib/app-version.ts`) displayed in admin footer.
 - Updated deployment options: prebuilt image + local tar workflow.
 - Default port set to 8080; added install script and local test script.

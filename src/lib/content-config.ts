@@ -18,6 +18,11 @@ export interface PortfolioLocaleOverrides {
         description: string
         linkLabel: string
     }
+    qrGenerator: {
+        title: string
+        description: string
+        linkLabel: string
+    }
 }
 
 export interface HomepageLocaleOverrides {
@@ -80,6 +85,10 @@ export interface HomepageContent {
         }
         commercial: {
             linkUrl: string
+        }
+        qrGenerator: {
+            linkUrl: string
+            imageUrl: string
         }
     }
     locales: {
@@ -208,6 +217,11 @@ export const defaultContent: HomepageContent = {
                     title: "",
                     description: "",
                     linkLabel: ""
+                },
+                qrGenerator: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
                 }
             },
             de: {
@@ -224,6 +238,11 @@ export const defaultContent: HomepageContent = {
                     linkLabel: ""
                 },
                 commercial: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
+                },
+                qrGenerator: {
                     title: "",
                     description: "",
                     linkLabel: ""
@@ -246,6 +265,11 @@ export const defaultContent: HomepageContent = {
                     title: "",
                     description: "",
                     linkLabel: ""
+                },
+                qrGenerator: {
+                    title: "",
+                    description: "",
+                    linkLabel: ""
                 }
             }
         },
@@ -259,6 +283,10 @@ export const defaultContent: HomepageContent = {
         },
         commercial: {
             linkUrl: "https://hub.linart.club"
+        },
+        qrGenerator: {
+            linkUrl: "https://qr.linart.club/",
+            imageUrl: "/assets/qr-generator-cover.svg"
         }
     },
     locales: {

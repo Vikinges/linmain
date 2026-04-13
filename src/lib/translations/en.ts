@@ -3,7 +3,7 @@
 export const en = {
   hero: {
     badge: "Always curious to try new things",
-    name: "VLADIMIR LINARTAS",
+    name: "LInArt Labs",
     subtitle: "Entrepreneur - Creator - Developer",
     description:
       "I've always been curious to try new things - and even better, build something useful myself. Good people, let's unite! Quality matters more than quantity.",
@@ -45,6 +45,28 @@ export const en = {
       description:
         "<p>Commercial projects and hosting at hub.linart.club. Access is password-protected.</p>",
       linkLabel: "Open Hub",
+    },
+    qrGenerator: {
+      title: "QR Generator",
+      description:
+        "<p>Business-ready QR codes for digital business cards, meeting check-ins, and team training flows.</p><p>Many features are free, with paid options priced like a cup of coffee.</p>",
+      linkLabel: "Open QR Generator",
+    },
+    hostLinart: {
+      title: "Host.linart.club",
+      description:
+        "<p>IoT Hub Dashboard — a multi-tenant IoT device management platform. Features tier-based access control, real-time monitoring, and shareable dashboards.</p>",
+      linkLabel: "Open Project",
+    },
+    crmIot: {
+      title: "CRM-IoT",
+      description:
+        "<p>Hybrid architecture project. The system works in two modes: Online (CRM syncs access codes via IoT) and Offline (the lock has a pre-loaded pool of codes in case of connection loss).</p>",
+      linkLabel: "Open Project",
+    },
+    entertainment: {
+      title: "Entertainment",
+      subtitle: "Projects for fun and experiments",
     },
     placeholders: {
       mapMissing: "Add a map embed URL in Admin.",

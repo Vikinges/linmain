@@ -61,6 +61,7 @@ import { cn } from "@/lib/utils"
 const BLOCK_OPTIONS: Array<{ value: PageBlock["type"]; label: string }> = [
   { value: "hero", label: "Hero" },
   { value: "portfolio", label: "Portfolio" },
+  { value: "project", label: "Project Highlight" },
   { value: "richText", label: "Rich Text" },
   { value: "imageText", label: "Image + Text" },
   { value: "image", label: "Image" },
@@ -350,6 +351,12 @@ export function PageEditor({ pageId }: PageEditorProps) {
   const [translatingBlockId, setTranslatingBlockId] = useState<string | null>(
     null
   )
+  const normalizedPageId =
+    typeof pageId === "string" ? pageId.trim() : ""
+  const hasValidPageId =
+    Boolean(normalizedPageId) &&
+    normalizedPageId !== "undefined" &&
+    normalizedPageId !== "null"
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -367,10 +374,15 @@ export function PageEditor({ pageId }: PageEditorProps) {
   }
 
   const loadPage = useCallback(async () => {
+    if (!hasValidPageId) {
+      setError("Missing page id.")
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch(`/api/admin/pages/${pageId}`, {
+      const response = await fetch(`/api/admin/pages/${normalizedPageId}`, {
         cache: "no-store",
       })
       if (!response.ok) {
@@ -390,11 +402,12 @@ export function PageEditor({ pageId }: PageEditorProps) {
     } finally {
       setLoading(false)
     }
-  }, [pageId])
+  }, [hasValidPageId, normalizedPageId])
 
   const loadRevisions = useCallback(async () => {
+    if (!hasValidPageId) return
     try {
-      const response = await fetch(`/api/admin/pages/${pageId}/revisions`, {
+      const response = await fetch(`/api/admin/pages/${normalizedPageId}/revisions`, {
         cache: "no-store",
       })
       if (!response.ok) return
@@ -403,19 +416,20 @@ export function PageEditor({ pageId }: PageEditorProps) {
     } catch {
       // ignore
     }
-  }, [pageId])
+  }, [hasValidPageId, normalizedPageId])
 
   useEffect(() => {
+    if (!hasValidPageId) return
     loadPage().then(loadRevisions)
-  }, [loadPage, loadRevisions])
+  }, [hasValidPageId, loadPage, loadRevisions])
 
   const handleSave = async () => {
-    if (!page) return
+    if (!page || !hasValidPageId) return
     setSaving(true)
     setError(null)
     setNotice(null)
     try {
-      const response = await fetch(`/api/admin/pages/${pageId}`, {
+      const response = await fetch(`/api/admin/pages/${normalizedPageId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, blocks }),
@@ -435,12 +449,12 @@ export function PageEditor({ pageId }: PageEditorProps) {
   }
 
   const handlePublish = async () => {
-    if (!page) return
+    if (!page || !hasValidPageId) return
     setPublishing(true)
     setError(null)
     setNotice(null)
     try {
-      const response = await fetch(`/api/admin/pages/${pageId}/publish`, {
+      const response = await fetch(`/api/admin/pages/${normalizedPageId}/publish`, {
         method: "POST",
       })
       if (!response.ok) {
@@ -457,12 +471,12 @@ export function PageEditor({ pageId }: PageEditorProps) {
   }
 
   const handleDelete = async () => {
-    if (!page) return
+    if (!page || !hasValidPageId) return
     if (!confirm("Delete this page? This cannot be undone.")) return
     setSaving(true)
     setError(null)
     try {
-      const response = await fetch(`/api/admin/pages/${pageId}`, {
+      const response = await fetch(`/api/admin/pages/${normalizedPageId}`, {
         method: "DELETE",
       })
       if (!response.ok) {
@@ -477,11 +491,12 @@ export function PageEditor({ pageId }: PageEditorProps) {
   }
 
   const handleRevert = async (revisionId: string) => {
+    if (!hasValidPageId) return
     setSaving(true)
     setError(null)
     setNotice(null)
     try {
-      const response = await fetch(`/api/admin/pages/${pageId}/revert`, {
+      const response = await fetch(`/api/admin/pages/${normalizedPageId}/revert`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ revisionId }),
@@ -678,6 +693,20 @@ export function PageEditor({ pageId }: PageEditorProps) {
             ),
           },
         }
+      case "project":
+        return {
+          ...block,
+          data: {
+            ...block.data,
+            title: await translateLocalized(block.data.title, "text"),
+            description: await translateLocalized(block.data.description, "html"),
+            linkLabel: await translateLocalized(block.data.linkLabel, "text"),
+            image: {
+              ...block.data.image,
+              alt: await translateLocalized(block.data.image.alt, "text"),
+            },
+          },
+        }
       case "cta":
         return {
           ...block,
@@ -753,6 +782,14 @@ export function PageEditor({ pageId }: PageEditorProps) {
     } finally {
       setTranslatingBlockId(null)
     }
+  }
+
+  if (!hasValidPageId) {
+    return (
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-12 text-gray-300">
+        Missing page id. Return to <Link href="/admin/editor">Editor</Link>.
+      </div>
+    )
   }
 
   if (loading) {
@@ -1228,6 +1265,98 @@ function BlockFields({
             language={language}
             onChange={(value) => updateData({ ...block.data, content: value })}
           />
+        </div>
+      )
+    case "project":
+      return (
+        <div className="space-y-4">
+          <LocalizedInput
+            label="Title"
+            value={block.data.title}
+            language={language}
+            onChange={(value) => updateData({ ...block.data, title: value })}
+          />
+          <LocalizedRichText
+            label="Description"
+            value={block.data.description}
+            language={language}
+            onChange={(value) => updateData({ ...block.data, description: value })}
+          />
+          <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Image URL</Label>
+              <Input
+                value={block.data.image.url}
+                onChange={(event) =>
+                  updateData({
+                    ...block.data,
+                    image: { ...block.data.image, url: event.target.value },
+                  })
+                }
+                className="bg-white/5 border-white/10"
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                openMediaPicker((url) =>
+                  updateData({
+                    ...block.data,
+                    image: { ...block.data.image, url },
+                  })
+                )
+              }
+            >
+              Choose
+            </Button>
+          </div>
+          <LocalizedInput
+            label="Image Alt"
+            value={block.data.image.alt}
+            language={language}
+            onChange={(value) =>
+              updateData({ ...block.data, image: { ...block.data.image, alt: value } })
+            }
+          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <LocalizedInput
+              label="Button Label"
+              value={block.data.linkLabel}
+              language={language}
+              onChange={(value) => updateData({ ...block.data, linkLabel: value })}
+            />
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Button URL</Label>
+              <Input
+                value={block.data.linkUrl}
+                onChange={(event) =>
+                  updateData({ ...block.data, linkUrl: event.target.value })
+                }
+                className="bg-white/5 border-white/10"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-[200px_1fr]">
+            <Label className="text-sm text-gray-300">Image Align</Label>
+            <Select
+              value={block.data.align}
+              onValueChange={(value) =>
+                updateData({
+                  ...block.data,
+                  align: value as "left" | "right",
+                })
+              }
+            >
+              <SelectTrigger className="bg-white/5 border-white/10">
+                <SelectValue placeholder="Align" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="left">Left</SelectItem>
+                <SelectItem value="right">Right</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       )
     case "gallery":

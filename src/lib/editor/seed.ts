@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db"
 import { defaultContent, type HomepageContent } from "@/lib/content-config"
 import { getTranslations } from "@/lib/translations"
 import type { Language } from "@/lib/i18n-config"
-import { emptyLocalizedString, type PageBlock } from "@/lib/editor/types"
+import { emptyLocalizedString, type PageBlock, type PortfolioBlock } from "@/lib/editor/types"
 
 const LANGS: Language[] = ["en", "de", "ru"]
 
@@ -61,7 +61,6 @@ function readContent(value?: unknown): HomepageContent {
 
 export async function ensureDefaultPages() {
   const count = await prisma.page.count()
-  if (count > 0) return
 
   const contentRow = await prisma.siteConfig.findUnique({ where: { key: "content" } })
   const content = readContent(contentRow?.value)
@@ -171,6 +170,34 @@ export async function ensureDefaultPages() {
         return pickText(overrides, getTranslations(lang).portfolio.commercial.linkLabel)
       }),
     },
+    qrGenerator: {
+      title: buildLocalized((lang) => {
+        const overrides = content.portfolio?.locales?.[lang]?.qrGenerator?.title
+        return pickText(overrides, getTranslations(lang).portfolio.qrGenerator.title)
+      }),
+      description: buildLocalized((lang) => {
+        const overrides = content.portfolio?.locales?.[lang]?.qrGenerator?.description
+        return pickText(overrides, getTranslations(lang).portfolio.qrGenerator.description)
+      }),
+      linkLabel: buildLocalized((lang) => {
+        const overrides = content.portfolio?.locales?.[lang]?.qrGenerator?.linkLabel
+        return pickText(overrides, getTranslations(lang).portfolio.qrGenerator.linkLabel)
+      }),
+    },
+    hostLinart: {
+      title: buildLocalized((lang) => getTranslations(lang).portfolio.hostLinart.title),
+      description: buildLocalized((lang) => getTranslations(lang).portfolio.hostLinart.description),
+      linkLabel: buildLocalized((lang) => getTranslations(lang).portfolio.hostLinart.linkLabel),
+    },
+    crmIot: {
+      title: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.title),
+      description: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.description),
+      linkLabel: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.linkLabel),
+    },
+    entertainment: {
+      title: buildLocalized((lang) => getTranslations(lang).portfolio.entertainment.title),
+      subtitle: buildLocalized((lang) => getTranslations(lang).portfolio.entertainment.subtitle),
+    },
   }
 
   const blocks: PageBlock[] = [
@@ -222,6 +249,20 @@ export async function ensureDefaultPages() {
             linkUrl: content.portfolio?.sensorHub?.linkUrl || "",
           },
           {
+            id: "qr-generator",
+            kind: "image",
+            title: portfolioText.qrGenerator.title,
+            description: portfolioText.qrGenerator.description,
+            embedUrl: "",
+            imageUrl:
+              content.portfolio?.qrGenerator?.imageUrl ||
+              "/assets/qr-generator-cover.svg",
+            linkLabel: portfolioText.qrGenerator.linkLabel,
+            linkUrl:
+              content.portfolio?.qrGenerator?.linkUrl ||
+              "https://qr.linart.club/",
+          },
+          {
             id: "commercial",
             kind: "locked",
             title: portfolioText.commercial.title,
@@ -265,6 +306,24 @@ export async function ensureDefaultPages() {
     },
   ]
 
+  if (count > 0) {
+    const page = await prisma.page.findUnique({ where: { slug: "home" } })
+    if (page) {
+      const revision = await prisma.pageRevision.create({
+        data: {
+          pageId: page.id,
+          title: "Home",
+          blocks,
+        },
+      })
+      await prisma.page.update({
+        where: { id: page.id },
+        data: { draftRevisionId: revision.id, publishedRevisionId: revision.id },
+      })
+    }
+    return
+  }
+
   const page = await prisma.page.create({
     data: {
       slug: "home",
@@ -286,5 +345,131 @@ export async function ensureDefaultPages() {
       draftRevisionId: revision.id,
       publishedRevisionId: revision.id,
     },
+  })
+}
+
+const normalizeUrl = (value: string | undefined) =>
+  (value || "").trim().replace(/\/+$/, "")
+
+async function ensureHomeHasQrProject(
+  content: HomepageContent,
+  portfolioText: {
+    title: ReturnType<typeof buildLocalized>
+    subtitle: ReturnType<typeof buildLocalized>
+    minecraft: {
+      title: ReturnType<typeof buildLocalized>
+      description: ReturnType<typeof buildLocalized>
+      linkLabel: ReturnType<typeof buildLocalized>
+    }
+    sensorHub: {
+      title: ReturnType<typeof buildLocalized>
+      description: ReturnType<typeof buildLocalized>
+      linkLabel: ReturnType<typeof buildLocalized>
+    }
+    commercial: {
+      title: ReturnType<typeof buildLocalized>
+      description: ReturnType<typeof buildLocalized>
+      linkLabel: ReturnType<typeof buildLocalized>
+    }
+    qrGenerator: {
+      title: ReturnType<typeof buildLocalized>
+      description: ReturnType<typeof buildLocalized>
+      linkLabel: ReturnType<typeof buildLocalized>
+    }
+  }
+) {
+  const page = await prisma.page.findUnique({
+    where: { slug: "home" },
+    include: {
+      publishedRevision: true,
+      draftRevision: true,
+    },
+  })
+
+  if (!page) return
+
+  const sourceRevision = page.draftRevision || page.publishedRevision
+  if (!sourceRevision || !Array.isArray(sourceRevision.blocks)) return
+
+  const blocks = sourceRevision.blocks as PageBlock[]
+  const targetUrl = normalizeUrl(
+    content.portfolio?.qrGenerator?.linkUrl || "https://qr.linart.club/"
+  )
+  let nextBlocks = [...blocks]
+  let updated = false
+
+  nextBlocks = nextBlocks.filter((block) => {
+    if (block.type !== "project") return true
+    const link = normalizeUrl(block.data.linkUrl)
+    const isQr = block.id === "qr-highlight" || link === targetUrl
+    if (isQr) updated = true
+    return !isQr
+  })
+
+  const portfolioIndex = nextBlocks.findIndex((block) => block.type === "portfolio")
+  if (portfolioIndex >= 0) {
+    const portfolioBlock = nextBlocks[portfolioIndex] as PortfolioBlock
+    const items = Array.isArray(portfolioBlock.data.items) ? portfolioBlock.data.items : []
+    const alreadyExists = items.some((item) => {
+      if (item.id === "qr-generator") return true
+      const link = normalizeUrl(item.linkUrl)
+      return link === targetUrl
+    })
+
+    if (!alreadyExists) {
+      const nextItem = {
+        id: "qr-generator",
+        kind: "image" as const,
+        title: portfolioText.qrGenerator.title,
+        description: portfolioText.qrGenerator.description,
+        embedUrl: "",
+        imageUrl:
+          content.portfolio?.qrGenerator?.imageUrl ||
+          "/assets/qr-generator-cover.svg",
+        linkLabel: portfolioText.qrGenerator.linkLabel,
+        linkUrl:
+          content.portfolio?.qrGenerator?.linkUrl ||
+          "https://qr.linart.club/",
+      }
+
+      const nextBlock: PortfolioBlock = {
+        ...portfolioBlock,
+        data: {
+          ...portfolioBlock.data,
+          items: [...items, nextItem],
+        },
+      }
+
+      nextBlocks = nextBlocks.map((block, index) =>
+        index === portfolioIndex ? nextBlock : block
+      )
+      updated = true
+    }
+  }
+
+  if (!updated) return
+
+  const revision = await prisma.pageRevision.create({
+    data: {
+      pageId: page.id,
+      title: sourceRevision.title || page.title,
+      blocks: nextBlocks,
+    },
+  })
+
+  const update: {
+    draftRevisionId: string
+    publishedRevisionId?: string | null
+  } = {
+    draftRevisionId: revision.id,
+  }
+
+  if (!page.draftRevisionId || page.draftRevisionId === page.publishedRevisionId) {
+    update.publishedRevisionId = revision.id
+  }
+
+  await prisma.page.update({
+    where: { id: page.id },
+    data: update,
   })
 }

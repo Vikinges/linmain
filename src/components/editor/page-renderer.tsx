@@ -8,6 +8,7 @@ import {
   Lock,
   Mail,
   Phone,
+  QrCode,
   Server,
   Sparkles,
   Linkedin,
@@ -312,6 +313,77 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     })}
                   </div>
                 </div>
+              </section>
+            )
+          }
+          case "project": {
+            const title = getLocalizedValue(block.data.title, language)
+            const description = getLocalizedValue(block.data.description, language)
+            const linkLabel = getLocalizedValue(block.data.linkLabel, language)
+            const alt = getLocalizedValue(block.data.image.alt, language)
+            const imageNode = block.data.image.url ? (
+              <Image
+                src={block.data.image.url}
+                alt={alt || title}
+                width={1200}
+                height={900}
+                className="h-full w-full rounded-2xl object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-2xl border border-white/10 bg-black/40 text-gray-300">
+                <QrCode className="h-10 w-10" />
+              </div>
+            )
+
+            const contentNode = (
+              <div className="space-y-4">
+                <h3
+                  className="text-3xl font-bold"
+                  style={{ color: palette.pillars.titleColor }}
+                >
+                  {title}
+                </h3>
+                <div
+                  className="leading-relaxed"
+                  style={{ color: palette.pillars.descriptionColor }}
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+                {block.data.linkUrl && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-gray-600/70 text-gray-200 hover:bg-gray-800/60"
+                  >
+                    <a href={block.data.linkUrl} target="_blank" rel="noopener noreferrer">
+                      {linkLabel}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+              </div>
+            )
+
+            const isLeft = block.data.align === "left"
+
+            return (
+              <section key={block.id} className="px-4">
+                <Card className="glass-card border-white/10">
+                  <CardContent className="pt-10 pb-10">
+                    <div className="grid gap-8 lg:grid-cols-2 items-center">
+                      {isLeft ? (
+                        <>
+                          {imageNode}
+                          {contentNode}
+                        </>
+                      ) : (
+                        <>
+                          {contentNode}
+                          {imageNode}
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
               </section>
             )
           }

@@ -56,6 +56,7 @@ export function EditorDashboard() {
   const [title, setTitle] = useState("")
   const [slug, setSlug] = useState("")
   const [slugTouched, setSlugTouched] = useState(false)
+  const [selectedPageId, setSelectedPageId] = useState("")
 
   const loadPages = async () => {
     setLoading(true)
@@ -82,6 +83,20 @@ export function EditorDashboard() {
     }
   }, [title, slugTouched])
 
+  useEffect(() => {
+    if (selectedPageId || pages.length === 0) return
+    const initial = pages[0]?.id?.trim() || pages[0]?.slug?.trim() || ""
+    if (initial) setSelectedPageId(initial)
+  }, [pages, selectedPageId])
+
+  const openPage = (editId: string) => {
+    if (!editId) {
+      setError("Page id is missing.")
+      return
+    }
+    window.location.assign(`/admin/editor?open=${encodeURIComponent(editId)}`)
+  }
+
   const handleCreate = async () => {
     setCreating(true)
     setError(null)
@@ -97,7 +112,8 @@ export function EditorDashboard() {
       }
       const data = await response.json()
       const page = data.page as PageSummary
-      window.location.href = `/admin/editor/${page.id}`
+      const editId = page.id?.trim() || page.slug?.trim() || ""
+      openPage(editId)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Create error")
     } finally {
@@ -184,6 +200,34 @@ export function EditorDashboard() {
             <p className="text-sm text-muted-foreground">
               Click a page row or the Edit button to open the editor.
             </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <select
+                value={selectedPageId}
+                onChange={(event) => setSelectedPageId(event.target.value)}
+                className="h-9 w-[240px] rounded-md border border-white/10 bg-white/5 px-3 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                <option value="" disabled>
+                  Select page
+                </option>
+                {pages.map((page) => {
+                  const value = page.id?.trim() || page.slug?.trim() || ""
+                  if (!value) return null
+                  return (
+                    <option key={value} value={value}>
+                      {page.title} ({page.slug})
+                    </option>
+                  )
+                })}
+              </select>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => openPage(selectedPageId)}
+                disabled={!selectedPageId}
+              >
+                Open
+              </Button>
+            </div>
             {loading && (
               <div className="text-sm text-gray-400">Loading...</div>
             )}
@@ -193,8 +237,7 @@ export function EditorDashboard() {
             <div className="space-y-3">
               {pages.map((page) => {
                 const isPublished = Boolean(page.publishedRevisionId)
-                const editId = page.id || page.slug
-                const editHref = editId ? `/admin/editor/${editId}` : "/admin/editor"
+                const editId = page.id?.trim() || page.slug?.trim() || ""
                 const previewHref = page.slug === "home" ? "/" : `/p/${page.slug}`
                 return (
                   <div
@@ -203,12 +246,12 @@ export function EditorDashboard() {
                     role="button"
                     tabIndex={0}
                     onClick={() => {
-                      window.location.href = editHref
+                      openPage(editId)
                     }}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault()
-                        window.location.href = editHref
+                        openPage(editId)
                       }
                     }}
                     aria-label={`Edit page ${page.title}`}
@@ -230,11 +273,14 @@ export function EditorDashboard() {
                         {isPublished ? "Published" : "Draft"}
                       </span>
                       <Button
-                        asChild
+                        type="button"
                         variant="default"
-                        onClick={(event) => event.stopPropagation()}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          openPage(editId)
+                        }}
                       >
-                        <Link href={editHref}>Edit</Link>
+                        Edit
                       </Button>
                       <Button
                         asChild

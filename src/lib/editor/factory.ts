@@ -60,6 +60,19 @@ export const createBlock = (type: PageBlock["type"]): PageBlock => {
           items: [],
         },
       }
+    case "project":
+      return {
+        id,
+        type,
+        data: {
+          title: emptyLocalizedString(),
+          description: emptyLocalizedHtml(),
+          image: { url: "", alt: emptyLocalizedString() },
+          linkLabel: emptyLocalizedString(),
+          linkUrl: "",
+          align: "left",
+        },
+      }
     case "cta":
       return {
         id,

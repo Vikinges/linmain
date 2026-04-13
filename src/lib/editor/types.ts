@@ -11,6 +11,7 @@ export type PageBlock =
   | GalleryBlock
   | VideoBlock
   | PortfolioBlock
+  | ProjectBlock
   | CtaBlock
   | FaqBlock
   | ContactBlock
@@ -112,6 +113,22 @@ export type PortfolioBlock = {
       linkLabel: LocalizedString
       linkUrl: string
     }>
+  }
+}
+
+export type ProjectBlock = {
+  id: string
+  type: "project"
+  data: {
+    title: LocalizedString
+    description: LocalizedHtml
+    image: {
+      url: string
+      alt: LocalizedString
+    }
+    linkLabel: LocalizedString
+    linkUrl: string
+    align: "left" | "right"
   }
 }
 

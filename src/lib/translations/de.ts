@@ -1,11 +1,11 @@
-﻿// German translations (Deutsch)
+// German translations (Deutsch)
 
 import { Translations } from "./en"
 
 export const de: Translations = {
   hero: {
     badge: "Immer neugierig auf Neues",
-    name: "VLADIMIR LINARTAS",
+    name: "LInArt Labs",
     subtitle: "Unternehmer • Creator • Entwickler",
     description:
       "Ich war schon immer neugierig, Neues auszuprobieren – und noch besser: selbst etwas Nützliches zu bauen. Gute Leute, lasst uns zusammenkommen! Qualität zählt mehr als Quantität.",
@@ -48,6 +48,28 @@ export const de: Translations = {
       description:
         "<p>Kommerzielle Projekte und Hosting unter hub.linart.club. Zugriff nur mit Passwort.</p>",
       linkLabel: "Hub öffnen",
+    },
+    qrGenerator: {
+      title: "QR Generator",
+      description:
+        "<p>QR-Generator fuer Business: digitale Visitenkarten, Meeting-Check-ins und Team-Trainingsflows.</p><p>Viele Funktionen gratis, Upgrades kosten etwa einen Kaffee.</p>",
+      linkLabel: "QR Generator oeffnen",
+    },
+    hostLinart: {
+      title: "Host.linart.club",
+      description:
+        "<p>IoT Hub Dashboard — eine mandantenfähige Plattform für IoT-Gerätemanagement mit mehrstufiger Zugriffskontrolle und Echtzeit-Überwachung.</p>",
+      linkLabel: "Projekt öffnen",
+    },
+    crmIot: {
+      title: "CRM-IoT",
+      description:
+        "<p>Projekt mit Hybridarchitektur. Das System arbeitet in zwei Modi: Online (CRM synchronisiert Codes via IoT) und Offline (das Schloss besitzt einen geladenen Pool von Codes für den Fall eines Verbindungsverlusts).</p>",
+      linkLabel: "Projekt öffnen",
+    },
+    entertainment: {
+      title: "Unterhaltung",
+      subtitle: "Projekte zum Spaß und für Experimente",
     },
     placeholders: {
       mapMissing: "Map-Embed-URL im Admin-Bereich hinzufügen.",

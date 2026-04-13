@@ -75,6 +75,9 @@ export const sanitizeBlocks = (blocks: unknown): PageBlock[] => {
             description: sanitizeLocalizedHtml(item.description),
           }))
           return safeBlock
+        case "project":
+          safeBlock.data.description = sanitizeLocalizedHtml(safeBlock.data.description)
+          return safeBlock
         case "faq":
           safeBlock.data.items = safeBlock.data.items.map((item) => ({
             ...item,

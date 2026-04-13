@@ -13,6 +13,7 @@ import { getTranslations } from "@/lib/translations"
 import { applyContentStyles, type HomepageContent, type TextStyles } from "@/lib/content-config"
 import type { PageBlock } from "@/lib/editor/types"
 import { PageRenderer } from "@/components/editor/page-renderer"
+import { APP_VERSION } from "@/lib/app-version"
 
 type PublicPageProps = {
   blocks: PageBlock[]
@@ -38,6 +39,7 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
   const translations = useMemo(() => getTranslations(language), [language])
   const { data: session } = useSession()
   const isAdmin = Boolean(session?.user?.isAdmin || session?.user?.role === "ADMIN")
+  const isLoggedIn = Boolean(session?.user)
 
   useEffect(() => {
     applyTheme(theme || defaultTheme)
@@ -57,6 +59,7 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
   const legacyFooter = language === "en" ? globalContent.footer : undefined
   const navLabel = pickText(localeOverrides?.nav?.getStarted, pickText(legacyNav?.getStarted, translations.nav.getStarted))
   const footerText = pickText(localeOverrides?.footer?.copyright, pickText(legacyFooter?.copyright, translations.footer.copyright))
+  const dashboardLabel = translations.footer.dashboard || "Dashboard"
   const hasProjects = useMemo(() => blocks.some((block) => block.type === "portfolio"), [blocks])
   const navHref = hasProjects ? "#projects" : "/#projects"
 
@@ -84,9 +87,9 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
 
             <div className="flex items-center gap-3">
               <LanguageSwitcher currentLanguage={language} onLanguageChange={handleLanguageChange} />
-              <Link href="/login">
+              <Link href={isLoggedIn ? "/dashboard" : "/login"}>
                 <Button className="bg-gray-700 hover:bg-gray-600 text-white">
-                  {translations.nav.login}
+                  {isLoggedIn ? dashboardLabel : translations.nav.login}
                 </Button>
               </Link>
               <Button size="sm" className="bg-gray-700 hover:bg-gray-600 text-white" asChild>
@@ -103,6 +106,7 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
         <footer className="relative z-10 border-t border-border/60 bg-background/80 backdrop-blur-xl">
           <div className="container mx-auto px-4 py-8 flex flex-col items-center gap-4 text-muted-foreground text-sm">
             <p>{footerText}</p>
+            <p className="text-xs text-muted-foreground/70">Linart v{APP_VERSION}</p>
             {isAdmin && (
               <Link href="/admin" className="text-xs text-muted-foreground/70 hover:text-foreground">
                 Admin
