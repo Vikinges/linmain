@@ -53,20 +53,29 @@ export const en = {
       linkLabel: "Open QR Generator",
     },
     hostLinart: {
-      title: "Host.linart.club",
+      title: "IoT Private Server",
       description:
-        "<p>IoT Hub Dashboard — a multi-tenant IoT device management platform. Features tier-based access control, real-time monitoring, and shareable dashboards.</p>",
-      linkLabel: "Open Project",
+        "<p>Our private multi-tenant IoT management platform. Device data stays on a server <strong>you can trust</strong> — not in a random cloud. Hosted locally in Bavaria, cooled by Alpine breeze.</p><h3>Plans</h3><ul><li>🎁 <strong>Hardware buyers</strong> — 1 year of server access FREE</li><li>⚡ <strong>Geeks</strong> — from 1.99€/month (up to 30 devices)</li><li>🏢 <strong>B2B Cloud</strong> — from 49€/month</li><li>🏆 <strong>Enterprise</strong> — Custom</li></ul><p><strong>🎉 Welcome, first buyers!</strong> Those who purchased our hardware receive free annual server access — and the right to be proud. Like the first Apple customers, you were there from day one. You can join brainstorming sessions, suggest features, and your idea might be exactly what we build next — for you.</p>",
+      linkLabel: "View Plans",
     },
     crmIot: {
-      title: "CRM-IoT",
+      title: "CRM-IoT — Smart Rental Automation",
       description:
-        "<p>Hybrid architecture project. The system works in two modes: Online (CRM syncs access codes via IoT) and Offline (the lock has a pre-loaded pool of codes in case of connection loss).</p>",
-      linkLabel: "Open Project",
+        "<p>B2B platform for hotels, holiday homes, and apartments that want to <strong>monetize property more efficiently</strong> through IoT infrastructure.</p><ul><li>Automated check-in/check-out via smart locks</li><li>Fingerprint scanner + keypad + NFC + wireless keys</li><li>Online mode (CRM sync) + Offline mode (pre-loaded access codes)</li><li>Protected by our private European IoT infrastructure</li></ul><p>You can already submit a request and order an electronic door lock — we'll contact you personally.</p>",
+      ctaTitle: "Request a Smart Lock",
+      ctaDescription:
+        "Electronic door lock with fingerprint scanner, digital keypad, NFC and wireless keys. First orders at early-adopter pricing.",
+      ctaButton: "Submit Request",
+      linkLabel: "Learn More",
     },
     entertainment: {
       title: "Entertainment",
       subtitle: "Projects for fun and experiments",
+    },
+    cloud: {
+      title: "Private Cloud — Your Data Stays Here",
+      description:
+        "<p>Cloud services for those we trust — and who trust us. Your data is stored on our protected server <strong>in Bavaria, Germany</strong>, cooled by real Alpine air 🏔️ — not somewhere in an American data center. We never analyze your data or sell your preferences. Everything is local, everything is yours.</p><p><strong>📷 Immich</strong> — self-hosted alternative to Google Photos. AI-powered search, face recognition, albums, sharing — but your photos never leave our server. Access: <a href='https://photo.linart.club'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — personal cloud: files, calendar, contacts, documents. Like Dropbox or Google Drive — but private, in Europe, under your control. Access: <a href='https://cloud.crm-iot.com'>cloud.crm-iot.com</a></p><p>Access is by invitation for trusted users. Write to us if you want in.</p>",
     },
     placeholders: {
       mapMissing: "Add a map embed URL in Admin.",

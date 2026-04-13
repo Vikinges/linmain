@@ -206,10 +206,42 @@ Then SSH to VPS and run Step 3.
 - On Windows, `npm run build` can fail due to Turbopack symlink permissions. Prefer Docker for production builds.
 - Port 80 is often occupied on VPS. Use `LINART_PORT=8080` and reverse proxy (nginx) for `linart.club`.
 
+## Home Page Structure
+
+The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in order:
+
+1. **hero** — HeroBlock (badge, title, subtitle, description, CTAs, image)
+2. **iot-server** — ProjectBlock — IoT Private Server (host.linart.club, pricing, early-buyer welcome)
+3. **portfolio** — PortfolioBlock — main projects (SensorHub, QR Generator, Commercial Hub)
+4. **entertainment** — PortfolioBlock — title="Entertainment", items: Minecraft map
+5. **chat** — ChatBlock — community chat for registered users
+6. **crm-iot-text** — RichTextBlock — CRM-IoT B2B description + "in development" notice
+7. **crm-iot-cta** — CtaBlock — "Request a Smart Lock" → mailto:info@linart.club
+8. **cloud-services** — RichTextBlock — Immich + Nextcloud private cloud (Bavaria server, Alpine cooling 🏔️)
+9. **callout** — CtaBlock — "Let's Team Up"
+10. **contact** — ContactBlock
+
+To reset the home page to the current seed (e.g. after code changes), run on VPS:
+```bash
+cd /opt/linart && docker compose --env-file .env exec -T web sh -lc "HOME=/tmp npx ts-node --project tsconfig.server.json scripts/reset-home.ts"
+```
+Or delete the home page from DB — on next request `ensureDefaultPages()` recreates it from seed.
+
+### Drag-and-Drop in Admin Editor
+Already implemented via `@dnd-kit/core` + `@dnd-kit/sortable` in `src/components/editor/page-editor.tsx`.
+Use the `GripVertical` handle (⠿) on each block to drag and reorder. No extra setup needed.
+
 ## Change Log
 
-### 2026-04-13
+### 2026-04-13 (v1.12)
 
+- Added 5 new home page sections: IoT server (featured first), Entertainment, CRM-IoT, Private Cloud.
+- IoT server (host.linart.club) moved to top — pricing plans + welcome message for first hardware buyers.
+- Entertainment section: Minecraft map + community chat grouped together.
+- CRM-IoT: B2B rental automation description + "in development" notice + smart lock request CTA.
+- Private Cloud: Immich + Nextcloud with Bavaria/Alpine server humor note.
+- Translations updated in EN/RU/DE for all new sections.
+- App version bumped to 1.12.
 - Full deployment to VPS completed via Method C (local build + tar).
 - SSH key added to VPS authorized_keys for passwordless deploy from PC.
 - Port changed from 8080 to 3456 (8080 occupied by frps on VPS).
@@ -244,4 +276,4 @@ Then SSH to VPS and run Step 3.
 - Added LibreTranslate integration for per-block translation.
 - Updated translations (EN/DE/RU) and deployment cleanup options.
 
-*Last Updated: 2026-04-13*
+*Last Updated: 2026-04-13 (v1.12)*

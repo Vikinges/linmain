@@ -192,15 +192,23 @@ export async function ensureDefaultPages() {
     crmIot: {
       title: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.title),
       description: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.description),
+      ctaTitle: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.ctaTitle),
+      ctaDescription: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.ctaDescription),
+      ctaButton: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.ctaButton),
       linkLabel: buildLocalized((lang) => getTranslations(lang).portfolio.crmIot.linkLabel),
     },
     entertainment: {
       title: buildLocalized((lang) => getTranslations(lang).portfolio.entertainment.title),
       subtitle: buildLocalized((lang) => getTranslations(lang).portfolio.entertainment.subtitle),
     },
+    cloud: {
+      title: buildLocalized((lang) => getTranslations(lang).portfolio.cloud.title),
+      description: buildLocalized((lang) => getTranslations(lang).portfolio.cloud.description),
+    },
   }
 
   const blocks: PageBlock[] = [
+    // 1. Hero
     {
       id: "hero",
       type: "hero",
@@ -221,6 +229,20 @@ export async function ensureDefaultPages() {
         },
       },
     },
+    // 2. IoT Private Server — featured first
+    {
+      id: "iot-server",
+      type: "project",
+      data: {
+        title: portfolioText.hostLinart.title,
+        description: portfolioText.hostLinart.description,
+        image: { url: "", alt: emptyLocalized() },
+        linkLabel: portfolioText.hostLinart.linkLabel,
+        linkUrl: "https://host.linart.club/",
+        align: "left",
+      },
+    },
+    // 3. Main portfolio — serious projects
     {
       id: "portfolio",
       type: "portfolio",
@@ -228,16 +250,6 @@ export async function ensureDefaultPages() {
         title: portfolioText.title,
         subtitle: portfolioText.subtitle,
         items: [
-          {
-            id: "minecraft",
-            kind: "map",
-            title: portfolioText.minecraft.title,
-            description: portfolioText.minecraft.description,
-            embedUrl: content.portfolio?.minecraft?.mapUrl || "",
-            imageUrl: "",
-            linkLabel: portfolioText.minecraft.linkLabel,
-            linkUrl: content.portfolio?.minecraft?.linkUrl || "",
-          },
           {
             id: "sensorhub",
             kind: "video",
@@ -275,6 +287,28 @@ export async function ensureDefaultPages() {
         ],
       },
     },
+    // 4. Entertainment section — Minecraft map
+    {
+      id: "entertainment",
+      type: "portfolio",
+      data: {
+        title: portfolioText.entertainment.title,
+        subtitle: portfolioText.entertainment.subtitle,
+        items: [
+          {
+            id: "minecraft",
+            kind: "map",
+            title: portfolioText.minecraft.title,
+            description: portfolioText.minecraft.description,
+            embedUrl: content.portfolio?.minecraft?.mapUrl || "",
+            imageUrl: "",
+            linkLabel: portfolioText.minecraft.linkLabel,
+            linkUrl: content.portfolio?.minecraft?.linkUrl || "",
+          },
+        ],
+      },
+    },
+    // 5. Community chat
     {
       id: "chat",
       type: "chat",
@@ -283,6 +317,36 @@ export async function ensureDefaultPages() {
         description: chatText.description,
       },
     },
+    // 6. CRM-IoT — coming soon + B2B description
+    {
+      id: "crm-iot-text",
+      type: "richText",
+      data: {
+        content: portfolioText.crmIot.description,
+        width: "narrow",
+      },
+    },
+    // 7. CRM-IoT — request smart lock CTA
+    {
+      id: "crm-iot-cta",
+      type: "cta",
+      data: {
+        title: portfolioText.crmIot.ctaTitle,
+        description: portfolioText.crmIot.ctaDescription,
+        buttonLabel: portfolioText.crmIot.ctaButton,
+        buttonUrl: "mailto:info@linart.club?subject=Smart%20Lock%20Request",
+      },
+    },
+    // 8. Private cloud — Immich + Nextcloud
+    {
+      id: "cloud-services",
+      type: "richText",
+      data: {
+        content: portfolioText.cloud.description,
+        width: "narrow",
+      },
+    },
+    // 9. Callout
     {
       id: "callout",
       type: "cta",
@@ -293,6 +357,7 @@ export async function ensureDefaultPages() {
         buttonUrl: "#contact",
       },
     },
+    // 10. Contact
     {
       id: "contact",
       type: "contact",
