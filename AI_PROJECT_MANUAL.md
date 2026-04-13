@@ -64,12 +64,20 @@
 
 ## Deployment & Updates
 
+### VPS Info
+
+- **IP:** `85.215.32.66`
+- **App path:** `/opt/linart`
+- **App port:** `3456` (port 8080 is occupied by `frps`)
+- **SSH user:** `root`
+- **SSH key:** local `~/.ssh/id_rsa` must be in VPS `~/.ssh/authorized_keys`
+
 ### Common Env
 
 - `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `AUTH_SECRET`, `ADMIN_EMAILS`
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
 - `LIBRETRANSLATE_URL`, `LIBRETRANSLATE_API_KEY` (optional)
-- `LINART_PORT` (default 8080)
+- `LINART_PORT` (set to `3456` on VPS — port 8080 is taken by frps)
 - `USE_PREBUILT_IMAGE`, `IMAGE_REF` (optional)
 - `DEPLOY_REF` (optional checkout ref)
 
@@ -86,15 +94,99 @@
 - Build and push image via GitHub Actions (GHCR).
 - On VPS: `USE_PREBUILT_IMAGE=1 IMAGE_REF=ghcr.io/vikinges/linmain:latest ./deploy.sh`.
 
-### Method C: Local build + tar + docker load (recommended for 4GB VPS)
+### Method C: Local build + tar + docker load (recommended, tested on 2026-04-13)
 
-- Build locally, `docker save` to tar, upload to VPS, then `docker load`.
-- Start with `docker compose up -d --no-build`.
-- Remove the tar after successful load to save disk.
-- VPS target: `85.215.32.66`, app path `/opt/linart`, default port `8080`.
-- One-liners (replace only if IP/path changes):
-  - PC (PowerShell): `cd d:\Code\linart_main_site; docker buildx build --platform linux/amd64 -t linart-web:local --load .; docker save -o linart-web.tar linart-web:local; scp .\linart-web.tar root@85.215.32.66:/opt/linart/linart-web.tar; Remove-Item .\linart-web.tar -Force`
-  - VPS (bash): `cd /opt/linart && docker compose --env-file .env down && docker load -i linart-web.tar && IMAGE_REF=linart-web:local docker compose --env-file .env up -d --no-build && docker compose --env-file .env exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && rm -f /opt/linart/linart-web.tar`
+This is the recommended method for our 4GB VPS. Build runs on your local PC, image is transferred as a tar file, loaded and started on VPS. No OOM risk.
+
+#### Prerequisites (one-time setup)
+
+1. Docker Desktop must be running on your PC.
+2. Your local SSH key (`~/.ssh/id_rsa.pub`) must be added to VPS `~/.ssh/authorized_keys`:
+   ```bash
+   # On VPS:
+   echo "<contents of your id_rsa.pub>" >> ~/.ssh/authorized_keys
+   ```
+3. Verify SSH works from your PC:
+   ```powershell
+   ssh root@85.215.32.66 "echo OK"
+   ```
+
+#### Step 1 — Build image locally (PowerShell on PC)
+
+```powershell
+cd d:\Code\linart_main_site
+docker buildx build --platform linux/amd64 -t linart-web:local --load .
+```
+
+- `--platform linux/amd64` — required, VPS runs Linux x64
+- `--load` — loads image into local Docker (not just build cache)
+- Build takes ~2-3 min on first run, faster on subsequent (layer cache)
+
+#### Step 2 — Save and upload to VPS (PowerShell on PC)
+
+```powershell
+docker save -o linart-web.tar linart-web:local
+scp .\linart-web.tar root@85.215.32.66:/opt/linart/linart-web.tar
+Remove-Item .\linart-web.tar -Force
+```
+
+- Tar is ~160MB, upload takes ~1-2 min depending on connection
+- Local tar is deleted after upload to save disk space
+
+#### Step 3 — Load and restart on VPS (SSH bash)
+
+```bash
+cd /opt/linart && \
+docker compose --env-file .env down && \
+docker load -i linart-web.tar && \
+IMAGE_REF=linart-web:local docker compose --env-file .env up -d --no-build && \
+docker compose --env-file .env exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && \
+rm -f /opt/linart/linart-web.tar && \
+echo "DEPLOY OK"
+```
+
+- `down` — stops old containers (DB is also stopped briefly, ~5s downtime)
+- `docker load` — imports image from tar file
+- `IMAGE_REF=linart-web:local` — tells compose to use the locally loaded image
+- `prisma db push` — applies any schema changes (safe if no changes)
+- tar is deleted from VPS after successful deploy
+
+#### Step 4 — Verify
+
+```bash
+ssh root@85.215.32.66 "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+```
+
+Expected output:
+```
+NAMES        STATUS         PORTS
+linart_web   Up N seconds   0.0.0.0:3456->3000/tcp
+linart_db    Up N minutes   0.0.0.0:5432->5432/tcp
+```
+
+Site is live at: `http://85.215.32.66:3456`
+
+#### All-in-one (Steps 1–2 combined, PowerShell)
+
+```powershell
+cd d:\Code\linart_main_site
+docker buildx build --platform linux/amd64 -t linart-web:local --load .
+docker save -o linart-web.tar linart-web:local
+scp .\linart-web.tar root@85.215.32.66:/opt/linart/linart-web.tar
+Remove-Item .\linart-web.tar -Force
+```
+
+Then SSH to VPS and run Step 3.
+
+### Troubleshooting
+
+| Problem | Cause | Fix |
+|---|---|---|
+| `npm run build` fails on Windows | Turbopack symlink permissions | Use Docker build (Method C) |
+| `Permission denied` on scp/ssh | SSH key not in authorized_keys | Add `~/.ssh/id_rsa.pub` to VPS `authorized_keys` |
+| Port already in use | Port 8080 taken by frps | Use port 3456 (`LINART_PORT=3456` in `/opt/linart/.env`) |
+| OOM during build on VPS | Low RAM | Use Method C (local build) |
+| `docker load` slow | Large image (~160MB) | Normal, wait 1-2 min |
 
 ## Local Testing
 
@@ -115,6 +207,13 @@
 - Port 80 is often occupied on VPS. Use `LINART_PORT=8080` and reverse proxy (nginx) for `linart.club`.
 
 ## Change Log
+
+### 2026-04-13
+
+- Full deployment to VPS completed via Method C (local build + tar).
+- SSH key added to VPS authorized_keys for passwordless deploy from PC.
+- Port changed from 8080 to 3456 (8080 occupied by frps on VPS).
+- Deployment & Updates section rewritten with full step-by-step instructions.
 
 ### 2025-12-28
 
@@ -145,4 +244,4 @@
 - Added LibreTranslate integration for per-block translation.
 - Updated translations (EN/DE/RU) and deployment cleanup options.
 
-*Last Updated: 2025-12-28*
+*Last Updated: 2026-04-13*
