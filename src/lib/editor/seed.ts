@@ -59,6 +59,125 @@ function readContent(value?: unknown): HomepageContent {
   return deepMerge(defaultContent, value as Partial<HomepageContent>)
 }
 
+// ---------------------------------------------------------------------------
+// Legal page HTML constants (German — standard for German law pages)
+// Note: sanitize-html allows h2, h3, p, br, strong, em, ul, ol, li, a, div, span
+// ---------------------------------------------------------------------------
+
+const IMPRESSUM_HTML = `<h2>Impressum</h2>
+<p>Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>
+
+<h3>Anbieter</h3>
+<p>Vladimir Linartas<br>Lange Gasse 35<br>91174 Spalt<br>Deutschland</p>
+
+<h3>Kontakt</h3>
+<p>E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
+
+<h3>Hosting</h3>
+<p>Diese Website wird technisch betrieben durch:<br>
+<strong>1&amp;1 IONOS SE</strong><br>
+Elgendorfer Str. 57, 56410 Montabaur<br>
+<a href="https://www.ionos.de">www.ionos.de</a><br>
+Zwischen uns und IONOS besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO. Die Server befinden sich in Deutschland.</p>
+
+<h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
+<p>Vladimir Linartas<br>Lange Gasse 35<br>91174 Spalt</p>
+
+<h3>EU-Streitschlichtung</h3>
+<p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:<br>
+<a href="https://ec.europa.eu/consumers/odr/">https://ec.europa.eu/consumers/odr/</a><br>
+Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+
+<h3>Haftung für Inhalte</h3>
+<p>Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen.</p>
+
+<h3>Haftung für Links</h3>
+<p>Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter verantwortlich.</p>
+
+<h3>Urheberrecht</h3>
+<p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen Zustimmung des jeweiligen Autors.</p>`
+
+const DATENSCHUTZ_HTML = `<h2>Datenschutzerklärung</h2>
+
+<h3>1. Verantwortlicher</h3>
+<p>Vladimir Linartas<br>Lange Gasse 35<br>91174 Spalt<br>Deutschland<br>
+E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
+
+<h3>2. Hosting und Server-Logfiles</h3>
+<p>Diese Website wird gehostet von <strong>1&amp;1 IONOS SE</strong>, Elgendorfer Str. 57, 56410 Montabaur (<a href="https://www.ionos.de">www.ionos.de</a>). Mit IONOS besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO. Alle Server stehen in Deutschland.</p>
+<p>Beim Aufruf der Website erfasst der Webserver automatisch Server-Logfiles: IP-Adresse, Datum/Uhrzeit des Zugriffs, aufgerufene Seiten, Browser und Betriebssystem. Diese Daten werden nicht mit anderen Quellen zusammengeführt und nach 7 Tagen gelöscht, sofern keine gesetzliche Aufbewahrungspflicht besteht.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse).</p>
+
+<h3>3. SSL-/TLS-Verschlüsselung</h3>
+<p>Diese Website nutzt SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie am „https://" in der Adresszeile Ihres Browsers. Dabei können Daten, die Sie übermitteln, nicht von Dritten mitgelesen werden.</p>
+
+<h3>4. Registrierung und Benutzerkonto</h3>
+<p>Zur Registrierung benötigen wir Ihre E-Mail-Adresse und ein Passwort. Ein Name ist optional. Passwörter werden ausschließlich als kryptografischer Hash gespeichert — Ihr Klartextpasswort ist uns nicht bekannt. Ihre Daten werden auf IONOS-Servern in Deutschland verarbeitet. Sie können Ihr Konto jederzeit löschen lassen.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p>
+
+<h3>5. Anmeldung via Google (OAuth)</h3>
+<p>Wenn Sie sich mit Google anmelden, wird eine Verbindung zu Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland hergestellt. Google übermittelt uns Ihre E-Mail-Adresse und ggf. Ihren Namen. Weitere Informationen: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a>.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
+
+<h3>6. Community-Chat</h3>
+<p>Nachrichten im Community-Chat werden auf unseren Servern gespeichert. Nur registrierte Nutzer können teilnehmen. Chat-Nachrichten können auf Anfrage gelöscht werden.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO.</p>
+
+<h3>7. Kontaktanfragen</h3>
+<p>Wenn Sie uns per E-Mail oder Kontaktformular kontaktieren, werden Ihre Angaben zur Bearbeitung gespeichert und danach gelöscht, sofern keine gesetzliche Aufbewahrungspflicht besteht.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO.</p>
+
+<h3>8. Eingebettete Videos (YouTube)</h3>
+<p>Auf dieser Website werden Videos über YouTube eingebettet (Google Ireland Limited, Dublin). Beim Öffnen einer solchen Seite wird eine Verbindung zu YouTube-Servern aufgebaut. Wir nutzen YouTube im erweiterten Datenschutzmodus (youtube-nocookie.com), der laut Anbieter erst beim aktiven Abspielen Cookies setzt.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO.</p>
+
+<h3>9. Cookies</h3>
+<p>Wir verwenden ausschließlich technisch notwendige Cookies für die Sitzungsverwaltung (Login-Status). Tracking- oder Analyse-Cookies werden nicht eingesetzt. Notwendige Cookies erfordern keine gesonderte Einwilligung (§ 25 Abs. 2 TDDDG).</p>
+
+<h3>10. Keine Analyse-Tools</h3>
+<p>Wir verwenden keine Analyse- oder Tracking-Dienste (kein Google Analytics, kein Facebook Pixel o. Ä.). Es werden keine Nutzerprofile erstellt und keine Daten zu Werbezwecken weitergegeben.</p>
+
+<h3>11. Ihre Rechte</h3>
+<p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Erteilte Einwilligungen können Sie jederzeit widerrufen (Art. 7 Abs. 3 DSGVO).</p>
+<p>Anfragen richten Sie bitte an: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
+
+<h3>12. Beschwerderecht</h3>
+<p>Sie haben das Recht, sich bei der zuständigen Datenschutzbehörde zu beschweren. Für Bayern:<br>
+<strong>Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)</strong><br>
+Promenade 27, 91522 Ansbach — <a href="https://www.lda.bayern.de">www.lda.bayern.de</a></p>
+
+<h3>13. Externe Dienste</h3>
+<p>Unsere weiteren Dienste (IoT-Plattform host.linart.club, Fotoplattform photo.linart.club, Cloud-Speicher cloud.crm-iot.com) verfügen über eigene Datenschutzhinweise, die beim jeweiligen Dienst einsehbar sind. Diese Dienste werden auf eigenem Server in Bayern, Deutschland betrieben.</p>
+
+<p><em>Stand: April 2026</em></p>`
+
+// Creates a static page (e.g. Impressum, Datenschutz) only if it doesn't exist yet.
+// Does NOT overwrite, so admin edits to these pages persist across restarts.
+async function ensureStaticPage(slug: string, title: string, html: string) {
+  const existing = await prisma.page.findUnique({ where: { slug } })
+  if (existing) return
+
+  const blocks: PageBlock[] = [
+    {
+      id: "content",
+      type: "richText",
+      data: {
+        content: { en: html, de: html, ru: html },
+        width: "full",
+      },
+    },
+  ]
+
+  const page = await prisma.page.create({ data: { slug, title } })
+  const revision = await prisma.pageRevision.create({
+    data: { pageId: page.id, title, blocks },
+  })
+  await prisma.page.update({
+    where: { id: page.id },
+    data: { draftRevisionId: revision.id, publishedRevisionId: revision.id },
+  })
+}
+
 export async function ensureDefaultPages() {
   const count = await prisma.page.count()
 
@@ -385,31 +504,33 @@ export async function ensureDefaultPages() {
         data: { draftRevisionId: revision.id, publishedRevisionId: revision.id },
       })
     }
-    return
+  } else {
+    const page = await prisma.page.create({
+      data: {
+        slug: "home",
+        title: "Home",
+      },
+    })
+
+    const revision = await prisma.pageRevision.create({
+      data: {
+        pageId: page.id,
+        title: "Home",
+        blocks,
+      },
+    })
+
+    await prisma.page.update({
+      where: { id: page.id },
+      data: {
+        draftRevisionId: revision.id,
+        publishedRevisionId: revision.id,
+      },
+    })
   }
 
-  const page = await prisma.page.create({
-    data: {
-      slug: "home",
-      title: "Home",
-    },
-  })
-
-  const revision = await prisma.pageRevision.create({
-    data: {
-      pageId: page.id,
-      title: "Home",
-      blocks,
-    },
-  })
-
-  await prisma.page.update({
-    where: { id: page.id },
-    data: {
-      draftRevisionId: revision.id,
-      publishedRevisionId: revision.id,
-    },
-  })
+  await ensureStaticPage("impressum", "Impressum", IMPRESSUM_HTML)
+  await ensureStaticPage("datenschutz", "Datenschutz", DATENSCHUTZ_HTML)
 }
 
 const normalizeUrl = (value: string | undefined) =>

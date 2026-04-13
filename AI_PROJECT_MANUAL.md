@@ -211,27 +211,87 @@ Then SSH to VPS and run Step 3.
 The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in order:
 
 1. **hero** — HeroBlock (badge, title, subtitle, description, CTAs, image)
-2. **iot-server** — ProjectBlock — IoT Private Server (host.linart.club, pricing, early-buyer welcome)
-3. **portfolio** — PortfolioBlock — main projects (SensorHub, QR Generator, Commercial Hub)
-4. **entertainment** — PortfolioBlock — title="Entertainment", items: Minecraft map
-5. **chat** — ChatBlock — community chat for registered users
-6. **crm-iot-text** — RichTextBlock — CRM-IoT B2B description + "in development" notice
-7. **crm-iot-cta** — CtaBlock — "Request a Smart Lock" → mailto:info@linart.club
-8. **cloud-services** — RichTextBlock — Immich + Nextcloud private cloud (Bavaria server, Alpine cooling 🏔️)
-9. **callout** — CtaBlock — "Let's Team Up"
-10. **contact** — ContactBlock
+2. **iot-server** — ProjectBlock — IoT Private Server (host.linart.club, pricing, early-buyer welcome) — Apple-style dark gradient card
+3. **crm-iot** — ProjectBlock — CRM-IoT B2B rental automation + "in development" notice + smart lock mailto CTA
+4. **cloud-services** — ProjectBlock — Immich + Nextcloud private cloud (Bavaria server) — same big card style
+5. **portfolio** — PortfolioBlock — main projects (SensorHub, QR Generator, Commercial Hub)
+6. **entertainment** — PortfolioBlock — title="Entertainment", items: Minecraft map
+7. **chat** — ChatBlock — community chat for registered users
+8. **callout** — CtaBlock — "Let's Team Up"
+9. **contact** — ContactBlock
 
-To reset the home page to the current seed (e.g. after code changes), run on VPS:
+All three feature sections (iot-server, crm-iot, cloud-services) use the same `project` block type and render as dark gradient feature cards (same design language).
+
+To reset the home page to the current seed (e.g. after code changes), delete the page from DB — on next request `ensureDefaultPages()` recreates it:
 ```bash
-cd /opt/linart && docker compose --env-file .env exec -T web sh -lc "HOME=/tmp npx ts-node --project tsconfig.server.json scripts/reset-home.ts"
+cd /opt/linart && docker compose --env-file .env exec -T db psql -U postgres -d linart -c "DELETE FROM \"PageRevision\"; DELETE FROM \"Page\";"
 ```
-Or delete the home page from DB — on next request `ensureDefaultPages()` recreates it from seed.
+Then visit the site — it auto-recreates from seed on first request.
 
 ### Drag-and-Drop in Admin Editor
 Already implemented via `@dnd-kit/core` + `@dnd-kit/sortable` in `src/components/editor/page-editor.tsx`.
 Use the `GripVertical` handle (⠿) on each block to drag and reorder. No extra setup needed.
 
+## Legal Pages & Compliance (German Law)
+
+Legal pages are auto-created by `ensureStaticPage()` in `seed.ts` on first startup.
+They are **NOT overwritten** on subsequent restarts — admin edits persist.
+
+| Page | URL | Auto-created | Required by |
+|------|-----|-------------|-------------|
+| Impressum | `/p/impressum` | ✅ Yes | DDG § 5 — mandatory for any German commercial/professional site |
+| Datenschutz | `/p/datenschutz` | ✅ Yes | DSGVO Art. 13/14 — mandatory for all sites processing EU user data |
+
+Footer links to both pages are in `src/components/editor/public-page.tsx` (always visible, all languages).
+
+### Which services need their own legal pages?
+
+Each subdomain running as an independent service must have its own Impressum and Datenschutz reachable within max 2 clicks.
+
+| Service | URL | Impressum needed? | Datenschutz needed? | Notes |
+|---|---|---|---|---|
+| Main site | linart.club | ✅ Done | ✅ Done | Covered by `/p/impressum`, `/p/datenschutz` |
+| IoT Platform | host.linart.club | ✅ Yes | ✅ Yes | Separate service — add own legal footer |
+| QR Generator | qr.linart.club | ✅ Yes | ✅ Yes | Separate service — add own legal pages |
+| Photo cloud | photo.linart.club | ✅ Yes | ✅ Yes | Immich — add legal or restrict to invited users only |
+| Nextcloud | cloud.crm-iot.com | ✅ Yes | ✅ Yes | Add legal pages if non-admin users access it |
+| Commercial Hub | hub.linart.club | ⚠️ Yes | ⚠️ Yes | Password-protected lowers risk but doesn't remove obligation |
+| CRM-IoT platform | crm-iot.com | ✅ Yes | ✅ Yes | B2B + paid — also needs AGB and Widerrufsbelehrung |
+| Minecraft map | embedded | — | — | Embedded iframe within linart.club — covered by main policy |
+
+### What's still missing legally
+
+| Item | Priority | When needed |
+|---|---|---|
+| **AGB** (Terms of Service) | ⚠️ High | Required once payment flow exists (IoT subscriptions, smart lock sales) |
+| **Widerrufsbelehrung** | ⚠️ High | Right of withdrawal (14 days) for B2C digital services — add at checkout |
+| Cookie Banner | ℹ️ Not yet | Only needed if tracking/analytics cookies are added (currently none) |
+| Legal pages per subdomain | ⚠️ Medium | Each subdomain service needs its own Impressum + Datenschutz |
+
+### Key legal facts to remember
+
+- **Applicable law**: DDG (Digitale-Dienste-Gesetz, replaces TMG since 2024) — use DDG in all texts, not TMG
+- **Privacy regulation**: DSGVO + TDDDG (formerly TTDSG for cookies)
+- **Hosting provider**: 1&1 IONOS SE, Elgendorfer Str. 57, 56410 Montabaur — must be named in Datenschutz with AVV note (Art. 28 DSGVO)
+- **IoT/computation server**: Own server in Bavaria, Germany — separate from IONOS web hosting
+- **Supervisory authority (Bavaria)**: BayLDA, Promenade 27, 91522 Ansbach, www.lda.bayern.de
+- **Steuernummer**: NOT published — not mandatory, sensitive data; publish only if you get a Umsatzsteuer-ID (VAT ID)
+- **EU OS Platform link**: Required in Impressum since we offer services to consumers — https://ec.europa.eu/consumers/odr/
+- **YouTube embeds**: Must be mentioned in Datenschutz; use `youtube-nocookie.com` domain
+
 ## Change Log
+
+### 2026-04-13 (v1.13)
+
+- Added `/p/impressum` and `/p/datenschutz` pages — auto-created on first startup via `ensureStaticPage()` in `seed.ts`.
+- Legal texts comply with DDG (not outdated TMG), DSGVO, TDDDG.
+- IONOS named as hosting provider with Art. 28 DSGVO AVV note; Steuernummer removed (not mandatory, sensitive).
+- Added SSL/TLS section, explicit "no analytics" statement, YouTube embed disclosure, BayLDA complaint authority.
+- Impressum footer links added to `public-page.tsx` (always visible, all languages).
+- Copyright year updated to 2026 in EN/DE/RU translations.
+- Fixed Home Page Structure docs (block order was outdated).
+- Added Legal Pages & Compliance section to this manual (per-subdomain obligations table, missing items checklist, key legal facts).
+- App version bumped to 1.13.
 
 ### 2026-04-13 (v1.12)
 
@@ -276,4 +336,4 @@ Use the `GripVertical` handle (⠿) on each block to drag and reorder. No extra 
 - Added LibreTranslate integration for per-block translation.
 - Updated translations (EN/DE/RU) and deployment cleanup options.
 
-*Last Updated: 2026-04-13 (v1.12)*
+*Last Updated: 2026-04-13 (v1.13)*

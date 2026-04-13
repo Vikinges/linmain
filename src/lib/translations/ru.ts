@@ -140,6 +140,6 @@ export const ru: Translations = {
   footer: {
     admin: "Админ",
     dashboard: "Панель",
-    copyright: "© 2025 Vladimir Linartas. Все права защищены.",
+    copyright: "© 2026 Vladimir Linartas. Все права защищены.",
   },
 }

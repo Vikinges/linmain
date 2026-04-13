@@ -136,7 +136,7 @@ export const en = {
   footer: {
     admin: "Admin",
     dashboard: "Dashboard",
-    copyright: "(c) 2025 Vladimir Linartas. All rights reserved.",
+    copyright: "© 2026 Vladimir Linartas. All rights reserved.",
   },
 }
 

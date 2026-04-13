@@ -141,6 +141,6 @@ export const de: Translations = {
   footer: {
     admin: "Admin",
     dashboard: "Dashboard",
-    copyright: "© 2025 Vladimir Linartas. Alle Rechte vorbehalten.",
+    copyright: "© 2026 Vladimir Linartas. Alle Rechte vorbehalten.",
   },
 }

@@ -6,8 +6,9 @@ import type { PageBlock } from "@/lib/editor/types"
 
 export const dynamic = "force-dynamic"
 
-export default async function PublicSlugPage({ params }: { params: { slug: string } }) {
-  const page = await getPublishedPage(params.slug)
+export default async function PublicSlugPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const page = await getPublishedPage(slug)
   if (!page?.publishedRevision) {
     notFound()
   }

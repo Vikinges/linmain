@@ -107,6 +107,14 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
           <div className="container mx-auto px-4 py-8 flex flex-col items-center gap-4 text-muted-foreground text-sm">
             <p>{footerText}</p>
             <p className="text-xs text-muted-foreground/70">Linart v{APP_VERSION}</p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
+              <Link href="/p/impressum" className="hover:text-foreground transition-colors">
+                Impressum
+              </Link>
+              <Link href="/p/datenschutz" className="hover:text-foreground transition-colors">
+                Datenschutz
+              </Link>
+            </div>
             {isAdmin && (
               <Link href="/admin" className="text-xs text-muted-foreground/70 hover:text-foreground">
                 Admin
