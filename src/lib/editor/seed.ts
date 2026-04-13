@@ -242,33 +242,32 @@ export async function ensureDefaultPages() {
         align: "left",
       },
     },
-    // 3. CRM-IoT — second, right after IoT server
+    // 3. CRM-IoT — second, same style as IoT server
     {
-      id: "crm-iot-text",
-      type: "richText",
+      id: "crm-iot",
+      type: "project",
       data: {
-        content: portfolioText.crmIot.description,
-        width: "full",
+        title: portfolioText.crmIot.title,
+        description: portfolioText.crmIot.description,
+        image: { url: "", alt: emptyLocalized() },
+        linkLabel: portfolioText.crmIot.linkLabel,
+        linkUrl: "mailto:info@linart.club?subject=Smart%20Lock%20Request",
+        align: "left",
       },
     },
-    // 4. CRM-IoT — request smart lock CTA (in same section)
-    {
-      id: "crm-iot-cta",
-      type: "cta",
-      data: {
-        title: portfolioText.crmIot.ctaTitle,
-        description: portfolioText.crmIot.ctaDescription,
-        buttonLabel: portfolioText.crmIot.ctaButton,
-        buttonUrl: "mailto:info@linart.club?subject=Smart%20Lock%20Request",
-      },
-    },
-    // 5. Private cloud — Immich + Nextcloud
+    // 4. Private cloud — same style as IoT server
     {
       id: "cloud-services",
-      type: "richText",
+      type: "project",
       data: {
-        content: portfolioText.cloud.description,
-        width: "full",
+        title: portfolioText.cloud.title,
+        description: portfolioText.cloud.description,
+        image: { url: "", alt: emptyLocalized() },
+        linkLabel: buildLocalized((lang) =>
+          lang === "ru" ? "Запросить доступ" : lang === "de" ? "Zugang anfragen" : "Request Access"
+        ),
+        linkUrl: "mailto:info@linart.club?subject=Cloud%20Access%20Request",
+        align: "left",
       },
     },
     // 6. Main portfolio — other projects

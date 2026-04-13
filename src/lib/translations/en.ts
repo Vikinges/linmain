@@ -61,21 +61,21 @@ export const en = {
     crmIot: {
       title: "CRM-IoT — Smart Rental Automation",
       description:
-        "<p>B2B platform for hotels, holiday homes, and apartments that want to <strong>monetize property more efficiently</strong> through IoT infrastructure.</p><ul><li>Automated check-in/check-out via smart locks</li><li>Fingerprint scanner + keypad + NFC + wireless keys</li><li>Online mode (CRM sync) + Offline mode (pre-loaded access codes)</li><li>Protected by our private European IoT infrastructure</li></ul><p>You can already submit a request and order an electronic door lock — we'll contact you personally.</p>",
+        "<p style='display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:99px;border:1px solid rgba(249,115,22,0.4);background:rgba(249,115,22,0.1);color:#fb923c;font-size:0.85em;margin-bottom:12px'>🚧 In Development — registration not yet open</p><p>B2B platform for <strong>hotels, holiday homes, and apartments</strong> that want to monetize property more efficiently through IoT infrastructure.</p><ul><li>Automated check-in/check-out via smart locks</li><li>Fingerprint scanner + keypad + NFC + wireless keys</li><li>Online mode (CRM sync) + Offline mode (pre-loaded codes)</li><li>Protected by our private European IoT infrastructure</li></ul><p>Already accepting applications — order an electronic door lock at early-adopter pricing. We contact you personally.</p>",
       ctaTitle: "Request a Smart Lock",
       ctaDescription:
         "Electronic door lock with fingerprint scanner, digital keypad, NFC and wireless keys. First orders at early-adopter pricing.",
       ctaButton: "Submit Request",
-      linkLabel: "Learn More",
+      linkLabel: "Submit Request",
+    },
+    cloud: {
+      title: "Private Cloud Services",
+      description:
+        "<p>For those we trust — and who trust us. Your data stays on our server <strong>in Bavaria, Germany</strong>, cooled by real Alpine air 🏔️ — not in an American data center. We never analyze your data or sell your preferences.</p><p><strong>📷 Immich</strong> — self-hosted alternative to Google Photos. AI search, face recognition, albums — your photos never leave our server.<br><a href='https://photo.linart.club' style='color:#93c5fd'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — personal cloud: files, calendar, contacts, documents. Like Dropbox — but private, in Europe, yours.<br><a href='https://cloud.crm-iot.com' style='color:#93c5fd'>cloud.crm-iot.com</a></p><p>Access by invitation. Write to us if you want in.</p>",
     },
     entertainment: {
       title: "Entertainment",
       subtitle: "Projects for fun and experiments",
-    },
-    cloud: {
-      title: "Private Cloud — Your Data Stays Here",
-      description:
-        "<p>Cloud services for those we trust — and who trust us. Your data is stored on our protected server <strong>in Bavaria, Germany</strong>, cooled by real Alpine air 🏔️ — not somewhere in an American data center. We never analyze your data or sell your preferences. Everything is local, everything is yours.</p><p><strong>📷 Immich</strong> — self-hosted alternative to Google Photos. AI-powered search, face recognition, albums, sharing — but your photos never leave our server. Access: <a href='https://photo.linart.club'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — personal cloud: files, calendar, contacts, documents. Like Dropbox or Google Drive — but private, in Europe, under your control. Access: <a href='https://cloud.crm-iot.com'>cloud.crm-iot.com</a></p><p>Access is by invitation for trusted users. Write to us if you want in.</p>",
     },
     placeholders: {
       mapMissing: "Add a map embed URL in Admin.",

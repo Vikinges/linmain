@@ -64,21 +64,21 @@ export const de: Translations = {
     crmIot: {
       title: "CRM-IoT — Smarte Mietautomatisierung",
       description:
-        "<p>B2B-Plattform für Hotels, Ferienhäuser und Apartments, die ihre <strong>Immobilien effizienter monetarisieren</strong> möchten — durch IoT-Infrastruktur.</p><ul><li>Automatisches Check-in/Check-out über Smart Locks</li><li>Fingerabdruckscanner + Tastatur + NFC + drahtlose Schlüssel</li><li>Online-Modus (CRM-Sync) + Offline-Modus (vorgeladene Codes)</li><li>Geschützt durch unsere private europäische IoT-Infrastruktur</li></ul><p>Du kannst bereits eine Anfrage stellen und ein elektronisches Türschloss bestellen — wir melden uns persönlich bei dir.</p>",
+        "<p style='display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:99px;border:1px solid rgba(249,115,22,0.4);background:rgba(249,115,22,0.1);color:#fb923c;font-size:0.85em;margin-bottom:12px'>🚧 In Entwicklung — Registrierung noch nicht offen</p><p>B2B-Plattform für <strong>Hotels, Ferienhäuser und Apartments</strong>, die Immobilien effizienter monetarisieren möchten — durch IoT-Infrastruktur.</p><ul><li>Automatisches Check-in/Check-out über Smart Locks</li><li>Fingerabdruckscanner + Tastatur + NFC + drahtlose Schlüssel</li><li>Online-Modus (CRM-Sync) + Offline-Modus (vorgeladene Codes)</li><li>Geschützt durch unsere private europäische IoT-Infrastruktur</li></ul><p>Bereits Anfragen möglich — bestell ein Türschloss zum Early-Adopter-Preis. Wir melden uns persönlich.</p>",
       ctaTitle: "Smart Lock anfragen",
       ctaDescription:
         "Elektronisches Türschloss mit Fingerabdruckscanner, digitaler Tastatur, NFC und drahtlosen Schlüsseln. Erste Bestellungen zum Early-Adopter-Preis.",
       ctaButton: "Jetzt anfragen",
-      linkLabel: "Mehr erfahren",
+      linkLabel: "Jetzt anfragen",
+    },
+    cloud: {
+      title: "Private Cloud",
+      description:
+        "<p>Für die, denen wir vertrauen — und die uns vertrauen. Deine Daten liegen auf unserem Server <strong>in Bayern, Deutschland</strong>, der von echter Alpenluft gekühlt wird 🏔️ — nicht in einem amerikanischen Rechenzentrum. Wir analysieren deine Daten nie.</p><p><strong>📷 Immich</strong> — selbst gehostete Alternative zu Google Fotos. KI-Suche, Gesichtserkennung, Alben — deine Fotos verlassen den Server nie.<br><a href='https://photo.linart.club' style='color:#93c5fd'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — persönliche Cloud: Dateien, Kalender, Kontakte. Wie Dropbox — aber privat, in Europa, deins.<br><a href='https://cloud.crm-iot.com' style='color:#93c5fd'>cloud.crm-iot.com</a></p><p>Zugang auf Einladung. Schreib uns.</p>",
     },
     entertainment: {
       title: "Unterhaltung",
       subtitle: "Projekte zum Spaß und für Experimente",
-    },
-    cloud: {
-      title: "Private Cloud — Deine Daten bleiben hier",
-      description:
-        "<p>Cloud-Dienste für die, denen wir vertrauen — und die uns vertrauen. Deine Daten liegen auf unserem geschützten Server <strong>in Bayern, Deutschland</strong>, der von echter Alpenluft gekühlt wird 🏔️ — nicht irgendwo in einem amerikanischen Rechenzentrum. Wir analysieren deine Daten nie und verkaufen deine Vorlieben an niemanden. Alles lokal, alles deins.</p><p><strong>📷 Immich</strong> — selbst gehostete Alternative zu Google Fotos. KI-Suche, Gesichtserkennung, Alben, Teilen — aber deine Fotos verlassen unseren Server nie. Zugang: <a href='https://photo.linart.club'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — persönliche Cloud: Dateien, Kalender, Kontakte, Dokumente. Wie Dropbox oder Google Drive — aber privat, in Europa, unter deiner Kontrolle. Zugang: <a href='https://cloud.crm-iot.com'>cloud.crm-iot.com</a></p><p>Zugang auf Einladung für vertrauenswürdige Nutzer. Schreib uns, wenn du mitmachen möchtest.</p>",
     },
     placeholders: {
       mapMissing: "Map-Embed-URL im Admin-Bereich hinzufügen.",
