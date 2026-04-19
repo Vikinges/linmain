@@ -140,7 +140,7 @@ cd /opt/linart && \
 docker compose --env-file .env down && \
 docker load -i linart-web.tar && \
 IMAGE_REF=linart-web:local docker compose --env-file .env up -d --no-build && \
-docker compose --env-file .env exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && \
+docker compose --env-file .env exec -T web_sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && \
 rm -f /opt/linart/linart-web.tar && \
 echo "DEPLOY OK"
 ```
@@ -281,6 +281,16 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-04-19 (v1.16)
+
+- Added origins with `https://` protocol to `allowedOrigins` in `next.config.ts`.
+- App version bumped to 1.16.
+
+### 2026-04-19 (v1.15)
+
+- Expanded `allowedOrigins` in `next.config.ts` to include `www` versions and wildcard subdomains to fix persistent 403 Forbidden errors on media uploads surfacing in production.
+- App version bumped to 1.15.
+
 ### 2026-04-19 (v1.14)
 
 - Fixed 403 Forbidden error on media uploads by adding `allowedOrigins` to `next.config.ts`.
@@ -341,4 +351,4 @@ Each subdomain running as an independent service must have its own Impressum and
 - Added LibreTranslate integration for per-block translation.
 - Updated translations (EN/DE/RU) and deployment cleanup options.
 
-*Last Updated: 2026-04-19 (v1.14)*
+*Last Updated: 2026-04-19 (v1.16)*
