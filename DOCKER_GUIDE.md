@@ -164,6 +164,14 @@ cd /opt/linart
 git pull origin master
 docker compose --env-file .env up -d --build
 docker compose exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma"
+
+# Очистка Docker-мусора после сборки
+docker container prune -f
+docker image prune -a -f
+docker builder prune -a -f
+
+# Проверить место на диске
+df -h /
 ```
 
 **Полное обновление через скрипт** (попросит Google Client ID/Secret):
@@ -182,10 +190,42 @@ DEPLOY_REF=<commit-hash> ./deploy.sh
 
 ---
 
+### 🧹 Освобождение места на диске (если сборка падает с "no space left on device")
+
+```bash
+# Остановить веб-контейнер
+docker stop linart_web
+
+# Удалить неиспользуемые образы, контейнеры и кэш
+docker container prune -f
+docker image prune -a -f
+docker builder prune -a -f
+
+# Обрезать логи Docker-контейнеров (могут занимать гигабайты)
+sudo truncate -s 0 /var/lib/docker/containers/*/*-json.log
+
+# Очистить системные логи
+sudo journalctl --vacuum-size=50M
+
+# Очистить кэш apt
+sudo apt-get clean
+sudo apt-get autoremove -y
+sudo rm -rf /tmp/* /var/tmp/*
+
+# Проверить результат (нужно минимум 3GB свободных)
+df -h /
+
+# После освобождения — пересобрать
+cd /opt/linart
+docker compose --env-file .env up -d --build
+```
+
+---
+
 ### Очистить все данные
 
-```powershell
-docker-compose down -v
+```bash
+docker compose down -v
 ```
 ⚠️ **Внимание**: Удаляет базу данных!
 
