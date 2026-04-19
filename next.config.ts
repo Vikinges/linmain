@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: '100mb',
+      allowedOrigins: ['linart.club', '*.linart.club', 'crm-iot.com', '*.crm-iot.com', 'localhost:3000'],
     },
   },
   images: {
