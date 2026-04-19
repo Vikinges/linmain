@@ -490,14 +490,16 @@ export async function ensureDefaultPages() {
   ]
 
   if (count > 0) {
-    const page = await prisma.page.findUnique({ where: { slug: "home" } })
-    if (page) {
+    // Pages already exist — only create the home page if it's missing.
+    // NEVER overwrite an existing home page with seed data, or editor
+    // changes will be silently lost on every page visit.
+    const existing = await prisma.page.findUnique({ where: { slug: "home" } })
+    if (!existing) {
+      const page = await prisma.page.create({
+        data: { slug: "home", title: "Home" },
+      })
       const revision = await prisma.pageRevision.create({
-        data: {
-          pageId: page.id,
-          title: "Home",
-          blocks,
-        },
+        data: { pageId: page.id, title: "Home", blocks },
       })
       await prisma.page.update({
         where: { id: page.id },
