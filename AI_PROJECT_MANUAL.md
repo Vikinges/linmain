@@ -281,6 +281,11 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-04-19 (v1.14)
+
+- Fixed 403 Forbidden error on media uploads by adding `allowedOrigins` to `next.config.ts`.
+- App version bumped to 1.14.
+
 ### 2026-04-13 (v1.13)
 
 - Added `/p/impressum` and `/p/datenschutz` pages — auto-created on first startup via `ensureStaticPage()` in `seed.ts`.
@@ -336,4 +341,4 @@ Each subdomain running as an independent service must have its own Impressum and
 - Added LibreTranslate integration for per-block translation.
 - Updated translations (EN/DE/RU) and deployment cleanup options.
 
-*Last Updated: 2026-04-13 (v1.13)*
+*Last Updated: 2026-04-19 (v1.14)*
