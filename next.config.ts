@@ -7,11 +7,15 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '100mb',
       allowedOrigins: [
         'linart.club', 
+        'https://linart.club',
         '*.linart.club', 
         'www.linart.club',
+        'https://www.linart.club',
         'crm-iot.com', 
+        'https://crm-iot.com',
         '*.crm-iot.com', 
         'www.crm-iot.com',
+        'https://www.crm-iot.com',
         'localhost:3000'
       ],
     },
