@@ -153,6 +153,35 @@ docker-compose up -d --build
 CLEANUP_LEVEL=full ./deploy.sh
 ```
 
+### 🔄 Обновление на VPS (production)
+
+Проект на VPS расположен по умолчанию в `/opt/linart`.
+
+**Быстрое обновление (без ввода Google-ключей):**
+
+```bash
+cd /opt/linart
+git pull origin master
+docker compose --env-file .env up -d --build
+docker compose exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma"
+```
+
+**Полное обновление через скрипт** (попросит Google Client ID/Secret):
+
+```bash
+cd /opt/linart
+./deploy.sh
+```
+
+**Откат к конкретному коммиту или тегу:**
+
+```bash
+cd /opt/linart
+DEPLOY_REF=<commit-hash> ./deploy.sh
+```
+
+---
+
 ### Очистить все данные
 
 ```powershell
