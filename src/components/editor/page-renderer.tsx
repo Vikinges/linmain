@@ -238,7 +238,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         >
                           <CardContent className="p-6">
                             <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
-                              <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40" style={{ height: item.imageHeight ? `${item.imageHeight}px` : undefined, minHeight: item.imageHeight ? undefined : '240px', maxHeight: item.imageHeight ? undefined : '320px' }}>
+                              <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40" style={{ height: `${item.imageHeight || 300}px` }}>
                                 {item.kind === "locked" ? (
                                   <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
                                     <Lock className="h-8 w-8 text-gray-200" />
@@ -259,7 +259,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                     alt={itemTitle}
                                     width={item.imageWidth || 1200}
                                     height={item.imageHeight || 800}
-                                    className="h-full w-full object-contain"
+                                    className="h-full w-full object-cover"
                                   />
                                 ) : (
                                   <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
@@ -368,18 +368,15 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                       {/* Right: image or server icon */}
                       <div className="hidden lg:flex items-center justify-center self-center">
                         {block.data.image.url ? (
-                          <Image
-                            src={block.data.image.url}
-                            alt={alt || title}
-                            width={block.data.image.width || 400}
-                            height={block.data.image.height || 400}
-                            className="rounded-2xl object-contain"
-                            style={{
-                              width: block.data.image.width ? `${block.data.image.width}px` : '16rem',
-                              height: block.data.image.height ? `${block.data.image.height}px` : '16rem',
-                              maxWidth: '100%',
-                            }}
-                          />
+                          <div className="overflow-hidden rounded-2xl" style={{ width: `${block.data.image.width || 256}px`, height: `${block.data.image.height || 256}px` }}>
+                            <Image
+                              src={block.data.image.url}
+                              alt={alt || title}
+                              width={block.data.image.width || 400}
+                              height={block.data.image.height || 400}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
                         ) : (
                           <div className="flex h-52 w-52 items-center justify-center rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/40 to-purple-900/40 shadow-2xl shadow-blue-900/20">
                             <Server className="h-24 w-24 text-blue-400/60" />
