@@ -1320,6 +1320,38 @@ function BlockFields({
             }
           />
           <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Image Width (px)</Label>
+              <Input
+                type="number"
+                placeholder="auto (256)"
+                value={block.data.image.width || ""}
+                onChange={(event) =>
+                  updateData({
+                    ...block.data,
+                    image: { ...block.data.image, width: event.target.value ? Number(event.target.value) : undefined },
+                  })
+                }
+                className="bg-white/5 border-white/10"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Image Height (px)</Label>
+              <Input
+                type="number"
+                placeholder="auto (256)"
+                value={block.data.image.height || ""}
+                onChange={(event) =>
+                  updateData({
+                    ...block.data,
+                    image: { ...block.data.image, height: event.target.value ? Number(event.target.value) : undefined },
+                  })
+                }
+                className="bg-white/5 border-white/10"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
             <LocalizedInput
               label="Button Label"
               value={block.data.linkLabel}
@@ -1669,6 +1701,42 @@ function BlockFields({
                   >
                     Choose
                   </Button>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-300">Image Width (px)</Label>
+                    <Input
+                      type="number"
+                      placeholder="auto"
+                      value={item.imageWidth || ""}
+                      onChange={(event) =>
+                        updateData({
+                          ...block.data,
+                          items: block.data.items.map((entry) =>
+                            entry.id === item.id ? { ...entry, imageWidth: event.target.value ? Number(event.target.value) : undefined } : entry
+                          ),
+                        })
+                      }
+                      className="bg-white/5 border-white/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-300">Image Height (px)</Label>
+                    <Input
+                      type="number"
+                      placeholder="auto"
+                      value={item.imageHeight || ""}
+                      onChange={(event) =>
+                        updateData({
+                          ...block.data,
+                          items: block.data.items.map((entry) =>
+                            entry.id === item.id ? { ...entry, imageHeight: event.target.value ? Number(event.target.value) : undefined } : entry
+                          ),
+                        })
+                      }
+                      className="bg-white/5 border-white/10"
+                    />
+                  </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <LocalizedInput

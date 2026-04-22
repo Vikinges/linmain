@@ -110,6 +110,8 @@ export type PortfolioBlock = {
       description: LocalizedHtml
       embedUrl: string
       imageUrl: string
+      imageWidth?: number
+      imageHeight?: number
       linkLabel: LocalizedString
       linkUrl: string
     }>
@@ -125,6 +127,8 @@ export type ProjectBlock = {
     image: {
       url: string
       alt: LocalizedString
+      width?: number
+      height?: number
     }
     linkLabel: LocalizedString
     linkUrl: string
