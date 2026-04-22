@@ -245,14 +245,22 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                     <p className="text-sm">{placeholderText}</p>
                                   </div>
                                 ) : embedUrl ? (
-                                  <iframe
-                                    src={embedUrl}
-                                    style={{ border: "none" }}
-                                    className="h-full w-full"
-                                    loading="lazy"
-                                    allowFullScreen
-                                    title={itemTitle}
-                                  />
+                                  <div className="relative h-full w-full overflow-hidden">
+                                    <iframe
+                                      src={embedUrl}
+                                      scrolling="no"
+                                      style={{
+                                        border: "none",
+                                        width: "200%",
+                                        height: "200%",
+                                        transform: "scale(0.5)",
+                                        transformOrigin: "top left",
+                                        pointerEvents: "none",
+                                      }}
+                                      loading="lazy"
+                                      title={itemTitle}
+                                    />
+                                  </div>
                                 ) : item.imageUrl ? (
                                   <Image
                                     src={item.imageUrl}
