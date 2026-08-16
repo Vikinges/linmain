@@ -281,6 +281,16 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-08-16 (v1.23)
+
+- New admin section **Plugins** (`/admin/plugins`): install and edit third-party `<script>` embeds — chat widgets, analytics, pixels — without a code change or a redeploy. Name, script URL, attribute pairs (`data-client` = `105`), enable/disable, hide-on-paths, hide-selector, and a live preview of the resulting tag.
+- Stored in `SiteConfig` under the key `plugins` instead of a new table, so no Prisma migration is needed (`prisma db push` cannot be run on the server from here, and the VPS has 848 MB RAM). The list is a handful of rows — exactly what the existing key/value store is for.
+- `src/lib/plugins.ts` holds types and pure helpers and must stay free of Prisma: client components import from it, so a Prisma import would land in the browser bundle. DB access lives in `src/lib/plugins-store.ts`.
+- The root layout now reads the DB. `/login`, `/register`, `/dashboard` render statically, so the read is wrapped in try/catch — without it the production build (which has no database) would fail.
+- Migration is transparent: until an admin presses Save, the list falls back to `AI_CONSULTANT_CLIENT_ID`, so the widget survives the upgrade untouched. After the first save the DB wins and the env var is ignored.
+- `src/components/chat/ai-consultant.tsx` replaced by the generic `src/components/chat/site-plugins.tsx`.
+- Script URLs are restricted to `http:`/`https:` (a `javascript:` URL would otherwise be injectable), and a rejected plugin returns an error instead of being dropped silently.
+
 ### 2026-08-16 (v1.22)
 
 - The consultant widget now mounts into a **shadow root**, so the old hide rule (`.lac-btn` / `.lac-panel`) no longer reached it and the chat button would have covered the editor on `/admin/*`.

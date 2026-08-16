@@ -16,7 +16,8 @@ import {
     LogOut,
     BarChart3,
     FileText,
-    Database
+    Database,
+    Puzzle
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -72,6 +73,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             href: "/admin/database",
             color: "text-cyan-500",
             description: "Data management"
+        },
+        {
+            label: "Plugins",
+            icon: Puzzle,
+            href: "/admin/plugins",
+            color: "text-violet-500",
+            description: "Embedded scripts"
         },
         {
             label: "Settings",
