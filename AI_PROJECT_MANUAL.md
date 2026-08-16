@@ -281,6 +281,12 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-08-16 (v1.22)
+
+- The consultant widget now mounts into a **shadow root**, so the old hide rule (`.lac-btn` / `.lac-panel`) no longer reached it and the chat button would have covered the editor on `/admin/*`.
+- `src/components/chat/ai-consultant.tsx` now hides the shadow **host** instead — `<div data-linart-widget="…">` sits in the light DOM. The old `.lac-*` selectors are kept for cached pre-shadow copies of `widget.js`.
+- linart.club points at site **105** again (its own knowledge base), not the account site 27.
+
 ### 2026-08-15 (v1.21)
 
 - Integrated the LinArt AI Consultant online chat widget (`src/components/chat/ai-consultant.tsx`, mounted in `src/app/layout.tsx`).

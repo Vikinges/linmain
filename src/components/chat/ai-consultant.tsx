@@ -34,8 +34,12 @@ export function AiConsultant({ clientId, apiUrl }: AiConsultantProps) {
         if (!document.getElementById(STYLE_ID)) {
             const style = document.createElement("style")
             style.id = STYLE_ID
+            // Виджет монтируется в shadow-root, поэтому селекторы по .lac-* внутрь
+            // не пробиваются — прячем сам host-элемент `<div data-linart-widget="…">`.
+            // Второй селектор — на случай старой, до-shadow версии widget.js в кэше.
             // !important — панель виджета переключается инлайновым display.
             style.textContent =
+                '[data-linart-consultant="hidden"] [data-linart-widget],' +
                 '[data-linart-consultant="hidden"] .lac-btn,' +
                 '[data-linart-consultant="hidden"] .lac-panel{display:none !important}'
             document.head.appendChild(style)
