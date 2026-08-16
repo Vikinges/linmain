@@ -71,6 +71,19 @@ if [ -z "$LINART_PORT" ]; then
   LINART_PORT="8080"
 fi
 
+# LinArt AI Consultant: id сайта из портала консультанта.
+# Не секрет — id виден в теге <script> на странице, поэтому дефолт зашит здесь;
+# переопределяется переменной окружения или значением в .env на сервере.
+AI_CONSULTANT_CLIENT_ID="${AI_CONSULTANT_CLIENT_ID:-$(get_env_value AI_CONSULTANT_CLIENT_ID)}"
+if [ -z "$AI_CONSULTANT_CLIENT_ID" ]; then
+  AI_CONSULTANT_CLIENT_ID="105"
+fi
+
+AI_CONSULTANT_API_URL="${AI_CONSULTANT_API_URL:-$(get_env_value AI_CONSULTANT_API_URL)}"
+if [ -z "$AI_CONSULTANT_API_URL" ]; then
+  AI_CONSULTANT_API_URL="https://ai.crm-iot.com"
+fi
+
 USE_PREBUILT_IMAGE="${USE_PREBUILT_IMAGE:-$(get_env_value USE_PREBUILT_IMAGE)}"
 IMAGE_REF="${IMAGE_REF:-$(get_env_value IMAGE_REF)}"
 
@@ -84,6 +97,8 @@ AUTH_TRUST_HOST=true
 ADMIN_EMAILS=$ADMIN_EMAILS
 GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+AI_CONSULTANT_CLIENT_ID=$AI_CONSULTANT_CLIENT_ID
+AI_CONSULTANT_API_URL=$AI_CONSULTANT_API_URL
 LINART_PORT=$LINART_PORT
 USE_PREBUILT_IMAGE=$USE_PREBUILT_IMAGE
 IMAGE_REF=$IMAGE_REF

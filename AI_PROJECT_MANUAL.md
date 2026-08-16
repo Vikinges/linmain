@@ -281,6 +281,20 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-08-15 (v1.21)
+
+- Integrated the LinArt AI Consultant online chat widget (`src/components/chat/ai-consultant.tsx`, mounted in `src/app/layout.tsx`).
+- Widget script is loaded from the consultant backend (`https://ai.crm-iot.com/widget.js`) with `data-client` / `data-api`; hidden on `/admin/*` so it does not overlap the editor UI.
+- Config via runtime env: `AI_CONSULTANT_CLIENT_ID` (empty = widget disabled) and `AI_CONSULTANT_API_URL`; wired through `docker-compose.yml` and `deploy.sh` (which rewrites `.env` on every deploy).
+- linart.club is site **105** in the consultant portal. The id is not a secret (it ships in the `<script>` tag), so `deploy.sh` falls back to `105` when the server `.env` has no value; env still overrides.
+- Only `/` and `/p/[slug]` are `force-dynamic`, so they pick the id up at request time. Any statically rendered route bakes the build-time value — irrelevant today (those are `/login`, `/register`, `/dashboard`), but relevant if a public static page is added.
+- Verified 2026-08-16: `GET /api/assistant/105/public` returns the tenant config for site 105.
+- Consultant sources: <https://git.crm-iot.com/linart-labs/linart-ai-consultant> (local clone: `D:\Code\Ai consultant`). Origin control is `backend/services/widget_guard.py::origin_allowed`, enforced inside the POST handlers (`chat.py`, `conversations.py`, `stt.py`) — **not** at the CORS layer, so a preflight probe proves nothing. An empty `allowed_origins` means "allow everything", which is why site 105 currently answers linart.club. Set it to `linart.club` in the portal so the widget cannot be embedded elsewhere.
+- Datenschutz: added §9 "KI-Chat / Online-Beratung" to `DATENSCHUTZ_HTML` in `src/lib/editor/seed.ts` (sections renumbered, Stand → August 2026). `ensureStaticPage` never overwrites an existing page, so the **live** `/p/datenschutz` must be updated by hand in `/admin/editor`.
+- No third-country transfer: answers come from a self-hosted open-source LLM (`BASE_MODEL` default `mistralai/Mistral-7B-Instruct-v0.3`, served over an OpenAI-compatible endpoint on own infrastructure), speech-to-text from self-hosted faster-whisper, translation from the same local model. No external AI provider is called.
+- Open item (consultant backend, not this repo): chat retention is **not** automated. `POST /api/admin/clients/{id}/purge-logs` only deletes `chat_logs`; the `conversations` / `messages` / `leads` / `appointments` tables have no purge path and no cron (`backend/worker.py` schedules only `refresh_urls_task`). §9 therefore states a criteria-based retention instead of a fixed period — a concrete "90 days" claim requires implementing an automatic purge first.
+- App version bumped to 1.21.
+
 ### 2026-04-19 (v1.16)
 
 - Added origins with `https://` protocol to `allowedOrigins` in `next.config.ts`.

@@ -131,25 +131,34 @@ E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
 <p>Auf dieser Website werden Videos über YouTube eingebettet (Google Ireland Limited, Dublin). Beim Öffnen einer solchen Seite wird eine Verbindung zu YouTube-Servern aufgebaut. Wir nutzen YouTube im erweiterten Datenschutzmodus (youtube-nocookie.com), der laut Anbieter erst beim aktiven Abspielen Cookies setzt.<br>
 <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO.</p>
 
-<h3>9. Cookies</h3>
+<h3>9. KI-Chat / Online-Beratung</h3>
+<p>Auf dieser Website steht ein Chat-Fenster („LinArt AI Consultant") zur Verfügung. Das Chat-Skript wird von unserem eigenen Server <strong>ai.crm-iot.com</strong> geladen; erst wenn Sie den Chat öffnen und nutzen, werden Daten an diesen Server übertragen.</p>
+<p><strong>Verarbeitete Daten:</strong> Ihre Chat-Nachrichten und die Antworten des Systems, ein zufällig erzeugter Sitzungs-Schlüssel, Zeitstempel sowie die technisch notwendigen Verbindungsdaten (IP-Adresse). Optional — und nur, wenn Sie sie selbst eingeben: Name, E-Mail-Adresse und Telefonnummer (bei der Weiterleitung an einen Mitarbeiter oder bei einer Terminbuchung) sowie Sprachnachrichten, die zur Texterkennung verarbeitet werden.</p>
+<p><strong>Zweck:</strong> Beantwortung Ihrer Anfragen, Weiterleitung an einen menschlichen Mitarbeiter auf Ihren Wunsch und ggf. Terminvereinbarung.</p>
+<p><strong>Speicherung:</strong> Der Gesprächsverlauf wird auf unserem eigenen Server in Deutschland gespeichert und aufbewahrt, solange dies zur Bearbeitung Ihres Anliegens und zur Nachvollziehbarkeit der Beratung erforderlich ist; anschließend wird er gelöscht, sofern keine gesetzliche Aufbewahrungspflicht besteht. Auf Anfrage löschen wir Ihren Gesprächsverlauf jederzeit. Im Browser wird zusätzlich ein Sitzungs-Schlüssel („linart_sid") im lokalen Speicher abgelegt, damit Ihr Gespräch beim Neuladen der Seite erhalten bleibt; er enthält keine personenbezogenen Daten und ist für den von Ihnen angeforderten Dienst technisch erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</p>
+<p><strong>Eingesetzte KI:</strong> Die Antworten werden von einem selbst betriebenen Sprachmodell (Open-Source-Modell auf eigener Hardware) erzeugt. Auch die Spracherkennung für Sprachnachrichten und die automatische Übersetzung laufen auf unseren eigenen Servern. <strong>Es werden keine Daten an externe KI-Anbieter (z. B. OpenAI, Google) übermittelt</strong> und keine Daten in Drittländer außerhalb der EU übertragen.</p>
+<p><strong>Bitte beachten:</strong> Geben Sie im Chat keine besonderen Kategorien personenbezogener Daten (z. B. Gesundheitsdaten) ein.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an effizienter Kundenkommunikation) bzw. Art. 6 Abs. 1 lit. b DSGVO, soweit die Anfrage der Anbahnung oder Erfüllung eines Vertrags dient.</p>
+
+<h3>10. Cookies</h3>
 <p>Wir verwenden ausschließlich technisch notwendige Cookies für die Sitzungsverwaltung (Login-Status). Tracking- oder Analyse-Cookies werden nicht eingesetzt. Notwendige Cookies erfordern keine gesonderte Einwilligung (§ 25 Abs. 2 TDDDG).</p>
 
-<h3>10. Keine Analyse-Tools</h3>
+<h3>11. Keine Analyse-Tools</h3>
 <p>Wir verwenden keine Analyse- oder Tracking-Dienste (kein Google Analytics, kein Facebook Pixel o. Ä.). Es werden keine Nutzerprofile erstellt und keine Daten zu Werbezwecken weitergegeben.</p>
 
-<h3>11. Ihre Rechte</h3>
+<h3>12. Ihre Rechte</h3>
 <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Erteilte Einwilligungen können Sie jederzeit widerrufen (Art. 7 Abs. 3 DSGVO).</p>
 <p>Anfragen richten Sie bitte an: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
 
-<h3>12. Beschwerderecht</h3>
+<h3>13. Beschwerderecht</h3>
 <p>Sie haben das Recht, sich bei der zuständigen Datenschutzbehörde zu beschweren. Für Bayern:<br>
 <strong>Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)</strong><br>
 Promenade 27, 91522 Ansbach — <a href="https://www.lda.bayern.de">www.lda.bayern.de</a></p>
 
-<h3>13. Externe Dienste</h3>
-<p>Unsere weiteren Dienste (IoT-Plattform host.linart.club, Fotoplattform photo.linart.club, Cloud-Speicher cloud.crm-iot.com) verfügen über eigene Datenschutzhinweise, die beim jeweiligen Dienst einsehbar sind. Diese Dienste werden auf eigenem Server in Bayern, Deutschland betrieben.</p>
+<h3>14. Externe Dienste</h3>
+<p>Unsere weiteren Dienste (IoT-Plattform host.linart.club, Fotoplattform photo.linart.club, Cloud-Speicher cloud.crm-iot.com, KI-Beratung ai.crm-iot.com) verfügen über eigene Datenschutzhinweise, die beim jeweiligen Dienst einsehbar sind. Diese Dienste werden auf eigenem Server in Bayern, Deutschland betrieben.</p>
 
-<p><em>Stand: April 2026</em></p>`
+<p><em>Stand: August 2026</em></p>`
 
 // Creates a static page (e.g. Impressum, Datenschutz) only if it doesn't exist yet.
 // Does NOT overwrite, so admin edits to these pages persist across restarts.

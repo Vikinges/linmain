@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
+import { AiConsultant } from "@/components/chat/ai-consultant";
+
+const DEFAULT_CONSULTANT_API = "https://ai.crm-iot.com";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +26,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Пустой AI_CONSULTANT_CLIENT_ID = виджет выключен (dev, превью, форки).
+  const consultantClientId = process.env.AI_CONSULTANT_CLIENT_ID?.trim();
+  const consultantApiUrl =
+    process.env.AI_CONSULTANT_API_URL?.trim() || DEFAULT_CONSULTANT_API;
+
   return (
     <html lang="en" className="dark">
       <body
@@ -30,6 +38,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AppProviders>{children}</AppProviders>
+        {consultantClientId && (
+          <AiConsultant clientId={consultantClientId} apiUrl={consultantApiUrl} />
+        )}
       </body>
     </html>
   );
