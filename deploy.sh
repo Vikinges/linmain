@@ -76,7 +76,7 @@ fi
 # переопределяется переменной окружения или значением в .env на сервере.
 AI_CONSULTANT_CLIENT_ID="${AI_CONSULTANT_CLIENT_ID:-$(get_env_value AI_CONSULTANT_CLIENT_ID)}"
 if [ -z "$AI_CONSULTANT_CLIENT_ID" ]; then
-  AI_CONSULTANT_CLIENT_ID="105"
+  AI_CONSULTANT_CLIENT_ID="27"
 fi
 
 AI_CONSULTANT_API_URL="${AI_CONSULTANT_API_URL:-$(get_env_value AI_CONSULTANT_API_URL)}"
