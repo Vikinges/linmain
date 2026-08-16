@@ -17,10 +17,10 @@ services:
       - ADMIN_EMAILS=${ADMIN_EMAILS}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # 27 = первичный сайт аккаунта («LinArt Support AI») в портале консультанта.
-      # Не секрет (id виден в <script>), поэтому дефолт здесь — чтобы деплой готовым
-      # образом работал без правки .env на сервере.
-      - AI_CONSULTANT_CLIENT_ID=${AI_CONSULTANT_CLIENT_ID:-27}
+      # 105 = сайт linart.club в портале консультанта (своя база знаний, отдельная
+      # от аккаунтского сайта 27). Не секрет (id виден в <script>), поэтому дефолт
+      # здесь — чтобы деплой готовым образом работал без правки .env на сервере.
+      - AI_CONSULTANT_CLIENT_ID=${AI_CONSULTANT_CLIENT_ID:-105}
       - AI_CONSULTANT_API_URL=${AI_CONSULTANT_API_URL:-https://ai.crm-iot.com}
     depends_on:
       - db
