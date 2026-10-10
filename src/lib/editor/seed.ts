@@ -7,6 +7,7 @@ import {
   SHOWCASE_COPY,
   buildAppItems,
   buildColdartBlock,
+  buildCrmIotData,
   buildKidsLabItems,
   buildLinartIdItem,
   runHomeMigrations,
@@ -374,20 +375,11 @@ export async function ensureDefaultPages() {
         secondaryLink: { label: SHOWCASE_COPY.iotApp, url: SHOWCASE_COPY.appSmartHome.linkUrl },
       },
     },
-    // 3. CRM-IoT — second, same style as IoT server
+    // 3. CRM-IoT — rentals host app, open beta (showcase layout: steps + host calendar screenshot)
     {
       id: "crm-iot",
       type: "project",
-      data: {
-        title: portfolioText.crmIot.title,
-        description: portfolioText.crmIot.description,
-        image: { url: "", alt: emptyLocalized() },
-        linkLabel: portfolioText.crmIot.linkLabel,
-        linkUrl: "https://crm-iot.com/",
-        align: "left",
-        badge: { label: SHOWCASE_COPY.badges.dev, tone: "dev" },
-        secondaryLink: { label: SHOWCASE_COPY.crmRequest, url: `mailto:${SHOWCASE_COPY.contact.email}?subject=Smart%20Lock%20Request` },
-      },
+      data: buildCrmIotData(),
     },
     // 4. Private cloud — same style as IoT server
     {

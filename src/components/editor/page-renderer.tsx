@@ -378,6 +378,138 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
               ? getLocalizedValue(block.data.secondaryLink.label, language)
               : ""
             const secondaryUrl = block.data.secondaryLink?.url?.trim() || ""
+            const isShowcase = block.data.layout === "showcase"
+            const steps = (block.data.steps || [])
+              .map((step) => ({
+                title: getLocalizedValue(step.title, language),
+                text: getLocalizedValue(step.text, language),
+              }))
+              .filter((step) => step.title)
+            const isExternal = (url: string) => /^https?:\/\//.test(url)
+
+            const badgeNode = badgeStyle && badgeLabel && (
+              <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium ${badgeStyle.ring}`}>
+                <span className={`h-2 w-2 rounded-full ${badgeStyle.dot}`} />
+                {badgeLabel}
+              </div>
+            )
+
+            const descriptionNode = (
+              <div
+                className="prose prose-invert prose-sm md:prose-base max-w-none leading-relaxed space-y-3 [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-white [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_strong]:text-gray-100 [&_a]:text-sky-300 [&_a]:underline-offset-2 hover:[&_a]:underline"
+                style={{ color: palette.pillars.descriptionColor }}
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+            )
+
+            const buttonsNode = (block.data.linkUrl || secondaryUrl) && (
+              <div className="flex flex-wrap gap-3 pt-2">
+                {block.data.linkUrl && (
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className={
+                      isShowcase
+                        ? "border-sky-400/40 bg-sky-500/15 text-white hover:bg-sky-500/25 font-semibold shadow-lg shadow-sky-900/30"
+                        : "border-gray-500/60 text-gray-100 hover:bg-gray-700/50 font-semibold"
+                    }
+                  >
+                    <a
+                      href={block.data.linkUrl}
+                      {...(isExternal(block.data.linkUrl) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      {linkLabel}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+                {secondaryUrl && secondaryLabel && (
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="ghost"
+                    className="text-gray-300 hover:bg-gray-700/40 hover:text-white font-semibold"
+                  >
+                    <a
+                      href={secondaryUrl}
+                      {...(isExternal(secondaryUrl) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      {secondaryLabel}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+              </div>
+            )
+
+            if (isShowcase) {
+              const frameUrl = (block.data.showcaseUrl || "").trim()
+              return (
+                <Reveal key={block.id} id={anchorFor(block)} className="px-4 scroll-mt-24">
+                  <div className="mx-auto max-w-6xl">
+                    <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-gray-900 via-slate-900/90 to-gray-900 p-8 md:p-12 lg:p-16 transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-black/50">
+                      {/* Glow decorations — a little warmer than the standard card */}
+                      <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-sky-500/10 blur-3xl" />
+                      <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
+
+                      <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
+                        <div className="space-y-6">
+                          {badgeNode}
+                          <h2 className="text-4xl md:text-5xl font-bold leading-tight text-white">{title}</h2>
+                          {descriptionNode}
+                          {buttonsNode}
+                        </div>
+
+                        {steps.length > 0 && (
+                          <ol className="relative space-y-4 lg:pt-14">
+                            {steps.map((step, index) => (
+                              <RevealItem key={index} index={index}>
+                                <li className="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition-colors duration-300 hover:border-sky-400/30 hover:bg-white/[0.05]">
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-sky-600 text-sm font-bold text-white shadow-lg shadow-sky-900/40">
+                                    {index + 1}
+                                  </span>
+                                  <div className="space-y-1">
+                                    <p className="font-semibold text-white">{step.title}</p>
+                                    {step.text && <p className="text-sm leading-relaxed text-gray-400">{step.text}</p>}
+                                  </div>
+                                </li>
+                              </RevealItem>
+                            ))}
+                          </ol>
+                        )}
+                      </div>
+
+                      {block.data.image.url && (
+                        <RevealItem index={1} className="relative mt-12">
+                          {/* Product screenshot in a browser window */}
+                          <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 shadow-2xl shadow-black/60 ring-1 ring-white/5 transition-transform duration-700 group-hover:-translate-y-1">
+                            <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.04] px-4 py-3">
+                              <span className="h-3 w-3 rounded-full bg-red-400/70" />
+                              <span className="h-3 w-3 rounded-full bg-amber-400/70" />
+                              <span className="h-3 w-3 rounded-full bg-green-400/70" />
+                              {frameUrl && (
+                                <span className="ml-3 truncate rounded-md bg-black/40 px-3 py-1 font-mono text-xs text-gray-400">
+                                  {frameUrl}
+                                </span>
+                              )}
+                            </div>
+                            <Image
+                              src={block.data.image.url}
+                              alt={alt || title}
+                              width={block.data.image.width || 1600}
+                              height={block.data.image.height || 900}
+                              sizes="(min-width: 1152px) 1024px, 100vw"
+                              className="h-auto w-full"
+                            />
+                          </div>
+                        </RevealItem>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+              )
+            }
 
             return (
               <Reveal key={block.id} id={anchorFor(block)} className="px-4 scroll-mt-24">
@@ -390,53 +522,15 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     <div className="relative grid gap-10 lg:grid-cols-[1fr_auto] items-start">
                       <div className="space-y-6 max-w-2xl">
                         {/* Status badge (configurable per block; legacy blocks show "Live") */}
-                        {badgeStyle && badgeLabel && (
-                          <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium ${badgeStyle.ring}`}>
-                            <span className={`h-2 w-2 rounded-full ${badgeStyle.dot}`} />
-                            {badgeLabel}
-                          </div>
-                        )}
+                        {badgeNode}
 
                         <h2 className="text-4xl md:text-5xl font-bold leading-tight text-white">
                           {title}
                         </h2>
 
-                        <div
-                          className="prose prose-invert prose-sm md:prose-base max-w-none leading-relaxed space-y-3 [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-white [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_a]:text-sky-300 [&_a]:underline-offset-2 hover:[&_a]:underline"
-                          style={{ color: palette.pillars.descriptionColor }}
-                          dangerouslySetInnerHTML={{ __html: description }}
-                        />
+                        {descriptionNode}
 
-                        {(block.data.linkUrl || secondaryUrl) && (
-                          <div className="flex flex-wrap gap-3 pt-2">
-                            {block.data.linkUrl && (
-                              <Button
-                                asChild
-                                size="lg"
-                                variant="outline"
-                                className="border-gray-500/60 text-gray-100 hover:bg-gray-700/50 font-semibold"
-                              >
-                                <a href={block.data.linkUrl} target="_blank" rel="noopener noreferrer">
-                                  {linkLabel}
-                                  <ArrowRight className="ml-2 h-5 w-5" />
-                                </a>
-                              </Button>
-                            )}
-                            {secondaryUrl && secondaryLabel && (
-                              <Button
-                                asChild
-                                size="lg"
-                                variant="ghost"
-                                className="text-gray-300 hover:bg-gray-700/40 hover:text-white font-semibold"
-                              >
-                                <a href={secondaryUrl} target="_blank" rel="noopener noreferrer">
-                                  {secondaryLabel}
-                                  <ArrowRight className="ml-2 h-4 w-4" />
-                                </a>
-                              </Button>
-                            )}
-                          </div>
-                        )}
+                        {buttonsNode}
                       </div>
 
                       {/* Right (desktop) / top (mobile): image, or a server icon on desktop only */}

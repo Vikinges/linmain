@@ -212,7 +212,7 @@ The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in ord
 
 1. **hero** — HeroBlock — "LinArt Labs" positioning (badge "Hosted in Bavaria · No US cloud", one promise, CTAs → `#projects` / `#contact`)
 2. **iot-server** — ProjectBlock — Linart IoT Cloud (host.crm-iot.com, pricing) + secondary button → "Smart Home IoT Dashboard" on the App Store. Badge: Live
-3. **crm-iot** — ProjectBlock — CRM-IoT B2B rental automation (crm-iot.com) + secondary mailto "Request a smart lock". Badge: In development
+3. **crm-iot** — ProjectBlock, layout **showcase** — CRM-IoT host app for rentals (open beta, free for testers): text + 3 "how it works" steps, real host-calendar screenshot (`public/assets/crm-iot-host-calendar.jpeg`) in a browser frame; CTA "Become a tester — free" → `https://host.crm-iot.com/?register=1`, secondary → host guide (`/manuals/app/rentals-host.html`, German). Badge: pilot (blue) "Open beta · free for testers"
 4. **cloud-services** — ProjectBlock — Immich + Nextcloud (nex.crm-iot.com) + ColdArt/GitLab/RustDesk; main CTA = mailto invite, secondary = /login. Badge: Live
 5. **coldart** — ProjectBlock — ColdART remote access & zero trust (zerotrust.crm-iot.com; free remote-support sessions + commercial control plane)
 6. **portfolio** — PortfolioBlock — cards: AI Consultant (first), Smart Hub Store, QR Generator, **NFC QR Business Card 3D Maker (iOS)**, **Smart Home IoT Dashboard (iOS)**, LinArt ID, Commercial Hub, Local LLM lab
@@ -221,13 +221,13 @@ The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in ord
 9. **callout** — CtaBlock — "Let's Team Up" (button "Contact us" → `#contact`)
 10. **contact** — ContactBlock — vladimir@linart.club, Spalt / Bavaria
 
-Project blocks (`project`) render as dark gradient feature cards. Each has an optional `badge` (label + tone: live / pilot / dev / soon / none — blocks without one show the legacy green "Live") and an optional `secondaryLink` (second button). Both are editable in the admin block editor.
+Project blocks (`project`) render as dark gradient feature cards. `layout: "showcase"` (v1.25) puts the text and the numbered `steps` side by side and shows the image full width below in a browser-window frame whose address bar shows `showcaseUrl`; use it for wide product screenshots. Each has an optional `badge` (label + tone: live / pilot / dev / soon / none — blocks without one show the legacy green "Live") and an optional `secondaryLink` (second button). Both are editable in the admin block editor.
 
 The **Community Chat** block was removed from the home page in v1.24 (login-only chat on a showcase page; the AI consultant widget covers visitor questions). The `chat` block type, `ChatBox` and `/admin/chat` still exist and the dashboard keeps its chat.
 
 ### Live-content migrations (`src/lib/editor/migrations.ts`)
 
-The home page is edited in the DB, so content fixes cannot ship as seed changes alone. `runHomeMigrations()` is called from `ensureDefaultPages()` on every request; it reads `SiteConfig["homeMigrations"].applied` and applies each pending migration once, writing a new `PageRevision` that is published and set as draft. `v1.24-showcase` fixes anchors/labels/contact, strips dead hosts (host.linart.club, cloud.crm-iot.com), adds the ColdART block, the two iOS app cards, LinArt ID, Kids Lab and the About block, and removes the chat block. To re-run a migration on a server, delete its name from the `applied` array in that SiteConfig row.
+The home page is edited in the DB, so content fixes cannot ship as seed changes alone. `runHomeMigrations()` is called from `ensureDefaultPages()` on every request; it reads `SiteConfig["homeMigrations"].applied` and applies each pending migration once, writing a new `PageRevision` that is published and set as draft. Migrations run in order and share one new revision: `v1.24-showcase`, then `v1.25-crm-iot-beta` (turns the CRM-IoT card into the showcase layout, only while it still has the "In development" badge). `v1.24-showcase` fixes anchors/labels/contact, strips dead hosts (host.linart.club, cloud.crm-iot.com), adds the ColdART block, the two iOS app cards, LinArt ID, Kids Lab and the About block, and removes the chat block. To re-run a migration on a server, delete its name from the `applied` array in that SiteConfig row.
 
 **Anchors:** the renderer puts `id="projects"` on the first project/portfolio block, so hero and nav "View Projects" links always resolve; every other section gets `id={block.id}` (`#contact` is fixed).
 
@@ -289,6 +289,14 @@ Each subdomain running as an independent service must have its own Impressum and
 - **YouTube embeds**: Must be mentioned in Datenschutz; use `youtube-nocookie.com` domain
 
 ## Change Log
+
+### 2026-10-10 (v1.25) — CRM-IoT open beta
+
+- CRM-IoT is live and free for testers. The home card becomes a **showcase**: badge "Open beta · free for testers", new EN/DE/RU copy built from the host manual (Today/Calendar/Bookings, door codes that keep working offline, guest card, cleaning & eco), 3 numbered steps (calendar → door code → guest & cleaner), a real screenshot of the host calendar in a browser frame. CTA "Become a tester — free" → registration on host.crm-iot.com, secondary → host guide.
+- Screenshot taken from the prod test account with test data; the sidebar (account e-mail) was hidden and the "E2E" prefix removed from unit names in the DOM only, nothing was changed on the server.
+- Project blocks: new optional `layout` ("side" | "showcase"), `showcaseUrl`, `steps[]` — editable in the block editor (layout select, frame address, add/remove steps) and auto-translated.
+- `runHomeMigrations` now runs a list of migrations in order and writes one revision; new migration `v1.25-crm-iot-beta` (`applyCrmBetaV125`). The dry-run script applies both.
+- The rental price is not shown on the site: the Vermietung plan is not in the public `/api/plans` catalog yet.
 
 ### 2026-10-10 (v1.24) — showcase refresh after the site audit
 

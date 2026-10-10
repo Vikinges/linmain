@@ -22,6 +22,7 @@ import type {
 
 const MIGRATIONS_KEY = "homeMigrations"
 const SHOWCASE_V124 = "v1.24-showcase"
+const CRM_BETA_V125 = "v1.25-crm-iot-beta"
 
 const CONTACT_EMAIL = "vladimir@linart.club"
 
@@ -58,6 +59,73 @@ export const SHOWCASE_COPY = {
   },
   iotApp: L("iOS app", "iOS-App", "iOS-приложение"),
   crmRequest: L("Request a smart lock", "Smart Lock anfragen", "Запросить умный замок"),
+  crmIot: {
+    badge: L("Open beta · free for testers", "Offene Beta · kostenlos für Tester", "Открытая бета · бесплатно для тестеров"),
+    title: L(
+      "CRM-IoT — the host app for rentals",
+      "CRM-IoT — die Gastgeber-App für Vermietung",
+      "CRM-IoT — приложение хоста для аренды"
+    ),
+    description: L(
+      "<p>Bookings from Airbnb, Booking.com, Vrbo or Smoobu turn into a door code, a guest card and a cleaning task — automatically. For holiday flats, houses, rooms, campers, boats and saunas.</p>" +
+        "<ul><li><strong>Today · Calendar · Bookings</strong> — arrivals, departures and double bookings on one board</li>" +
+        "<li><strong>Door codes</strong> — written to the lock for exactly the stay; codes on the lock keep working without internet</li>" +
+        "<li><strong>Guest card</strong> — address, Wi-Fi and house rules in DE / EN / RU, no app to install</li>" +
+        "<li><strong>Cleaning &amp; energy</strong> — a task with its own code after every departure, heating back to eco</li></ul>" +
+        "<p>No commission, guest money never flows through us, hosted in Germany. Testers use it for free during the beta.</p>",
+      "<p>Buchungen aus Airbnb, Booking.com, Vrbo oder Smoobu werden automatisch zu Türcode, Gast-Karte und Reinigungsauftrag. Für Ferienwohnungen, Häuser, Zimmer, Wohnmobile, Boote und Saunen.</p>" +
+        "<ul><li><strong>Heute · Kalender · Buchungen</strong> — Anreisen, Abreisen und Doppelbuchungen auf einen Blick</li>" +
+        "<li><strong>Türcodes</strong> — genau für den Aufenthalt aufs Schloss geschrieben; Codes auf dem Schloss funktionieren auch ohne Internet</li>" +
+        "<li><strong>Gast-Karte</strong> — Adresse, WLAN und Hausregeln auf DE / EN / RU, ohne App-Installation</li>" +
+        "<li><strong>Reinigung &amp; Energie</strong> — nach jeder Abreise ein Auftrag mit eigenem Code, Heizung zurück auf Eco</li></ul>" +
+        "<p>Keine Provision, Gästegeld fließt nie über uns, gehostet in Deutschland. Tester nutzen es während der Beta kostenlos.</p>",
+      "<p>Бронирования из Airbnb, Booking.com, Vrbo или Smoobu сами превращаются в код двери, карточку гостя и задачу на уборку. Для апартаментов, домов, комнат, автодомов, лодок и саун.</p>" +
+        "<ul><li><strong>Сегодня · Календарь · Брони</strong> — заезды, выезды и двойные брони на одной доске</li>" +
+        "<li><strong>Коды двери</strong> — записываются в замок ровно на срок проживания; записанные коды работают и без интернета</li>" +
+        "<li><strong>Карточка гостя</strong> — адрес, Wi-Fi и правила дома на DE / EN / RU, без установки приложения</li>" +
+        "<li><strong>Уборка и энергия</strong> — после каждого выезда задача со своим кодом, отопление обратно в эко</li></ul>" +
+        "<p>Без комиссии, деньги гостей никогда не идут через нас, хостинг в Германии. Тестеры пользуются бесплатно на время беты.</p>"
+    ),
+    steps: [
+      {
+        title: L("Connect your calendar", "Kalender verbinden", "Подключите календарь"),
+        text: L(
+          "iCal from Airbnb, Booking.com or Vrbo — or Smoobu. Or add bookings by hand.",
+          "iCal aus Airbnb, Booking.com oder Vrbo — oder Smoobu. Oder Buchungen selbst eintragen.",
+          "iCal из Airbnb, Booking.com или Vrbo — или Smoobu. Либо вносите брони вручную."
+        ),
+      },
+      {
+        title: L("The door code writes itself", "Der Türcode schreibt sich selbst", "Код двери записывается сам"),
+        text: L(
+          "Valid from check-in to check-out, written to the lock through our LockHub.",
+          "Gültig von Check-in bis Check-out, über unseren LockHub aufs Schloss geschrieben.",
+          "Действует от заезда до выезда, записывается в замок через наш LockHub."
+        ),
+      },
+      {
+        title: L("Guest and cleaner are ready", "Gast und Reinigung sind bereit", "Гость и уборка готовы"),
+        text: L(
+          "Guest card link and message templates, a cleaning task with its own code after departure.",
+          "Link zur Gast-Karte und Nachrichtenvorlagen, nach der Abreise ein Reinigungsauftrag mit eigenem Code.",
+          "Ссылка на карточку гостя и шаблоны сообщений, после выезда — задача на уборку со своим кодом."
+        ),
+      },
+    ],
+    linkLabel: L("Become a tester — free", "Kostenlos testen", "Стать тестером бесплатно"),
+    linkUrl: "https://host.crm-iot.com/?register=1",
+    guideLabel: L("Host guide (DE)", "Anleitung für Gastgeber", "Инструкция для хоста (DE)"),
+    guideUrl: "https://host.crm-iot.com/manuals/app/rentals-host.html",
+    imageUrl: "/assets/crm-iot-host-calendar.jpeg",
+    imageAlt: L(
+      "Host calendar in CRM-IoT: properties, bookings by channel",
+      "Gastgeber-Kalender in CRM-IoT: Unterkünfte, Buchungen nach Kanal",
+      "Календарь хоста в CRM-IoT: объекты и брони по каналам"
+    ),
+    imageWidth: 2600,
+    imageHeight: 970,
+    showcaseUrl: "host.crm-iot.com/app/rentals/calendar",
+  },
   cloudRequest: L("Request an invite", "Einladung anfragen", "Запросить приглашение"),
   cloudSignIn: L("Sign in", "Anmelden", "Войти"),
   coldart: {
@@ -240,6 +308,24 @@ export const buildLinartIdItem = (): PortfolioBlock["data"]["items"][number] => 
   linkLabel: SHOWCASE_COPY.linartId.linkLabel,
   linkUrl: SHOWCASE_COPY.linartId.linkUrl,
 })
+
+/** The CRM-IoT rentals block in its v1.25 "showcase" form (open beta, free for testers). */
+export const buildCrmIotData = (): ProjectBlock["data"] => {
+  const c = SHOWCASE_COPY.crmIot
+  return {
+    title: c.title,
+    description: c.description,
+    image: { url: c.imageUrl, alt: c.imageAlt, width: c.imageWidth, height: c.imageHeight },
+    linkLabel: c.linkLabel,
+    linkUrl: c.linkUrl,
+    align: "left",
+    badge: { label: c.badge, tone: "pilot" },
+    secondaryLink: { label: c.guideLabel, url: c.guideUrl },
+    layout: "showcase",
+    showcaseUrl: c.showcaseUrl,
+    steps: c.steps.map((s) => ({ title: s.title, text: s.text })),
+  }
+}
 
 export const buildColdartBlock = (): ProjectBlock => ({
   id: "coldart",
@@ -507,14 +593,35 @@ export function applyShowcaseV124(blocks: PageBlock[], pillarsHtml: LocalizedHtm
   return { blocks: next, changed }
 }
 
+/**
+ * v1.25: CRM-IoT is live and open to testers for free. Replaces the "in development" card with the showcase
+ * layout (steps + real host-calendar screenshot). Only touches the block while it is still in its
+ * "in development" state (tone dev, or no badge with the old 🚧 text), so an owner's own edit is kept.
+ */
+export function applyCrmBetaV125(blocks: PageBlock[]): { blocks: PageBlock[]; changed: boolean } {
+  let changed = false
+  const next = blocks.map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  for (const block of next) {
+    if (block.type !== "project") continue
+    const isCrm = block.id === "crm-iot" || /CRM-IoT/i.test(block.data.title?.en || "")
+    if (!isCrm) continue
+    const tone = block.data.badge?.tone
+    const looksUntouched = tone === "dev" || (!block.data.badge && /🚧|In Development/u.test(block.data.description?.en || ""))
+    if (!looksUntouched) continue
+    block.data = { ...block.data, ...buildCrmIotData() }
+    changed = true
+  }
+  return { blocks: next, changed }
+}
+
 async function readApplied(): Promise<string[]> {
   const row = await prisma.siteConfig.findUnique({ where: { key: MIGRATIONS_KEY } })
   const value = row?.value as { applied?: unknown } | null
   return Array.isArray(value?.applied) ? (value!.applied as string[]) : []
 }
 
-async function markApplied(applied: string[], name: string) {
-  const nextApplied = Array.from(new Set([...applied, name]))
+async function markAllApplied(applied: string[], names: string[]) {
+  const nextApplied = Array.from(new Set([...applied, ...names]))
   await prisma.siteConfig.upsert({
     where: { key: MIGRATIONS_KEY },
     update: { value: { applied: nextApplied } },
@@ -527,8 +634,14 @@ async function markApplied(applied: string[], name: string) {
  * read when nothing is pending.
  */
 export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
+  const migrations: Array<{ name: string; apply: (blocks: PageBlock[]) => { blocks: PageBlock[]; changed: boolean } }> = [
+    { name: SHOWCASE_V124, apply: (blocks) => applyShowcaseV124(blocks, pillarsHtml) },
+    { name: CRM_BETA_V125, apply: applyCrmBetaV125 },
+  ]
+
   const applied = await readApplied()
-  if (applied.includes(SHOWCASE_V124)) return
+  const pending = migrations.filter((m) => !applied.includes(m.name))
+  if (pending.length === 0) return
 
   const page = await prisma.page.findUnique({
     where: { slug: "home" },
@@ -538,11 +651,17 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
 
   const source = page.publishedRevision || page.draftRevision
   if (!source || !Array.isArray(source.blocks)) {
-    await markApplied(applied, SHOWCASE_V124)
+    await markAllApplied(applied, pending.map((m) => m.name))
     return
   }
 
-  const { blocks, changed } = applyShowcaseV124(source.blocks as PageBlock[], pillarsHtml)
+  let blocks = source.blocks as PageBlock[]
+  let changed = false
+  for (const migration of pending) {
+    const result = migration.apply(blocks)
+    blocks = result.blocks
+    changed = changed || result.changed
+  }
   if (changed) {
     const revision = await prisma.pageRevision.create({
       data: { pageId: page.id, title: source.title || page.title, blocks },
@@ -553,5 +672,5 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
       data: { publishedRevisionId: revision.id, draftRevisionId: revision.id },
     })
   }
-  await markApplied(applied, SHOWCASE_V124)
+  await markAllApplied(applied, pending.map((m) => m.name))
 }

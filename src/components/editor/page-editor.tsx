@@ -712,6 +712,14 @@ export function PageEditor({ pageId }: PageEditorProps) {
             secondaryLink: block.data.secondaryLink
               ? { ...block.data.secondaryLink, label: await translateLocalized(block.data.secondaryLink.label, "text") }
               : undefined,
+            steps: block.data.steps
+              ? await Promise.all(
+                  block.data.steps.map(async (step) => ({
+                    title: await translateLocalized(step.title, "text"),
+                    text: await translateLocalized(step.text, "text"),
+                  }))
+                )
+              : undefined,
           },
         }
       case "cta":
@@ -1444,6 +1452,94 @@ function BlockFields({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Layout</Label>
+              <Select
+                value={block.data.layout ?? "side"}
+                onValueChange={(value) =>
+                  updateData({ ...block.data, layout: value as "side" | "showcase" })
+                }
+              >
+                <SelectTrigger className="bg-white/5 border-white/10">
+                  <SelectValue placeholder="Side" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="side">Side — image next to the text</SelectItem>
+                  <SelectItem value="showcase">Showcase — steps + wide screenshot in a browser frame</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Browser frame address (showcase)</Label>
+              <Input
+                value={block.data.showcaseUrl ?? ""}
+                placeholder="host.crm-iot.com/app/rentals"
+                onChange={(event) => updateData({ ...block.data, showcaseUrl: event.target.value })}
+                className="bg-white/5 border-white/10"
+              />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm text-gray-300">How-it-works steps (showcase)</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  updateData({
+                    ...block.data,
+                    steps: [
+                      ...(block.data.steps ?? []),
+                      { title: { en: "", de: "", ru: "" }, text: { en: "", de: "", ru: "" } },
+                    ],
+                  })
+                }
+              >
+                + Step
+              </Button>
+            </div>
+            {(block.data.steps ?? []).map((step, index) => (
+              <div key={index} className="grid gap-3 rounded-lg border border-white/10 p-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
+                <LocalizedInput
+                  label={`Step ${index + 1} — title`}
+                  value={step.title}
+                  language={language}
+                  onChange={(value) =>
+                    updateData({
+                      ...block.data,
+                      steps: (block.data.steps ?? []).map((s, i) => (i === index ? { ...s, title: value } : s)),
+                    })
+                  }
+                />
+                <LocalizedInput
+                  label="Text"
+                  value={step.text}
+                  language={language}
+                  onChange={(value) =>
+                    updateData({
+                      ...block.data,
+                      steps: (block.data.steps ?? []).map((s, i) => (i === index ? { ...s, text: value } : s)),
+                    })
+                  }
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    updateData({
+                      ...block.data,
+                      steps: (block.data.steps ?? []).filter((_, i) => i !== index),
+                    })
+                  }
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
           </div>
           <div className="grid gap-4 md:grid-cols-[200px_1fr]">
             <Label className="text-sm text-gray-300">Image Align</Label>

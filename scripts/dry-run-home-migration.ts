@@ -1,5 +1,5 @@
 /**
- * Dry run of the v1.24 home-page migration against a saved blocks JSON.
+ * Dry run of the home-page migrations (v1.24 showcase, then v1.25 CRM-IoT beta) against a saved blocks JSON.
  *
  *   npx tsx scripts/dry-run-home-migration.ts <blocks.json> [out.json]
  *
@@ -7,7 +7,7 @@
  * blocks to out.json when given. Does not touch the database.
  */
 import { readFileSync, writeFileSync } from "node:fs"
-import { applyShowcaseV124 } from "../src/lib/editor/migrations"
+import { applyCrmBetaV125, applyShowcaseV124 } from "../src/lib/editor/migrations"
 import type { PageBlock } from "../src/lib/editor/types"
 
 const [, , input, output] = process.argv
@@ -25,13 +25,17 @@ const pillars = {
   ru: "<ul><li><strong>Бизнес</strong> — 20+ лет управления компаниями.</li></ul>",
 }
 
-const { blocks: next, changed } = applyShowcaseV124(blocks, pillars)
+const first = applyShowcaseV124(blocks, pillars)
+const second = applyCrmBetaV125(first.blocks)
+const next = second.blocks
+const changed = first.changed || second.changed
+console.log("v1.24 changed:", first.changed, "| v1.25 changed:", second.changed)
 
 console.log("changed:", changed)
 for (const b of next) {
   let extra = ""
   if (b.type === "project") {
-    extra = ` badge=${b.data.badge?.tone ?? "-"} url=${b.data.linkUrl} second=${b.data.secondaryLink?.url ?? "-"}`
+    extra = ` badge=${b.data.badge?.tone ?? "-"} layout=${b.data.layout ?? "side"} steps=${b.data.steps?.length ?? 0} url=${b.data.linkUrl} second=${b.data.secondaryLink?.url ?? "-"}`
   } else if (b.type === "portfolio") {
     extra = ` title="${b.data.title.en}" items=[${b.data.items.map((i) => `${i.id}(${i.kind}${i.imageUrl ? ",img" : ""})`).join(", ")}]`
   } else if (b.type === "hero") {

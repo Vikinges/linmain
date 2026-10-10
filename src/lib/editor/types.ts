@@ -145,6 +145,18 @@ export type ProjectBlock = {
       label: LocalizedString
       url: string
     }
+    /**
+     * "side" (default): image to the right of the text.
+     * "showcase": text + numbered steps on top, the image below in a browser-window frame (for wide product screenshots).
+     */
+    layout?: "side" | "showcase"
+    /** Address shown in the browser-window frame of the showcase layout, e.g. "host.crm-iot.com/app/rentals". */
+    showcaseUrl?: string
+    /** "How it works" steps shown next to the text in the showcase layout. */
+    steps?: Array<{
+      title: LocalizedString
+      text: LocalizedString
+    }>
   }
 }
 
