@@ -8,7 +8,6 @@ import {
   Lock,
   Mail,
   Phone,
-  QrCode,
   Server,
   Sparkles,
   Linkedin,
@@ -23,6 +22,19 @@ import { defaultStyles, type TextStyles } from "@/lib/content-config"
 import { ChatBox } from "@/components/chat/chat-box"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Reveal, RevealItem } from "@/components/editor/reveal"
+import type { ProjectBadgeTone } from "@/lib/editor/types"
+
+/** Status pill styles for project blocks. Legacy blocks without a badge keep the green "Live". */
+const BADGE_TONES: Record<Exclude<ProjectBadgeTone, "none">, { ring: string; dot: string }> = {
+  live: { ring: "border-green-500/30 bg-green-500/10 text-green-400", dot: "bg-green-400 animate-pulse" },
+  pilot: { ring: "border-sky-500/30 bg-sky-500/10 text-sky-300", dot: "bg-sky-400" },
+  dev: { ring: "border-orange-500/40 bg-orange-500/10 text-orange-300", dot: "bg-orange-400 animate-pulse" },
+  soon: { ring: "border-violet-500/30 bg-violet-500/10 text-violet-300", dot: "bg-violet-400" },
+}
+
+/** Anchor used by the hero/nav "View Projects" buttons: the first product block gets id="projects". */
+const PROJECTS_ANCHOR = "projects"
 
 const getYoutubeEmbedUrl = (url: string) => {
   const trimmed = url.trim()
@@ -74,6 +86,14 @@ type PageRendererProps = {
 export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
   const palette = styles || defaultStyles
   const translations = getTranslations(language)
+  const firstProductBlock = blocks.find(
+    (block) =>
+      block.type === "project" ||
+      (block.type === "portfolio" && Array.isArray(block.data.items) && block.data.items.length > 0)
+  )
+  const anchorFor = (block: PageBlock) =>
+    block === firstProductBlock ? PROJECTS_ANCHOR : block.id
+
   return (
     <div className="space-y-24">
       {blocks.map((block) => {
@@ -88,12 +108,14 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const alt = getLocalizedValue(block.data.image.alt, language)
 
             return (
-              <section
+              <Reveal
                 key={block.id}
+                id={block.id}
                 className="relative z-10 flex items-center justify-center px-4 py-20"
               >
                 <div className="container mx-auto max-w-6xl">
                   <div className="text-center space-y-8">
+                    <RevealItem index={0}>
                     <div
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-sm"
                       style={{
@@ -105,6 +127,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                       <Sparkles className="w-4 h-4" />
                       <span className="text-sm font-medium">{badge}</span>
                     </div>
+                    </RevealItem>
 
                     {block.data.image.url && (
                       <div className="flex justify-center">
@@ -120,7 +143,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                       </div>
                     )}
 
-                    <div className="space-y-4">
+                    <RevealItem index={1} className="space-y-4">
                       <h1 className="text-5xl md:text-7xl font-bold">
                         <span
                           className="block mb-2"
@@ -152,9 +175,9 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         style={{ color: palette.description.textColor }}
                         dangerouslySetInnerHTML={{ __html: description }}
                       />
-                    </div>
+                    </RevealItem>
 
-                    <div className="flex flex-wrap items-center justify-center gap-4">
+                    <RevealItem index={2} className="flex flex-wrap items-center justify-center gap-4">
                       {block.data.primaryCta.url && (
                         <Button
                           size="lg"
@@ -180,22 +203,24 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                           </a>
                         </Button>
                       )}
-                    </div>
+                    </RevealItem>
                   </div>
                 </div>
-              </section>
+              </Reveal>
             )
           }
           case "portfolio": {
+            // An empty section (title + subtitle, no cards) only adds a dead heading — skip it.
+            if (!Array.isArray(block.data.items) || block.data.items.length === 0) return null
             const title = getLocalizedValue(block.data.title, language)
             const subtitle = getLocalizedValue(block.data.subtitle, language)
             const placeholders = translations.portfolio.placeholders
             const cardBackground =
               palette.pillars.backgroundColor || "rgba(17, 24, 39, 0.5)"
             return (
-              <section
+              <Reveal
                 key={block.id}
-                id={block.id}
+                id={anchorFor(block)}
                 className="relative z-10 px-4 scroll-mt-24"
               >
                 <div className="container mx-auto max-w-6xl space-y-10">
@@ -216,7 +241,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     )}
                   </div>
                   <div className="space-y-6">
-                    {block.data.items.map((item) => {
+                    {block.data.items.map((item, itemIndex) => {
                       const itemTitle = getLocalizedValue(item.title, language)
                       const itemDescription = getLocalizedValue(item.description, language)
                       const itemLabel = getLocalizedValue(item.linkLabel, language)
@@ -231,18 +256,27 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                               ? placeholders.lockedHint
                               : placeholders.mediaMissing || placeholders.mapMissing
                       return (
+                        <RevealItem key={item.id} index={Math.min(itemIndex, 4)}>
                         <Card
-                          key={item.id}
-                          className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2"
+                          className="group border-gray-700/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-black/40"
                           style={{ backgroundColor: cardBackground }}
                         >
                           <CardContent className="p-6">
                             <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
-                              <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40" style={{ height: `${item.imageHeight || 300}px` }}>
+                              <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/40" style={{ height: `${item.imageHeight || 300}px` }}>
                                 {item.kind === "locked" ? (
-                                  <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
-                                    <Lock className="h-8 w-8 text-gray-200" />
-                                    <p className="text-sm">{placeholderText}</p>
+                                  <div className="relative flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
+                                    {item.imageUrl && (
+                                      <Image
+                                        src={item.imageUrl}
+                                        alt={itemTitle}
+                                        fill
+                                        sizes="(min-width: 768px) 55vw, 100vw"
+                                        className="object-cover blur-sm scale-105 opacity-60"
+                                      />
+                                    )}
+                                    <Lock className="relative h-8 w-8 text-gray-200" />
+                                    <p className="relative text-sm">{placeholderText}</p>
                                   </div>
                                 ) : embedUrl ? (
                                   <div className="relative h-full w-full overflow-hidden">
@@ -267,8 +301,13 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                     alt={itemTitle}
                                     width={item.imageWidth || 1200}
                                     height={item.imageHeight || 800}
-                                    className="h-full w-full object-cover"
+                                    sizes="(min-width: 768px) 55vw, 100vw"
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                   />
+                                ) : item.kind === "image" ? (
+                                  <div className="flex h-full items-center justify-center bg-gradient-to-br from-sky-900/40 via-gray-900/60 to-violet-900/40">
+                                    <Sparkles className="h-16 w-16 text-sky-300/60" />
+                                  </div>
                                 ) : (
                                   <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
                                     <Server className="h-8 w-8 text-gray-200" />
@@ -295,7 +334,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                   </h3>
                                 </div>
                                 <div
-                                  className="leading-relaxed"
+                                  className="leading-relaxed space-y-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-white [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-white [&_ul]:list-disc [&_ul]:pl-5 [&_li]:my-0.5 [&_a]:text-sky-300 hover:[&_a]:underline"
                                   style={{ color: palette.pillars.descriptionColor }}
                                   dangerouslySetInnerHTML={{ __html: itemDescription }}
                                 />
@@ -317,11 +356,12 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                             </div>
                           </CardContent>
                         </Card>
+                        </RevealItem>
                       )
                     })}
                   </div>
                 </div>
-              </section>
+              </Reveal>
             )
           }
           case "project": {
@@ -329,59 +369,93 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const description = getLocalizedValue(block.data.description, language)
             const linkLabel = getLocalizedValue(block.data.linkLabel, language)
             const alt = getLocalizedValue(block.data.image.alt, language)
+            const badgeTone: ProjectBadgeTone = block.data.badge?.tone ?? "live"
+            const badgeLabel = block.data.badge
+              ? getLocalizedValue(block.data.badge.label, language)
+              : "Live"
+            const badgeStyle = badgeTone === "none" ? null : BADGE_TONES[badgeTone]
+            const secondaryLabel = block.data.secondaryLink
+              ? getLocalizedValue(block.data.secondaryLink.label, language)
+              : ""
+            const secondaryUrl = block.data.secondaryLink?.url?.trim() || ""
 
             return (
-              <section key={block.id} className="px-4">
+              <Reveal key={block.id} id={anchorFor(block)} className="px-4 scroll-mt-24">
                 <div className="mx-auto max-w-6xl">
-                  <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-gray-900 via-gray-800/80 to-gray-900 p-8 md:p-12 lg:p-16">
+                  <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-gray-900 via-gray-800/80 to-gray-900 p-8 md:p-12 lg:p-16 transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-black/50">
                     {/* Glow decorations */}
                     <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
                     <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-purple-600/10 blur-3xl" />
 
                     <div className="relative grid gap-10 lg:grid-cols-[1fr_auto] items-start">
                       <div className="space-y-6 max-w-2xl">
-                        {/* Live badge */}
-                        <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-sm font-medium text-green-400">
-                          <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                          Live
-                        </div>
+                        {/* Status badge (configurable per block; legacy blocks show "Live") */}
+                        {badgeStyle && badgeLabel && (
+                          <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium ${badgeStyle.ring}`}>
+                            <span className={`h-2 w-2 rounded-full ${badgeStyle.dot}`} />
+                            {badgeLabel}
+                          </div>
+                        )}
 
                         <h2 className="text-4xl md:text-5xl font-bold leading-tight text-white">
                           {title}
                         </h2>
 
                         <div
-                          className="prose prose-invert prose-sm md:prose-base max-w-none leading-relaxed"
+                          className="prose prose-invert prose-sm md:prose-base max-w-none leading-relaxed space-y-3 [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-white [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_a]:text-sky-300 [&_a]:underline-offset-2 hover:[&_a]:underline"
                           style={{ color: palette.pillars.descriptionColor }}
                           dangerouslySetInnerHTML={{ __html: description }}
                         />
 
-                        {block.data.linkUrl && (
-                          <div className="pt-2">
-                            <Button
-                              asChild
-                              size="lg"
-                              variant="outline"
-                              className="border-gray-500/60 text-gray-100 hover:bg-gray-700/50 font-semibold"
-                            >
-                              <a href={block.data.linkUrl} target="_blank" rel="noopener noreferrer">
-                                {linkLabel}
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                              </a>
-                            </Button>
+                        {(block.data.linkUrl || secondaryUrl) && (
+                          <div className="flex flex-wrap gap-3 pt-2">
+                            {block.data.linkUrl && (
+                              <Button
+                                asChild
+                                size="lg"
+                                variant="outline"
+                                className="border-gray-500/60 text-gray-100 hover:bg-gray-700/50 font-semibold"
+                              >
+                                <a href={block.data.linkUrl} target="_blank" rel="noopener noreferrer">
+                                  {linkLabel}
+                                  <ArrowRight className="ml-2 h-5 w-5" />
+                                </a>
+                              </Button>
+                            )}
+                            {secondaryUrl && secondaryLabel && (
+                              <Button
+                                asChild
+                                size="lg"
+                                variant="ghost"
+                                className="text-gray-300 hover:bg-gray-700/40 hover:text-white font-semibold"
+                              >
+                                <a href={secondaryUrl} target="_blank" rel="noopener noreferrer">
+                                  {secondaryLabel}
+                                  <ArrowRight className="ml-2 h-4 w-4" />
+                                </a>
+                              </Button>
+                            )}
                           </div>
                         )}
                       </div>
 
-                      {/* Right: image or server icon */}
-                      <div className="hidden lg:flex items-center justify-center self-center">
+                      {/* Right (desktop) / top (mobile): image, or a server icon on desktop only */}
+                      <div
+                        className={`flex items-center justify-center lg:self-center ${
+                          block.data.image.url ? "order-first lg:order-none" : "hidden lg:flex"
+                        }`}
+                      >
                         {block.data.image.url ? (
-                          <div className="overflow-hidden rounded-2xl" style={{ width: `${block.data.image.width || 256}px`, height: `${block.data.image.height || 256}px` }}>
+                          <div
+                            className="overflow-hidden rounded-2xl max-w-full transition-transform duration-500 group-hover:scale-[1.02]"
+                            style={{ width: `${block.data.image.width || 256}px`, height: `${block.data.image.height || 256}px` }}
+                          >
                             <Image
                               src={block.data.image.url}
                               alt={alt || title}
                               width={block.data.image.width || 400}
                               height={block.data.image.height || 400}
+                              sizes="(min-width: 1024px) 420px, 90vw"
                               className="h-full w-full object-cover"
                             />
                           </div>
@@ -394,7 +468,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     </div>
                   </div>
                 </div>
-              </section>
+              </Reveal>
             )
           }
           case "richText": {
@@ -406,7 +480,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                   <Card className="glass-card border-white/10">
                     <CardContent className="pt-8 pb-8 px-8 md:px-12">
                       <div
-                        className="prose prose-invert prose-sm md:prose-base max-w-none"
+                        className="prose prose-invert prose-sm md:prose-base max-w-none text-gray-300 space-y-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-white [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_a]:text-sky-300 hover:[&_a]:underline"
                         dangerouslySetInnerHTML={{ __html: html }}
                       />
                     </CardContent>
@@ -509,7 +583,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const description = getLocalizedValue(block.data.description, language)
             const buttonLabel = getLocalizedValue(block.data.buttonLabel, language)
             return (
-              <section key={block.id} className="px-4">
+              <Reveal key={block.id} id={block.id} className="px-4 scroll-mt-24">
                 <div className="mx-auto max-w-3xl">
                   <Card
                     className="glass-card border-white/20 overflow-hidden"
@@ -549,7 +623,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     </CardContent>
                   </Card>
                 </div>
-              </section>
+              </Reveal>
             )
           }
           case "faq": {
@@ -582,7 +656,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const description = getLocalizedValue(block.data.description, language)
             const address = getLocalizedValue(block.data.address, language)
             return (
-              <section key={block.id} id="contact" className="px-4">
+              <Reveal key={block.id} id="contact" className="px-4 scroll-mt-24">
                 <div className="mx-auto max-w-4xl space-y-6 text-center">
                   {title && <h3 className="text-3xl font-bold text-white">{title}</h3>}
                   {description && <p className="text-gray-300">{description}</p>}
@@ -617,7 +691,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     )}
                   </div>
                 </div>
-              </section>
+              </Reveal>
             )
           }
           case "chat": {

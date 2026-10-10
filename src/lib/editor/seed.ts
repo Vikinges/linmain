@@ -2,7 +2,15 @@ import { prisma } from "@/lib/db"
 import { defaultContent, type HomepageContent } from "@/lib/content-config"
 import { getTranslations } from "@/lib/translations"
 import type { Language } from "@/lib/i18n-config"
-import { emptyLocalizedString, type PageBlock, type PortfolioBlock } from "@/lib/editor/types"
+import { emptyLocalizedString, type LocalizedHtml, type PageBlock } from "@/lib/editor/types"
+import {
+  SHOWCASE_COPY,
+  buildAppItems,
+  buildColdartBlock,
+  buildKidsLabItems,
+  buildLinartIdItem,
+  runHomeMigrations,
+} from "@/lib/editor/migrations"
 
 const LANGS: Language[] = ["en", "de", "ru"]
 
@@ -187,6 +195,18 @@ async function ensureStaticPage(slug: string, title: string, html: string) {
   })
 }
 
+const buildPillarsHtml = (): LocalizedHtml => {
+  const result = emptyLocalized()
+  for (const lang of LANGS) {
+    const p = getTranslations(lang).pillars
+    result[lang] =
+      `<ul><li><strong>${p.business.title}</strong> — ${p.business.description}</li>` +
+      `<li><strong>${p.content.title}</strong> — ${p.content.description}</li>` +
+      `<li><strong>${p.tech.title}</strong> — ${p.tech.description}</li></ul>`
+  }
+  return result
+}
+
 export async function ensureDefaultPages() {
   const count = await prisma.page.count()
 
@@ -216,19 +236,6 @@ export async function ensureDefaultPages() {
     }),
   }
 
-  const ctaText = {
-    primaryButton: buildLocalized((lang) => {
-      const overrides = content.locales?.[lang]?.cta?.primaryButton
-      const legacy = lang === "en" ? content.cta.primaryButton : undefined
-      return pickText(overrides, pickText(legacy, getTranslations(lang).cta.primary))
-    }),
-    secondaryButton: buildLocalized((lang) => {
-      const overrides = content.locales?.[lang]?.cta?.secondaryButton
-      const legacy = lang === "en" ? content.cta.secondaryButton : undefined
-      return pickText(overrides, pickText(legacy, getTranslations(lang).cta.secondary))
-    }),
-  }
-
   const calloutText = {
     title: buildLocalized((lang) => {
       const overrides = content.locales?.[lang]?.callout?.title
@@ -240,11 +247,6 @@ export async function ensureDefaultPages() {
       const legacy = lang === "en" ? content.callout.description : undefined
       return pickText(overrides, pickText(legacy, getTranslations(lang).callout.description))
     }),
-  }
-
-  const chatText = {
-    title: buildLocalized((lang) => getTranslations(lang).chat.title),
-    description: buildLocalized((lang) => getTranslations(lang).chat.description),
   }
 
   const portfolioText = {
@@ -341,12 +343,12 @@ export async function ensureDefaultPages() {
       id: "hero",
       type: "hero",
       data: {
-        badge: heroText.badge,
-        title: heroText.name,
-        subtitle: heroText.subtitle,
-        description: heroText.description,
-        primaryCta: { label: ctaText.primaryButton, url: "#projects" },
-        secondaryCta: { label: ctaText.secondaryButton, url: "#contact" },
+        badge: SHOWCASE_COPY.hero.badge,
+        title: SHOWCASE_COPY.hero.title,
+        subtitle: SHOWCASE_COPY.hero.subtitle,
+        description: SHOWCASE_COPY.hero.description,
+        primaryCta: { label: SHOWCASE_COPY.hero.primaryCta, url: "#projects" },
+        secondaryCta: { label: SHOWCASE_COPY.hero.secondaryCta, url: "#contact" },
         image: {
           url: content.media?.heroImageUrl || "",
           alt: {
@@ -366,8 +368,10 @@ export async function ensureDefaultPages() {
         description: portfolioText.hostLinart.description,
         image: { url: "", alt: emptyLocalized() },
         linkLabel: portfolioText.hostLinart.linkLabel,
-        linkUrl: "https://host.linart.club/",
+        linkUrl: "https://host.crm-iot.com/",
         align: "left",
+        badge: { label: SHOWCASE_COPY.badges.live, tone: "live" },
+        secondaryLink: { label: SHOWCASE_COPY.iotApp, url: SHOWCASE_COPY.appSmartHome.linkUrl },
       },
     },
     // 3. CRM-IoT — second, same style as IoT server
@@ -379,8 +383,10 @@ export async function ensureDefaultPages() {
         description: portfolioText.crmIot.description,
         image: { url: "", alt: emptyLocalized() },
         linkLabel: portfolioText.crmIot.linkLabel,
-        linkUrl: "mailto:info@linart.club?subject=Smart%20Lock%20Request",
+        linkUrl: "https://crm-iot.com/",
         align: "left",
+        badge: { label: SHOWCASE_COPY.badges.dev, tone: "dev" },
+        secondaryLink: { label: SHOWCASE_COPY.crmRequest, url: `mailto:${SHOWCASE_COPY.contact.email}?subject=Smart%20Lock%20Request` },
       },
     },
     // 4. Private cloud — same style as IoT server
@@ -391,13 +397,15 @@ export async function ensureDefaultPages() {
         title: portfolioText.cloud.title,
         description: portfolioText.cloud.description,
         image: { url: "", alt: emptyLocalized() },
-        linkLabel: buildLocalized((lang) =>
-          lang === "ru" ? "Запросить доступ" : lang === "de" ? "Zugang anfragen" : "Request Access"
-        ),
-        linkUrl: "mailto:info@linart.club?subject=Cloud%20Access%20Request",
+        linkLabel: SHOWCASE_COPY.cloudRequest,
+        linkUrl: `mailto:${SHOWCASE_COPY.contact.email}?subject=Private%20Cloud%20invite`,
         align: "left",
+        badge: { label: SHOWCASE_COPY.badges.live, tone: "live" },
+        secondaryLink: { label: SHOWCASE_COPY.cloudSignIn, url: "/login" },
       },
     },
+    // 5. ColdART — remote access & zero trust
+    buildColdartBlock(),
     // 6. Main portfolio — other projects
     {
       id: "portfolio",
@@ -408,13 +416,13 @@ export async function ensureDefaultPages() {
         items: [
           {
             id: "sensorhub",
-            kind: "video",
-            title: portfolioText.sensorHub.title,
-            description: portfolioText.sensorHub.description,
-            embedUrl: content.portfolio?.sensorHub?.videoUrl || "",
+            kind: "image",
+            title: SHOWCASE_COPY.smartHubStore.title,
+            description: SHOWCASE_COPY.smartHubStore.description,
+            embedUrl: "",
             imageUrl: "",
-            linkLabel: portfolioText.sensorHub.linkLabel,
-            linkUrl: content.portfolio?.sensorHub?.linkUrl || "",
+            linkLabel: SHOWCASE_COPY.smartHubStore.linkLabel,
+            linkUrl: content.portfolio?.sensorHub?.linkUrl || "https://shop.linart.club/en",
           },
           {
             id: "qr-generator",
@@ -430,6 +438,8 @@ export async function ensureDefaultPages() {
               content.portfolio?.qrGenerator?.linkUrl ||
               "https://qr.linart.club/",
           },
+          ...buildAppItems(),
+          buildLinartIdItem(),
           {
             id: "commercial",
             kind: "locked",
@@ -443,34 +453,26 @@ export async function ensureDefaultPages() {
         ],
       },
     },
-    // 7. Entertainment section — Minecraft map
+    // 7. Kids Lab — browser games built by the kids (free for everyone)
     {
       id: "entertainment",
       type: "portfolio",
       data: {
-        title: portfolioText.entertainment.title,
-        subtitle: portfolioText.entertainment.subtitle,
-        items: [
-          {
-            id: "minecraft",
-            kind: "map",
-            title: portfolioText.minecraft.title,
-            description: portfolioText.minecraft.description,
-            embedUrl: content.portfolio?.minecraft?.mapUrl || "",
-            imageUrl: "",
-            linkLabel: portfolioText.minecraft.linkLabel,
-            linkUrl: content.portfolio?.minecraft?.linkUrl || "",
-          },
-        ],
+        title: SHOWCASE_COPY.kidsLab.title,
+        subtitle: SHOWCASE_COPY.kidsLab.subtitle,
+        items: buildKidsLabItems(),
       },
     },
-    // 8. Community chat
+    // 8. About — the personal story that used to be the hero
     {
-      id: "chat",
-      type: "chat",
+      id: "about",
+      type: "richText",
       data: {
-        title: chatText.title,
-        description: chatText.description,
+        width: "narrow",
+        content: buildLocalized(
+          (lang) =>
+            `<h2>${SHOWCASE_COPY.about.title[lang]}</h2><p>${heroText.description[lang]}</p>${buildPillarsHtml()[lang]}`
+        ),
       },
     },
     // 9. Callout
@@ -480,7 +482,7 @@ export async function ensureDefaultPages() {
       data: {
         title: calloutText.title,
         description: calloutText.description,
-        buttonLabel: buildLocalized((lang) => getTranslations(lang).cta.primary),
+        buttonLabel: SHOWCASE_COPY.callout.buttonLabel,
         buttonUrl: "#contact",
       },
     },
@@ -491,9 +493,9 @@ export async function ensureDefaultPages() {
       data: {
         title: emptyLocalizedString(),
         description: emptyLocalizedString(),
-        email: "",
+        email: SHOWCASE_COPY.contact.email,
         phone: "",
-        address: emptyLocalizedString(),
+        address: SHOWCASE_COPY.contact.address,
       },
     },
   ]
@@ -542,130 +544,8 @@ export async function ensureDefaultPages() {
 
   await ensureStaticPage("impressum", "Impressum", IMPRESSUM_HTML)
   await ensureStaticPage("datenschutz", "Datenschutz", DATENSCHUTZ_HTML)
+
+  // One-off content fixes for an already-seeded live home page (see migrations.ts).
+  await runHomeMigrations(buildPillarsHtml())
 }
 
-const normalizeUrl = (value: string | undefined) =>
-  (value || "").trim().replace(/\/+$/, "")
-
-async function ensureHomeHasQrProject(
-  content: HomepageContent,
-  portfolioText: {
-    title: ReturnType<typeof buildLocalized>
-    subtitle: ReturnType<typeof buildLocalized>
-    minecraft: {
-      title: ReturnType<typeof buildLocalized>
-      description: ReturnType<typeof buildLocalized>
-      linkLabel: ReturnType<typeof buildLocalized>
-    }
-    sensorHub: {
-      title: ReturnType<typeof buildLocalized>
-      description: ReturnType<typeof buildLocalized>
-      linkLabel: ReturnType<typeof buildLocalized>
-    }
-    commercial: {
-      title: ReturnType<typeof buildLocalized>
-      description: ReturnType<typeof buildLocalized>
-      linkLabel: ReturnType<typeof buildLocalized>
-    }
-    qrGenerator: {
-      title: ReturnType<typeof buildLocalized>
-      description: ReturnType<typeof buildLocalized>
-      linkLabel: ReturnType<typeof buildLocalized>
-    }
-  }
-) {
-  const page = await prisma.page.findUnique({
-    where: { slug: "home" },
-    include: {
-      publishedRevision: true,
-      draftRevision: true,
-    },
-  })
-
-  if (!page) return
-
-  const sourceRevision = page.draftRevision || page.publishedRevision
-  if (!sourceRevision || !Array.isArray(sourceRevision.blocks)) return
-
-  const blocks = sourceRevision.blocks as PageBlock[]
-  const targetUrl = normalizeUrl(
-    content.portfolio?.qrGenerator?.linkUrl || "https://qr.linart.club/"
-  )
-  let nextBlocks = [...blocks]
-  let updated = false
-
-  nextBlocks = nextBlocks.filter((block) => {
-    if (block.type !== "project") return true
-    const link = normalizeUrl(block.data.linkUrl)
-    const isQr = block.id === "qr-highlight" || link === targetUrl
-    if (isQr) updated = true
-    return !isQr
-  })
-
-  const portfolioIndex = nextBlocks.findIndex((block) => block.type === "portfolio")
-  if (portfolioIndex >= 0) {
-    const portfolioBlock = nextBlocks[portfolioIndex] as PortfolioBlock
-    const items = Array.isArray(portfolioBlock.data.items) ? portfolioBlock.data.items : []
-    const alreadyExists = items.some((item) => {
-      if (item.id === "qr-generator") return true
-      const link = normalizeUrl(item.linkUrl)
-      return link === targetUrl
-    })
-
-    if (!alreadyExists) {
-      const nextItem = {
-        id: "qr-generator",
-        kind: "image" as const,
-        title: portfolioText.qrGenerator.title,
-        description: portfolioText.qrGenerator.description,
-        embedUrl: "",
-        imageUrl:
-          content.portfolio?.qrGenerator?.imageUrl ||
-          "/assets/qr-generator-cover.svg",
-        linkLabel: portfolioText.qrGenerator.linkLabel,
-        linkUrl:
-          content.portfolio?.qrGenerator?.linkUrl ||
-          "https://qr.linart.club/",
-      }
-
-      const nextBlock: PortfolioBlock = {
-        ...portfolioBlock,
-        data: {
-          ...portfolioBlock.data,
-          items: [...items, nextItem],
-        },
-      }
-
-      nextBlocks = nextBlocks.map((block, index) =>
-        index === portfolioIndex ? nextBlock : block
-      )
-      updated = true
-    }
-  }
-
-  if (!updated) return
-
-  const revision = await prisma.pageRevision.create({
-    data: {
-      pageId: page.id,
-      title: sourceRevision.title || page.title,
-      blocks: nextBlocks,
-    },
-  })
-
-  const update: {
-    draftRevisionId: string
-    publishedRevisionId?: string | null
-  } = {
-    draftRevisionId: revision.id,
-  }
-
-  if (!page.draftRevisionId || page.draftRevisionId === page.publishedRevisionId) {
-    update.publishedRevisionId = revision.id
-  }
-
-  await prisma.page.update({
-    where: { id: page.id },
-    data: update,
-  })
-}

@@ -378,7 +378,7 @@ export const defaultContent: HomepageContent = {
         getStarted: "Get Started"
     },
     footer: {
-        copyright: "(c) 2025 Vladimir Linartas. All rights reserved."
+        copyright: "© 2026 Vladimir Linartas. All rights reserved."
     }
 }
 
@@ -414,7 +414,7 @@ export const defaultStyles: TextStyles = {
         getStarted: "Get Started"
     },
     footer: {
-        copyright: "(c) 2025 Vladimir Linartas. All rights reserved."
+        copyright: "© 2026 Vladimir Linartas. All rights reserved."
     }
 }
 

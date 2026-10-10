@@ -32,8 +32,7 @@ export function LanguageSwitcher({ currentLanguage, onLanguageChange }: Language
                     className="gap-2 text-gray-300 hover:text-white hover:bg-white/10"
                 >
                     <Globe className="h-4 w-4" />
-                    <span className="hidden sm:inline">{currentLang?.flag} {currentLang?.code.toUpperCase()}</span>
-                    <span className="sm:hidden">{currentLang?.flag}</span>
+                    <span className="font-medium tracking-wide">{currentLang?.code.toUpperCase()}</span>
                     <ChevronDown className="h-3 w-3" />
                 </Button>
             </DropdownMenuTrigger>
@@ -44,7 +43,7 @@ export function LanguageSwitcher({ currentLanguage, onLanguageChange }: Language
                         onClick={() => handleLanguageChange(lang.code)}
                         className="cursor-pointer text-gray-300 hover:text-white hover:bg-white/10 flex items-center gap-3"
                     >
-                        <span className="text-lg">{lang.flag}</span>
+                        <span className="w-8 text-xs font-semibold tracking-wide text-gray-400">{lang.code.toUpperCase()}</span>
                         <span className="flex-1">{lang.name}</span>
                         {currentLanguage === lang.code && (
                             <Check className="h-4 w-4 text-green-400" />

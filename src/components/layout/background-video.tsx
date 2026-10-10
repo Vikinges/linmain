@@ -34,14 +34,20 @@ export function BackgroundVideo({
 
     return (
         <div className={cn("fixed inset-0 -z-10 overflow-hidden", className)}>
-            {/* Fallback Image or Gradient */}
-            {(fallbackImage || !videoUrl || hasError) && (
+            {/* Always-present gradient underlay: the page is never plain black while the video loads */}
+            <div
+                className="absolute inset-0"
+                style={{
+                    backgroundImage: 'linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%)',
+                }}
+            />
+
+            {/* Fallback Image (used as poster until the video is ready, or if it fails) */}
+            {fallbackImage && (
                 <div
                     className="absolute inset-0"
                     style={{
-                        backgroundImage: fallbackImage
-                            ? `url(${fallbackImage})`
-                            : 'linear-gradient(to bottom right, #0f172a, #1e293b, #334155)',
+                        backgroundImage: `url(${fallbackImage})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         filter: `blur(${blurAmount}px)`,
@@ -59,6 +65,8 @@ export function BackgroundVideo({
                         loop
                         muted
                         playsInline
+                        preload="metadata"
+                        poster={fallbackImage || undefined}
                         onLoadedData={() => setVideoLoaded(true)}
                         onError={() => {
                             setHasError(true)

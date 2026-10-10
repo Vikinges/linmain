@@ -48,8 +48,18 @@ export function ChatBox({ className }: ChatBoxProps) {
         }
 
         fetchMessages()
-        const interval = setInterval(fetchMessages, 3000) // Poll every 3 seconds
-        return () => clearInterval(interval)
+        // 15 s is plenty for a community chat; 3 s meant ~20 POSTs/min per visitor on the landing page.
+        const interval = setInterval(() => {
+            if (document.visibilityState === "visible") fetchMessages()
+        }, 15000)
+        const onVisible = () => {
+            if (document.visibilityState === "visible") fetchMessages()
+        }
+        document.addEventListener("visibilitychange", onVisible)
+        return () => {
+            clearInterval(interval)
+            document.removeEventListener("visibilitychange", onVisible)
+        }
     }, [])
 
     useEffect(() => {

@@ -55,6 +55,7 @@ import type {
   LocalizedHtml,
   LocalizedString,
   PageBlock,
+  ProjectBlock,
 } from "@/lib/editor/types"
 import { cn } from "@/lib/utils"
 
@@ -705,6 +706,12 @@ export function PageEditor({ pageId }: PageEditorProps) {
               ...block.data.image,
               alt: await translateLocalized(block.data.image.alt, "text"),
             },
+            badge: block.data.badge
+              ? { ...block.data.badge, label: await translateLocalized(block.data.badge.label, "text") }
+              : undefined,
+            secondaryLink: block.data.secondaryLink
+              ? { ...block.data.secondaryLink, label: await translateLocalized(block.data.secondaryLink.label, "text") }
+              : undefined,
           },
         }
       case "cta":
@@ -1367,6 +1374,75 @@ function BlockFields({
                 }
                 className="bg-white/5 border-white/10"
               />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <LocalizedInput
+              label="Secondary Button Label"
+              value={block.data.secondaryLink?.label ?? { en: "", de: "", ru: "" }}
+              language={language}
+              onChange={(value) =>
+                updateData({
+                  ...block.data,
+                  secondaryLink: { url: block.data.secondaryLink?.url ?? "", label: value },
+                })
+              }
+            />
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Secondary Button URL</Label>
+              <Input
+                value={block.data.secondaryLink?.url ?? ""}
+                placeholder="https://… or mailto:…"
+                onChange={(event) =>
+                  updateData({
+                    ...block.data,
+                    secondaryLink: {
+                      label: block.data.secondaryLink?.label ?? { en: "", de: "", ru: "" },
+                      url: event.target.value,
+                    },
+                  })
+                }
+                className="bg-white/5 border-white/10"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <LocalizedInput
+              label="Status Badge"
+              value={block.data.badge?.label ?? { en: "Live", de: "Live", ru: "Работает" }}
+              language={language}
+              onChange={(value) =>
+                updateData({
+                  ...block.data,
+                  badge: { tone: block.data.badge?.tone ?? "live", label: value },
+                })
+              }
+            />
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">Badge Style</Label>
+              <Select
+                value={block.data.badge?.tone ?? "live"}
+                onValueChange={(value) =>
+                  updateData({
+                    ...block.data,
+                    badge: {
+                      label: block.data.badge?.label ?? { en: "Live", de: "Live", ru: "Работает" },
+                      tone: value as NonNullable<ProjectBlock["data"]["badge"]>["tone"],
+                    },
+                  })
+                }
+              >
+                <SelectTrigger className="bg-white/5 border-white/10">
+                  <SelectValue placeholder="Live" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="live">Live (green)</SelectItem>
+                  <SelectItem value="pilot">Pilot (blue)</SelectItem>
+                  <SelectItem value="dev">In development (orange)</SelectItem>
+                  <SelectItem value="soon">Coming soon (violet)</SelectItem>
+                  <SelectItem value="none">Hidden</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-[200px_1fr]">

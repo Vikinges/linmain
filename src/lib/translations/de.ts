@@ -5,7 +5,7 @@ import { Translations } from "./en"
 export const de: Translations = {
   hero: {
     badge: "Immer neugierig auf Neues",
-    name: "LInArt Labs",
+    name: "LinArt Labs",
     subtitle: "Unternehmer • Creator • Entwickler",
     description:
       "Ich war schon immer neugierig, Neues auszuprobieren – und noch besser: selbst etwas Nützliches zu bauen. Gute Leute, lasst uns zusammenkommen! Qualität zählt mehr als Quantität.",
@@ -52,8 +52,8 @@ export const de: Translations = {
     qrGenerator: {
       title: "QR Generator",
       description:
-        "<p>QR-Generator fuer Business: digitale Visitenkarten, Meeting-Check-ins und Team-Trainingsflows.</p><p>Viele Funktionen gratis, Upgrades kosten etwa einen Kaffee.</p>",
-      linkLabel: "QR Generator oeffnen",
+        "<p>QR-Generator für Business: digitale Visitenkarten, Meeting-Check-ins und Team-Trainingsflows.</p><p>Viele Funktionen gratis, Upgrades kosten etwa einen Kaffee.</p>",
+      linkLabel: "QR-Generator öffnen",
     },
     hostLinart: {
       title: "Privater IoT-Server",
@@ -64,7 +64,7 @@ export const de: Translations = {
     crmIot: {
       title: "CRM-IoT — Smarte Mietautomatisierung",
       description:
-        "<p style='display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:99px;border:1px solid rgba(249,115,22,0.4);background:rgba(249,115,22,0.1);color:#fb923c;font-size:0.85em;margin-bottom:12px'>🚧 In Entwicklung — Registrierung noch nicht offen</p><p>B2B-Plattform für <strong>Hotels, Ferienhäuser und Apartments</strong>, die Immobilien effizienter monetarisieren möchten — durch IoT-Infrastruktur.</p><ul><li>Automatisches Check-in/Check-out über Smart Locks</li><li>Fingerabdruckscanner + Tastatur + NFC + drahtlose Schlüssel</li><li>Online-Modus (CRM-Sync) + Offline-Modus (vorgeladene Codes)</li><li>Geschützt durch unsere private europäische IoT-Infrastruktur</li></ul><p>Bereits Anfragen möglich — bestell ein Türschloss zum Early-Adopter-Preis. Wir melden uns persönlich.</p>",
+        "<p>B2B-Plattform für <strong>Hotels, Ferienhäuser und Apartments</strong>, die Immobilien effizienter monetarisieren möchten — durch IoT-Infrastruktur.</p><ul><li>Automatisches Check-in/Check-out über Smart Locks</li><li>Fingerabdruckscanner + Tastatur + NFC + drahtlose Schlüssel</li><li>Online-Modus (CRM-Sync) + Offline-Modus (vorgeladene Codes)</li><li>Geschützt durch unsere private europäische IoT-Infrastruktur</li></ul><p>Bereits Anfragen möglich — bestell ein Türschloss zum Early-Adopter-Preis. Wir melden uns persönlich.</p>",
       ctaTitle: "Smart Lock anfragen",
       ctaDescription:
         "Elektronisches Türschloss mit Fingerabdruckscanner, digitaler Tastatur, NFC und drahtlosen Schlüsseln. Erste Bestellungen zum Early-Adopter-Preis.",
@@ -74,7 +74,7 @@ export const de: Translations = {
     cloud: {
       title: "Private Cloud",
       description:
-        "<p>Für die, denen wir vertrauen — und die uns vertrauen. Deine Daten liegen auf unserem Server <strong>in Bayern, Deutschland</strong>, der von echter Alpenluft gekühlt wird 🏔️ — nicht in einem amerikanischen Rechenzentrum. Wir analysieren deine Daten nie.</p><p><strong>📷 Immich</strong> — selbst gehostete Alternative zu Google Fotos. KI-Suche, Gesichtserkennung, Alben — deine Fotos verlassen den Server nie.<br><a href='https://photo.linart.club' style='color:#93c5fd'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — persönliche Cloud: Dateien, Kalender, Kontakte. Wie Dropbox — aber privat, in Europa, deins.<br><a href='https://cloud.crm-iot.com' style='color:#93c5fd'>cloud.crm-iot.com</a></p><p>Zugang auf Einladung. Schreib uns.</p>",
+        "<p>Für die, denen wir vertrauen — und die uns vertrauen. Deine Daten liegen auf unserem Server <strong>in Bayern, Deutschland</strong>, der von echter Alpenluft gekühlt wird 🏔️ — nicht in einem amerikanischen Rechenzentrum. Wir analysieren deine Daten nie.</p><p><strong>📷 Immich</strong> — selbst gehostete Alternative zu Google Fotos. KI-Suche, Gesichtserkennung, Alben — deine Fotos verlassen den Server nie.<br><a href='https://photo.linart.club' style='color:#93c5fd'>photo.linart.club</a></p><p><strong>☁️ Nextcloud</strong> — persönliche Cloud: Dateien, Kalender, Kontakte. Wie Dropbox — aber privat, in Europa, deins.<br><a href='https://nex.crm-iot.com' style='color:#93c5fd'>nex.crm-iot.com</a></p><p>Zugang auf Einladung. Schreib uns.</p>",
     },
     entertainment: {
       title: "Unterhaltung",

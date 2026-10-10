@@ -118,6 +118,8 @@ export type PortfolioBlock = {
   }
 }
 
+export type ProjectBadgeTone = "live" | "pilot" | "dev" | "soon" | "none"
+
 export type ProjectBlock = {
   id: string
   type: "project"
@@ -133,6 +135,16 @@ export type ProjectBlock = {
     linkLabel: LocalizedString
     linkUrl: string
     align: "left" | "right"
+    /** Status pill above the title. Omitted = "Live" (legacy default); tone "none" hides it. */
+    badge?: {
+      label: LocalizedString
+      tone: ProjectBadgeTone
+    }
+    /** Optional second button next to the main one (e.g. App Store, demo, docs). */
+    secondaryLink?: {
+      label: LocalizedString
+      url: string
+    }
   }
 }
 

@@ -210,17 +210,26 @@ Then SSH to VPS and run Step 3.
 
 The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in order:
 
-1. **hero** — HeroBlock (badge, title, subtitle, description, CTAs, image)
-2. **iot-server** — ProjectBlock — IoT Private Server (host.linart.club, pricing, early-buyer welcome) — Apple-style dark gradient card
-3. **crm-iot** — ProjectBlock — CRM-IoT B2B rental automation + "in development" notice + smart lock mailto CTA
-4. **cloud-services** — ProjectBlock — Immich + Nextcloud private cloud (Bavaria server) — same big card style
-5. **portfolio** — PortfolioBlock — main projects (SensorHub, QR Generator, Commercial Hub)
-6. **entertainment** — PortfolioBlock — title="Entertainment", items: Minecraft map
-7. **chat** — ChatBlock — community chat for registered users
-8. **callout** — CtaBlock — "Let's Team Up"
-9. **contact** — ContactBlock
+1. **hero** — HeroBlock — "LinArt Labs" positioning (badge "Hosted in Bavaria · No US cloud", one promise, CTAs → `#projects` / `#contact`)
+2. **iot-server** — ProjectBlock — Linart IoT Cloud (host.crm-iot.com, pricing) + secondary button → "Smart Home IoT Dashboard" on the App Store. Badge: Live
+3. **crm-iot** — ProjectBlock — CRM-IoT B2B rental automation (crm-iot.com) + secondary mailto "Request a smart lock". Badge: In development
+4. **cloud-services** — ProjectBlock — Immich + Nextcloud (nex.crm-iot.com) + ColdArt/GitLab/RustDesk; main CTA = mailto invite, secondary = /login. Badge: Live
+5. **coldart** — ProjectBlock — ColdART remote access & zero trust (zerotrust.crm-iot.com; free remote-support sessions + commercial control plane)
+6. **portfolio** — PortfolioBlock — cards: AI Consultant (first), Smart Hub Store, QR Generator, **NFC QR Business Card 3D Maker (iOS)**, **Smart Home IoT Dashboard (iOS)**, LinArt ID, Commercial Hub, Local LLM lab
+7. **entertainment** — PortfolioBlock — title "Kids Lab": Monster Apocalypse (monst.crm-iot.com) and Boat Shutter (boat.crm-iot.com), browser games built by the kids, free
+8. **about** — RichTextBlock — the personal story that used to be the hero + the three "pillars"
+9. **callout** — CtaBlock — "Let's Team Up" (button "Contact us" → `#contact`)
+10. **contact** — ContactBlock — vladimir@linart.club, Spalt / Bavaria
 
-All three feature sections (iot-server, crm-iot, cloud-services) use the same `project` block type and render as dark gradient feature cards (same design language).
+Project blocks (`project`) render as dark gradient feature cards. Each has an optional `badge` (label + tone: live / pilot / dev / soon / none — blocks without one show the legacy green "Live") and an optional `secondaryLink` (second button). Both are editable in the admin block editor.
+
+The **Community Chat** block was removed from the home page in v1.24 (login-only chat on a showcase page; the AI consultant widget covers visitor questions). The `chat` block type, `ChatBox` and `/admin/chat` still exist and the dashboard keeps its chat.
+
+### Live-content migrations (`src/lib/editor/migrations.ts`)
+
+The home page is edited in the DB, so content fixes cannot ship as seed changes alone. `runHomeMigrations()` is called from `ensureDefaultPages()` on every request; it reads `SiteConfig["homeMigrations"].applied` and applies each pending migration once, writing a new `PageRevision` that is published and set as draft. `v1.24-showcase` fixes anchors/labels/contact, strips dead hosts (host.linart.club, cloud.crm-iot.com), adds the ColdART block, the two iOS app cards, LinArt ID, Kids Lab and the About block, and removes the chat block. To re-run a migration on a server, delete its name from the `applied` array in that SiteConfig row.
+
+**Anchors:** the renderer puts `id="projects"` on the first project/portfolio block, so hero and nav "View Projects" links always resolve; every other section gets `id={block.id}` (`#contact` is fixed).
 
 To reset the home page to the current seed (e.g. after code changes), delete the page from DB — on next request `ensureDefaultPages()` recreates it:
 ```bash
@@ -251,7 +260,7 @@ Each subdomain running as an independent service must have its own Impressum and
 | Service | URL | Impressum needed? | Datenschutz needed? | Notes |
 |---|---|---|---|---|
 | Main site | linart.club | ✅ Done | ✅ Done | Covered by `/p/impressum`, `/p/datenschutz` |
-| IoT Platform | host.linart.club | ✅ Yes | ✅ Yes | Separate service — add own legal footer |
+| IoT Platform | host.crm-iot.com (host.linart.club is retired, returns 530) | ✅ Yes | ✅ Yes | Separate service — add own legal footer |
 | QR Generator | qr.linart.club | ✅ Yes | ✅ Yes | Separate service — add own legal pages |
 | Photo cloud | photo.linart.club | ✅ Yes | ✅ Yes | Immich — add legal or restrict to invited users only |
 | Nextcloud | cloud.crm-iot.com | ✅ Yes | ✅ Yes | Add legal pages if non-admin users access it |
@@ -280,6 +289,18 @@ Each subdomain running as an independent service must have its own Impressum and
 - **YouTube embeds**: Must be mentioned in Datenschutz; use `youtube-nocookie.com` domain
 
 ## Change Log
+
+### 2026-10-10 (v1.24) — showcase refresh after the site audit
+
+- **Metadata:** real `<title>`/description/Open Graph/Twitter cards in `src/app/layout.tsx` (was "Create Next App"); favicon now `src/app/icon.png` (= public/logo.png); `<html lang>` follows the chosen UI language; `scroll-smooth`; `font-sans` (Geist) finally applied to `<body>`.
+- **Renderer:** scroll-in animations via `src/components/editor/reveal.tsx` (framer-motion `whileInView`, respects `prefers-reduced-motion`); hover lift/glow on project and portfolio cards; project images now show on mobile (above the text); `sizes` on portfolio images; locked cards show a blurred image behind the lock; image-less portfolio cards get an icon tile instead of "Media not set."; empty portfolio sections are skipped.
+- **Project blocks:** new optional `badge` (label + tone) and `secondaryLink` fields (`src/lib/editor/types.ts`), editable in the block editor, auto-translated with the rest of the block. The hard-coded green "Live" is now only the fallback.
+- **Public page:** `#projects` anchor always resolves (first product block); mobile header no longer overlaps (brand text and Login hidden below `sm`, Login moved to the footer); soft colour glows behind the glass; language switcher shows EN/DE/RU text instead of flag emoji (Windows renders flags as letters); footer links ≥44 px tall with better contrast.
+- **Background:** gradient underlay is always present (no black flash before the video), `poster`/`preload="metadata"` on the video.
+- **Chat:** polling 3 s → 15 s and paused in background tabs.
+- **Content migration `v1.24-showcase`** (see "Live-content migrations" above): LinArt Labs hero, ColdART block, iOS app cards (NFC QR Business Card 3D Maker, Smart Home IoT Dashboard), LinArt ID card, Kids Lab (Monster Apocalypse, Boat Shutter) instead of the dead Minecraft map, About block, Community Chat removed, callout button relabelled "Contact us", contact block filled (vladimir@linart.club, Spalt), CRM-IoT "🚧" paragraph replaced by the orange "In development" badge, Private Cloud links fixed (nex.crm-iot.com, zerotrust, git; `**markdown**` → `<strong>`), Smart Hub Store DE/RU texts and "Zum Shop / В магазин" labels, QR Generator proper RU/DE, AI Consultant and Local LLM cards localised, AI Consultant moved to the first card.
+- **Seed/translations:** same defaults for fresh installs; brand name "LinArt Labs" (was "LInArt"); dead `ensureHomeHasQrProject` removed; `host.linart.club` → `host.crm-iot.com`.
+- New static assets in `public/assets/`: App Store artwork for both apps and screenshots of the two games.
 
 ### 2026-08-16 (v1.23)
 
