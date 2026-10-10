@@ -99,7 +99,7 @@ export function TesterRequestsAdmin() {
         <div>
           <h1 className="text-3xl font-bold text-white">Tester requests</h1>
           <p className="text-gray-400">
-            CRM-IoT open beta — requests from <span className="font-mono">/tester</span>. Unlock access in the IoT dashboard: Admin → Accounts → 🏠.
+            CRM-IoT open beta — requests from <span className="font-mono">/tester</span>. Unlock access in the IoT dashboard: Admin → Accounts → 🏠 (units + days; it ends by itself and the host gets an e-mail).
           </p>
         </div>
         <Button variant="outline" onClick={() => void load()} disabled={loading}>
