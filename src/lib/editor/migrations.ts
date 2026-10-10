@@ -72,19 +72,19 @@ export const SHOWCASE_COPY = {
         "<li><strong>Door codes</strong> — written to the lock for exactly the stay; codes on the lock keep working without internet</li>" +
         "<li><strong>Guest card</strong> — address, Wi-Fi and house rules in DE / EN / RU, no app to install</li>" +
         "<li><strong>Cleaning &amp; energy</strong> — a task with its own code after every departure, heating back to eco</li></ul>" +
-        "<p>No commission, guest money never flows through us, hosted in Germany. Testers use it for free during the beta.</p>",
+        "<p>No commission, guest money never flows through us, hosted in Germany. <strong>Free for testers during the beta</strong> — write to us and we unlock access for your property.</p>",
       "<p>Buchungen aus Airbnb, Booking.com, Vrbo oder Smoobu werden automatisch zu Türcode, Gast-Karte und Reinigungsauftrag. Für Ferienwohnungen, Häuser, Zimmer, Wohnmobile, Boote und Saunen.</p>" +
         "<ul><li><strong>Heute · Kalender · Buchungen</strong> — Anreisen, Abreisen und Doppelbuchungen auf einen Blick</li>" +
         "<li><strong>Türcodes</strong> — genau für den Aufenthalt aufs Schloss geschrieben; Codes auf dem Schloss funktionieren auch ohne Internet</li>" +
         "<li><strong>Gast-Karte</strong> — Adresse, WLAN und Hausregeln auf DE / EN / RU, ohne App-Installation</li>" +
         "<li><strong>Reinigung &amp; Energie</strong> — nach jeder Abreise ein Auftrag mit eigenem Code, Heizung zurück auf Eco</li></ul>" +
-        "<p>Keine Provision, Gästegeld fließt nie über uns, gehostet in Deutschland. Tester nutzen es während der Beta kostenlos.</p>",
+        "<p>Keine Provision, Gästegeld fließt nie über uns, gehostet in Deutschland. <strong>Für Tester während der Beta kostenlos</strong> — schreiben Sie uns, wir schalten den Zugang für Ihre Unterkunft frei.</p>",
       "<p>Бронирования из Airbnb, Booking.com, Vrbo или Smoobu сами превращаются в код двери, карточку гостя и задачу на уборку. Для апартаментов, домов, комнат, автодомов, лодок и саун.</p>" +
         "<ul><li><strong>Сегодня · Календарь · Брони</strong> — заезды, выезды и двойные брони на одной доске</li>" +
         "<li><strong>Коды двери</strong> — записываются в замок ровно на срок проживания; записанные коды работают и без интернета</li>" +
         "<li><strong>Карточка гостя</strong> — адрес, Wi-Fi и правила дома на DE / EN / RU, без установки приложения</li>" +
         "<li><strong>Уборка и энергия</strong> — после каждого выезда задача со своим кодом, отопление обратно в эко</li></ul>" +
-        "<p>Без комиссии, деньги гостей никогда не идут через нас, хостинг в Германии. Тестеры пользуются бесплатно на время беты.</p>"
+        "<p>Без комиссии, деньги гостей никогда не идут через нас, хостинг в Германии. <strong>Для тестеров на время беты бесплатно</strong> — напишите нам, и мы откроем доступ для вашего объекта.</p>"
     ),
     steps: [
       {
@@ -112,8 +112,13 @@ export const SHOWCASE_COPY = {
         ),
       },
     ],
-    linkLabel: L("Become a tester — free", "Kostenlos testen", "Стать тестером бесплатно"),
-    linkUrl: "https://host.crm-iot.com/?register=1",
+    linkLabel: L("Request free tester access", "Kostenlosen Testzugang anfragen", "Запросить бесплатный тестовый доступ"),
+    // Tester access is granted by hand (owner decision 2026-10-10): a self-registered account has no rentals workspace.
+    linkUrl:
+      `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("CRM-IoT – Testzugang / tester access")}` +
+      `&body=${encodeURIComponent(
+        "Hello LinArt team,\n\nI would like to test CRM-IoT.\n\nProperty type and number of units:\nBooking platforms / channel manager:\nSmart lock (yes / no / which):\n\nThank you!"
+      )}`,
     guideLabel: L("Host guide (DE)", "Anleitung für Gastgeber", "Инструкция для хоста (DE)"),
     guideUrl: "https://host.crm-iot.com/manuals/app/rentals-host.html",
     imageUrl: "/assets/crm-iot-host-calendar.jpeg",
