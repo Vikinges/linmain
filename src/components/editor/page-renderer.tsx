@@ -377,7 +377,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
             const secondaryLabel = block.data.secondaryLink
               ? getLocalizedValue(block.data.secondaryLink.label, language)
               : ""
-            const secondaryUrl = block.data.secondaryLink?.url?.trim() || ""
+            const secondaryUrl =
+              block.data.secondaryLink?.urlByLang?.[language]?.trim() || block.data.secondaryLink?.url?.trim() || ""
             const isShowcase = block.data.layout === "showcase"
             const steps = (block.data.steps || [])
               .map((step) => ({

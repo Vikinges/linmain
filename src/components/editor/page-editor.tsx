@@ -1414,6 +1414,21 @@ function BlockFields({
               />
             </div>
           </div>
+          <LocalizedInput
+            label="Secondary Button URL per language (optional, overrides the URL above)"
+            value={block.data.secondaryLink?.urlByLang ?? { en: "", de: "", ru: "" }}
+            language={language}
+            onChange={(value) =>
+              updateData({
+                ...block.data,
+                secondaryLink: {
+                  label: block.data.secondaryLink?.label ?? { en: "", de: "", ru: "" },
+                  url: block.data.secondaryLink?.url ?? "",
+                  urlByLang: value,
+                },
+              })
+            }
+          />
           <div className="grid gap-4 md:grid-cols-2">
             <LocalizedInput
               label="Status Badge"

@@ -147,3 +147,29 @@ model MediaAsset {
 
   createdBy    User?    @relation("MediaAssetCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 }
+
+// Requests for free tester access to CRM-IoT (rentals host app), sent from linart.club/tester.
+// Access is unlocked by hand in the IoT dashboard; this table is the inbox (admin → Tester requests).
+model TesterRequest {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  name       String
+  email      String
+  phone      String?
+  company    String?
+  kind       String // apartment | house | hotel | boarding | rooms | vehicle | sauna | other
+  units      Int?
+  channels   String[] // airbnb | booking | vrbo | smoobu | direct | other
+  interests  String[] // locks | air | heating | cooling | software
+  address    String?
+  lat        Float?
+  lng        Float?
+  message    String?
+  lang       String   @default("en")
+  status     String   @default("new") // new | contacted | granted | declined
+  note       String? // admin-only note
+
+  @@index([createdAt])
+  @@index([email])
+}

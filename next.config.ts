@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Browsers still probe /favicon.ico; the app icon is src/app/icon.png (= public/logo.png).
+  async rewrites() {
+    return [{ source: '/favicon.ico', destination: '/logo.png' }];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '100mb',

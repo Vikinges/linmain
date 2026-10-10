@@ -23,6 +23,7 @@ import type {
 const MIGRATIONS_KEY = "homeMigrations"
 const SHOWCASE_V124 = "v1.24-showcase"
 const CRM_BETA_V125 = "v1.25-crm-iot-beta"
+const DATENSCHUTZ_V126 = "v1.26-datenschutz-tester"
 
 const CONTACT_EMAIL = "vladimir@linart.club"
 
@@ -72,19 +73,22 @@ export const SHOWCASE_COPY = {
         "<li><strong>Door codes</strong> — written to the lock for exactly the stay; codes on the lock keep working without internet</li>" +
         "<li><strong>Guest card</strong> — address, Wi-Fi and house rules in DE / EN / RU, no app to install</li>" +
         "<li><strong>Cleaning &amp; energy</strong> — a task with its own code after every departure, heating back to eco</li></ul>" +
-        "<p>No commission, guest money never flows through us, hosted in Germany. <strong>Free for testers during the beta</strong> — write to us and we unlock access for your property.</p>",
+        "<p>No commission, guest money never flows through us, hosted in Germany. <strong>Free for testers during the beta</strong> — write to us and we unlock access for your property.</p>" +
+        "<p>After the beta: <strong>€15 per unit / month</strong> or <strong>€160 per unit / year</strong> (≈ €13.33 / month).</p>",
       "<p>Buchungen aus Airbnb, Booking.com, Vrbo oder Smoobu werden automatisch zu Türcode, Gast-Karte und Reinigungsauftrag. Für Ferienwohnungen, Häuser, Zimmer, Wohnmobile, Boote und Saunen.</p>" +
         "<ul><li><strong>Heute · Kalender · Buchungen</strong> — Anreisen, Abreisen und Doppelbuchungen auf einen Blick</li>" +
         "<li><strong>Türcodes</strong> — genau für den Aufenthalt aufs Schloss geschrieben; Codes auf dem Schloss funktionieren auch ohne Internet</li>" +
         "<li><strong>Gast-Karte</strong> — Adresse, WLAN und Hausregeln auf DE / EN / RU, ohne App-Installation</li>" +
         "<li><strong>Reinigung &amp; Energie</strong> — nach jeder Abreise ein Auftrag mit eigenem Code, Heizung zurück auf Eco</li></ul>" +
-        "<p>Keine Provision, Gästegeld fließt nie über uns, gehostet in Deutschland. <strong>Für Tester während der Beta kostenlos</strong> — schreiben Sie uns, wir schalten den Zugang für Ihre Unterkunft frei.</p>",
+        "<p>Keine Provision, Gästegeld fließt nie über uns, gehostet in Deutschland. <strong>Für Tester während der Beta kostenlos</strong> — schreiben Sie uns, wir schalten den Zugang für Ihre Unterkunft frei.</p>" +
+        "<p>Nach der Beta: <strong>15 € pro Unterkunft / Monat</strong> oder <strong>160 € pro Unterkunft / Jahr</strong> (≈ 13,33 € / Monat).</p>",
       "<p>Бронирования из Airbnb, Booking.com, Vrbo или Smoobu сами превращаются в код двери, карточку гостя и задачу на уборку. Для апартаментов, домов, комнат, автодомов, лодок и саун.</p>" +
         "<ul><li><strong>Сегодня · Календарь · Брони</strong> — заезды, выезды и двойные брони на одной доске</li>" +
         "<li><strong>Коды двери</strong> — записываются в замок ровно на срок проживания; записанные коды работают и без интернета</li>" +
         "<li><strong>Карточка гостя</strong> — адрес, Wi-Fi и правила дома на DE / EN / RU, без установки приложения</li>" +
         "<li><strong>Уборка и энергия</strong> — после каждого выезда задача со своим кодом, отопление обратно в эко</li></ul>" +
-        "<p>Без комиссии, деньги гостей никогда не идут через нас, хостинг в Германии. <strong>Для тестеров на время беты бесплатно</strong> — напишите нам, и мы откроем доступ для вашего объекта.</p>"
+        "<p>Без комиссии, деньги гостей никогда не идут через нас, хостинг в Германии. <strong>Для тестеров на время беты бесплатно</strong> — напишите нам, и мы откроем доступ для вашего объекта.</p>" +
+        "<p>После беты: <strong>15 € за объект в месяц</strong> или <strong>160 € за объект в год</strong> (≈ 13,33 € в месяц).</p>"
     ),
     steps: [
       {
@@ -114,13 +118,16 @@ export const SHOWCASE_COPY = {
     ],
     linkLabel: L("Request free tester access", "Kostenlosen Testzugang anfragen", "Запросить бесплатный тестовый доступ"),
     // Tester access is granted by hand (owner decision 2026-10-10): a self-registered account has no rentals workspace.
-    linkUrl:
-      `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("CRM-IoT – Testzugang / tester access")}` +
-      `&body=${encodeURIComponent(
-        "Hello LinArt team,\n\nI would like to test CRM-IoT.\n\nProperty type and number of units:\nBooking platforms / channel manager:\nSmart lock (yes / no / which):\n\nThank you!"
-      )}`,
-    guideLabel: L("Host guide (DE)", "Anleitung für Gastgeber", "Инструкция для хоста (DE)"),
+    // The form at /tester asks for the property, its location (map pin) and interest in locks / sensors / heating / AC.
+    linkUrl: "/tester",
+    guideLabel: L("Host guide", "Anleitung für Gastgeber", "Инструкция для хоста"),
     guideUrl: "https://host.crm-iot.com/manuals/app/rentals-host.html",
+    // EN / RU manuals live since host.crm-iot.com v4.55.0 (2026-10-10); same anchors in every language.
+    guideUrlByLang: L(
+      "https://host.crm-iot.com/manuals/app/en/rentals-host.html",
+      "https://host.crm-iot.com/manuals/app/rentals-host.html",
+      "https://host.crm-iot.com/manuals/app/ru/rentals-host.html"
+    ),
     imageUrl: "/assets/crm-iot-host-calendar.jpeg",
     imageAlt: L(
       "Host calendar in CRM-IoT: properties, bookings by channel",
@@ -325,7 +332,7 @@ export const buildCrmIotData = (): ProjectBlock["data"] => {
     linkUrl: c.linkUrl,
     align: "left",
     badge: { label: c.badge, tone: "pilot" },
-    secondaryLink: { label: c.guideLabel, url: c.guideUrl },
+    secondaryLink: { label: c.guideLabel, url: c.guideUrl, urlByLang: c.guideUrlByLang },
     layout: "showcase",
     showcaseUrl: c.showcaseUrl,
     steps: c.steps.map((s) => ({ title: s.title, text: s.text })),
@@ -619,6 +626,57 @@ export function applyCrmBetaV125(blocks: PageBlock[]): { blocks: PageBlock[]; ch
   return { blocks: next, changed }
 }
 
+export const DATENSCHUTZ_SECTION_7A = "<h3>7a. Anfrage für einen Testzugang (CRM-IoT) und Kartenauswahl</h3>\n<p>Über das Formular unter <strong>linart.club/tester</strong> können Sie einen kostenlosen Testzugang zu unserer Gastgeber-App CRM-IoT anfragen. Dabei verarbeiten wir die von Ihnen eingegebenen Angaben: Name, E-Mail-Adresse, optional Telefonnummer und Firma, Art und Anzahl Ihrer Unterkünfte, genutzte Buchungskanäle, Ihr Interesse an Automatisierung (Schlösser, Sensoren, Heizung, Klima), optional Adresse und den auf der Karte gesetzten Standort sowie Ihre Nachricht. Die IP-Adresse wird nur kurzzeitig im Arbeitsspeicher zur Missbrauchsabwehr (Begrenzung der Anfragen) genutzt und nicht gespeichert.</p>\n<p><strong>Zweck und Speicherung:</strong> Bearbeitung Ihrer Anfrage, Freischaltung des Testzugangs und Kontaktaufnahme. Die Daten werden auf unserem Server in Deutschland gespeichert und gelöscht, sobald sie dafür nicht mehr erforderlich sind, spätestens 12 Monate nach Ende der Testphase, sofern kein Vertrag zustande kommt.</p>\n<p><strong>Karte und Adresssuche:</strong> Die Karte wird erst geladen, wenn Sie auf „Karte anzeigen“, „Suchen“ oder „Mein Standort“ klicken. Dann ruft Ihr Browser Kartenkacheln und – für die Adresssuche – den Dienst Nominatim bei der OpenStreetMap Foundation (St John’s Innovation Centre, Cambridge, Vereinigtes Königreich) ab; dabei werden Ihre IP-Adresse und die Suchanfrage an die OpenStreetMap Foundation übertragen. Für das Vereinigte Königreich besteht ein Angemessenheitsbeschluss der EU-Kommission. „Mein Standort“ nutzt die Standortfunktion Ihres Browsers erst nach Ihrer Freigabe.<br>\n<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung im Formular, jederzeit widerrufbar) und Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen).</p>\n\n"
+
+/** v1.26: Datenschutz gets section 7a (tester form, map tiles, Nominatim) and the current service hosts. */
+export function applyDatenschutzV126(html: string): string {
+  let next = html
+  if (!next.includes("7a. Anfrage für einen Testzugang")) {
+    const anchor = next.indexOf("<h3>8.")
+    next = anchor >= 0 ? next.slice(0, anchor) + DATENSCHUTZ_SECTION_7A + next.slice(anchor) : next + DATENSCHUTZ_SECTION_7A
+  }
+  next = next
+    .replace("IoT-Plattform host.linart.club", "IoT-Plattform und Gastgeber-App CRM-IoT host.crm-iot.com")
+    .replace("Cloud-Speicher cloud.crm-iot.com", "Cloud-Speicher nex.crm-iot.com")
+    .replace(/Stand: [A-Za-zäÄ]+ 2026/, "Stand: Oktober 2026")
+  return next
+}
+
+async function runDatenschutzMigration(applied: string[]) {
+  if (applied.includes(DATENSCHUTZ_V126)) return
+  const page = await prisma.page.findUnique({
+    where: { slug: "datenschutz" },
+    include: { publishedRevision: true, draftRevision: true },
+  })
+  const source = page?.publishedRevision || page?.draftRevision
+  if (page && source && Array.isArray(source.blocks)) {
+    const blocks = (source.blocks as PageBlock[]).map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+    let changed = false
+    for (const block of blocks) {
+      if (block.type !== "richText") continue
+      for (const lang of ["en", "de", "ru"] as const) {
+        const before = block.data.content[lang] || ""
+        if (!before.includes("Datenschutzerklärung")) continue
+        const after = applyDatenschutzV126(before)
+        if (after !== before) {
+          block.data.content[lang] = after
+          changed = true
+        }
+      }
+    }
+    if (changed) {
+      const revision = await prisma.pageRevision.create({
+        data: { pageId: page.id, title: source.title || page.title, blocks },
+      })
+      await prisma.page.update({
+        where: { id: page.id },
+        data: { publishedRevisionId: revision.id, draftRevisionId: revision.id },
+      })
+    }
+  }
+  await markAllApplied(applied, [DATENSCHUTZ_V126])
+}
+
 async function readApplied(): Promise<string[]> {
   const row = await prisma.siteConfig.findUnique({ where: { key: MIGRATIONS_KEY } })
   const value = row?.value as { applied?: unknown } | null
@@ -644,6 +702,8 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
     { name: CRM_BETA_V125, apply: applyCrmBetaV125 },
   ]
 
+  const appliedBefore = await readApplied()
+  await runDatenschutzMigration(appliedBefore)
   const applied = await readApplied()
   const pending = migrations.filter((m) => !applied.includes(m.name))
   if (pending.length === 0) return

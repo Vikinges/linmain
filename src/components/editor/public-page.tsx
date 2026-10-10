@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { BackgroundVideo } from "@/components/layout/background-video"
@@ -8,7 +8,7 @@ import { BrandLogo } from "@/components/layout/brand-logo"
 import { LanguageSwitcher } from "@/components/layout/language-switcher"
 import { Button } from "@/components/ui/button"
 import { applyTheme, type ThemeConfig, defaultTheme } from "@/lib/theme-config"
-import { loadLanguage, saveLanguage, type Language } from "@/lib/i18n-config"
+import { defaultLanguage, languages, loadLanguage, saveLanguage, type Language } from "@/lib/i18n-config"
 import { getTranslations } from "@/lib/translations"
 import { applyContentStyles, type HomepageContent, type TextStyles } from "@/lib/content-config"
 import type { PageBlock } from "@/lib/editor/types"
@@ -20,6 +20,8 @@ type PublicPageProps = {
   globalContent: HomepageContent
   theme: ThemeConfig
   styles: TextStyles
+  /** Extra content rendered after the blocks (e.g. the tester request form), in the current UI language. */
+  renderExtra?: (language: Language) => ReactNode
 }
 
 const isReadableText = (value: string | undefined) => {
@@ -34,8 +36,33 @@ const isReadableText = (value: string | undefined) => {
 const pickText = (value: string | undefined, fallback: string) =>
   isReadableText(value) ? value!.trim() : fallback
 
-export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageProps) {
-  const [language, setLanguage] = useState<Language>(() => loadLanguage())
+// UI language as an external store: the server (and the hydration pass) render the default language, the
+// browser then switches to the visitor's language without a hydration mismatch.
+const LANGUAGE_EVENT = "linart:language"
+
+const subscribeLanguage = (onChange: () => void) => {
+  window.addEventListener(LANGUAGE_EVENT, onChange)
+  window.addEventListener("storage", onChange)
+  return () => {
+    window.removeEventListener(LANGUAGE_EVENT, onChange)
+    window.removeEventListener("storage", onChange)
+  }
+}
+
+/** ?lang=de|en|ru in the URL wins (links from host.crm-iot.com, e-mails) and is remembered; else saved / browser language. */
+const readClientLanguage = (): Language => {
+  const wanted = new URLSearchParams(window.location.search).get("lang")
+  if (wanted && languages.some((l) => l.code === wanted)) {
+    saveLanguage(wanted as Language)
+    return wanted as Language
+  }
+  return loadLanguage()
+}
+
+const readServerLanguage = (): Language => defaultLanguage
+
+export function PublicPage({ blocks, globalContent, theme, styles, renderExtra }: PublicPageProps) {
+  const language = useSyncExternalStore(subscribeLanguage, readClientLanguage, readServerLanguage)
   const translations = useMemo(() => getTranslations(language), [language])
   const { data: session } = useSession()
   const isAdmin = Boolean(session?.user?.isAdmin || session?.user?.role === "ADMIN")
@@ -55,8 +82,14 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
   }, [language])
 
   const handleLanguageChange = (nextLang: Language) => {
-    setLanguage(nextLang)
     saveLanguage(nextLang)
+    // A manual choice beats the ?lang= of the link the visitor came from.
+    const url = new URL(window.location.href)
+    if (url.searchParams.has("lang")) {
+      url.searchParams.delete("lang")
+      window.history.replaceState(window.history.state, "", url.toString())
+    }
+    window.dispatchEvent(new Event(LANGUAGE_EVENT))
   }
 
   const localeOverrides = globalContent.locales?.[language]
@@ -123,6 +156,7 @@ export function PublicPage({ blocks, globalContent, theme, styles }: PublicPageP
 
         <main className="flex-1 pt-32 pb-24">
           <PageRenderer blocks={blocks} language={language} styles={styles} />
+          {renderExtra?.(language)}
         </main>
 
         <footer className="relative z-10 border-t border-border/60 bg-background/80 backdrop-blur-xl">

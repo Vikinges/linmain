@@ -212,7 +212,7 @@ The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in ord
 
 1. **hero** — HeroBlock — "LinArt Labs" positioning (badge "Hosted in Bavaria · No US cloud", one promise, CTAs → `#projects` / `#contact`)
 2. **iot-server** — ProjectBlock — Linart IoT Cloud (host.crm-iot.com, pricing) + secondary button → "Smart Home IoT Dashboard" on the App Store. Badge: Live
-3. **crm-iot** — ProjectBlock, layout **showcase** — CRM-IoT host app for rentals (open beta, free for testers): text + 3 "how it works" steps, real host-calendar screenshot (`public/assets/crm-iot-host-calendar.jpeg`) in a browser frame; CTA "Request free tester access" → mailto vladimir@linart.club with a prefilled subject and questions (property, channels, lock) — tester access is unlocked by hand; secondary → host guide (`/manuals/app/rentals-host.html`, German). Badge: pilot (blue) "Open beta · free for testers"
+3. **crm-iot** — ProjectBlock, layout **showcase** — CRM-IoT host app for rentals (open beta, free for testers): text + 3 "how it works" steps, real host-calendar screenshot (`public/assets/crm-iot-host-calendar.jpeg`) in a browser frame; CTA "Request free tester access" → `/tester` (form, see below) — tester access is unlocked by hand; secondary → host guide in the visitor's language (`secondaryLink.urlByLang`: `/manuals/app/{en/,ru/}rentals-host.html`). The copy shows the price after the beta (€15 per unit / month, €160 / year — public in host.crm-iot.com `/api/plans` since v4.55.0). Badge: pilot (blue) "Open beta · free for testers"
 4. **cloud-services** — ProjectBlock — Immich + Nextcloud (nex.crm-iot.com) + ColdArt/GitLab/RustDesk; main CTA = mailto invite, secondary = /login. Badge: Live
 5. **coldart** — ProjectBlock — ColdART remote access & zero trust (zerotrust.crm-iot.com; free remote-support sessions + commercial control plane)
 6. **portfolio** — PortfolioBlock — cards: AI Consultant (first), Smart Hub Store, QR Generator, **NFC QR Business Card 3D Maker (iOS)**, **Smart Home IoT Dashboard (iOS)**, LinArt ID, Commercial Hub, Local LLM lab
@@ -240,6 +240,16 @@ Then visit the site — it auto-recreates from seed on first request.
 ### Drag-and-Drop in Admin Editor
 Already implemented via `@dnd-kit/core` + `@dnd-kit/sortable` in `src/components/editor/page-editor.tsx`.
 Use the `GripVertical` handle (⠿) on each block to drag and reorder. No extra setup needed.
+
+## Tester requests (CRM-IoT open beta)
+
+- Public form: `/tester` (`src/app/tester/page.tsx` → `src/components/tester/tester-form.tsx` inside `PublicPage` via `renderExtra`). EN/DE/RU; `?lang=de|en|ru` in any public URL picks the language (used by links from host.crm-iot.com).
+- Asks: name, e-mail, phone, company, what is rented (flat / house / hotel / boarding / rooms / vehicle / sauna), units, channels, **location** (address search via OSM Nominatim, "use my location", or a click on the map; the pin is draggable; the address is filled back from the pin) and **"Would you like to use our automation in your hotel or rental?"** — smart locks, air-quality sensors, heating control, AC control, or software only.
+- The map (`src/components/tester/linart-map.tsx`, Leaflet + OpenStreetMap tiles darkened by `.linart-dark-tiles` in `globals.css`) loads only after a click (privacy). CARTO basemaps need an API key now — do not switch back without one.
+- API: `POST /api/tester-request` (route handler; honeypot + min fill time + 5 requests/hour per IP in memory + one request per e-mail per 10 min; IP is not stored). Validation shared in `src/lib/tester-request.ts` (no Prisma import — used by client code).
+- Storage: Prisma model `TesterRequest` → **deploy must run `prisma db push`** (Method C step 3 does).
+- Admin: `/admin/requests` ("Tester requests" in the sidebar) — all requests as pins on a map coloured by status (new / contacted / granted / declined), list with interests and channels, status select, internal note, delete. `GET /api/admin/tester-requests`, `PATCH|DELETE /api/admin/tester-requests/[id]`.
+- No e-mail notification yet (the app has no SMTP) — check the admin page.
 
 ## Legal Pages & Compliance (German Law)
 
@@ -289,6 +299,14 @@ Each subdomain running as an independent service must have its own Impressum and
 - **YouTube embeds**: Must be mentioned in Datenschutz; use `youtube-nocookie.com` domain
 
 ## Change Log
+
+### 2026-10-10 (v1.26) — tester request form with map
+
+- New `/tester` form for CRM-IoT tester access with a map pin for the property and the question about automation (locks, air-quality sensors, heating, AC); admin inbox `/admin/requests` with all pins on a map (see "Tester requests"). CRM-IoT card CTA → `/tester` (owner decision 2026-10-10: testers contact us, access is unlocked by hand).
+- CRM-IoT card: host guide link per visitor language (EN/RU manuals live on host.crm-iot.com since v4.55.0), "(DE)" removed; price after the beta in the copy.
+- Datenschutz: new section 7a (tester form, map, Nominatim), §14 hosts fixed (host.crm-iot.com, nex.crm-iot.com), "Stand: Oktober 2026" — seed + live migration `v1.26-datenschutz-tester` (`runDatenschutzMigration`). Section 7a should be checked by the lawyer like the rest of the page.
+- Public pages: the UI language is now an external store (`useSyncExternalStore`) — no more hydration error for DE/RU visitors; `?lang=` support; `/favicon.ico` rewritten to `/logo.png`.
+- Prisma: new model `TesterRequest` (needs `prisma db push` on deploy). New dependency `leaflet` (+ `@types/leaflet`).
 
 ### 2026-10-10 (v1.25) — CRM-IoT open beta
 

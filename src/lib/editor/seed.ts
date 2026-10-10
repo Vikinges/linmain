@@ -136,6 +136,12 @@ E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
 <p>Wenn Sie uns per E-Mail oder Kontaktformular kontaktieren, werden Ihre Angaben zur Bearbeitung gespeichert und danach gelöscht, sofern keine gesetzliche Aufbewahrungspflicht besteht.<br>
 <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO.</p>
 
+<h3>7a. Anfrage für einen Testzugang (CRM-IoT) und Kartenauswahl</h3>
+<p>Über das Formular unter <strong>linart.club/tester</strong> können Sie einen kostenlosen Testzugang zu unserer Gastgeber-App CRM-IoT anfragen. Dabei verarbeiten wir die von Ihnen eingegebenen Angaben: Name, E-Mail-Adresse, optional Telefonnummer und Firma, Art und Anzahl Ihrer Unterkünfte, genutzte Buchungskanäle, Ihr Interesse an Automatisierung (Schlösser, Sensoren, Heizung, Klima), optional Adresse und den auf der Karte gesetzten Standort sowie Ihre Nachricht. Die IP-Adresse wird nur kurzzeitig im Arbeitsspeicher zur Missbrauchsabwehr (Begrenzung der Anfragen) genutzt und nicht gespeichert.</p>
+<p><strong>Zweck und Speicherung:</strong> Bearbeitung Ihrer Anfrage, Freischaltung des Testzugangs und Kontaktaufnahme. Die Daten werden auf unserem Server in Deutschland gespeichert und gelöscht, sobald sie dafür nicht mehr erforderlich sind, spätestens 12 Monate nach Ende der Testphase, sofern kein Vertrag zustande kommt.</p>
+<p><strong>Karte und Adresssuche:</strong> Die Karte wird erst geladen, wenn Sie auf „Karte anzeigen“, „Suchen“ oder „Mein Standort“ klicken. Dann ruft Ihr Browser Kartenkacheln und – für die Adresssuche – den Dienst Nominatim bei der OpenStreetMap Foundation (St John’s Innovation Centre, Cambridge, Vereinigtes Königreich) ab; dabei werden Ihre IP-Adresse und die Suchanfrage an die OpenStreetMap Foundation übertragen. Für das Vereinigte Königreich besteht ein Angemessenheitsbeschluss der EU-Kommission. „Mein Standort“ nutzt die Standortfunktion Ihres Browsers erst nach Ihrer Freigabe.<br>
+<strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung im Formular, jederzeit widerrufbar) und Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen).</p>
+
 <h3>8. Eingebettete Videos (YouTube)</h3>
 <p>Auf dieser Website werden Videos über YouTube eingebettet (Google Ireland Limited, Dublin). Beim Öffnen einer solchen Seite wird eine Verbindung zu YouTube-Servern aufgebaut. Wir nutzen YouTube im erweiterten Datenschutzmodus (youtube-nocookie.com), der laut Anbieter erst beim aktiven Abspielen Cookies setzt.<br>
 <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO.</p>
@@ -165,9 +171,9 @@ E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
 Promenade 27, 91522 Ansbach — <a href="https://www.lda.bayern.de">www.lda.bayern.de</a></p>
 
 <h3>14. Externe Dienste</h3>
-<p>Unsere weiteren Dienste (IoT-Plattform host.linart.club, Fotoplattform photo.linart.club, Cloud-Speicher cloud.crm-iot.com, KI-Beratung ai.crm-iot.com) verfügen über eigene Datenschutzhinweise, die beim jeweiligen Dienst einsehbar sind. Diese Dienste werden auf eigenem Server in Bayern, Deutschland betrieben.</p>
+<p>Unsere weiteren Dienste (IoT-Plattform und Gastgeber-App CRM-IoT host.crm-iot.com, Fotoplattform photo.linart.club, Cloud-Speicher nex.crm-iot.com, KI-Beratung ai.crm-iot.com) verfügen über eigene Datenschutzhinweise, die beim jeweiligen Dienst einsehbar sind. Diese Dienste werden auf eigenem Server in Bayern, Deutschland betrieben.</p>
 
-<p><em>Stand: August 2026</em></p>`
+<p><em>Stand: Oktober 2026</em></p>`
 
 // Creates a static page (e.g. Impressum, Datenschutz) only if it doesn't exist yet.
 // Does NOT overwrite, so admin edits to these pages persist across restarts.

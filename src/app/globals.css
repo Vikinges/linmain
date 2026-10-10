@@ -140,3 +140,19 @@
     @apply bg-card/80 backdrop-blur-md border-border/60 shadow-sm;
   }
 }
+
+/* Leaflet maps (tester form, admin requests): OSM tiles turned dark to match the site */
+.linart-dark-tiles {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.55);
+}
+.leaflet-container {
+  background: #0b1220;
+  font-family: inherit;
+}
+.leaflet-control-attribution {
+  background: rgba(11, 18, 32, 0.75) !important;
+  color: #94a3b8 !important;
+}
+.leaflet-control-attribution a {
+  color: #7dd3fc !important;
+}

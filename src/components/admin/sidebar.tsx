@@ -17,7 +17,8 @@ import {
     BarChart3,
     FileText,
     Database,
-    Puzzle
+    Puzzle,
+    MapPin
 } from "lucide-react"
 
 interface AdminSidebarProps {
@@ -45,6 +46,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             href: "/admin/users",
             color: "text-pink-500",
             description: "User management"
+        },
+        {
+            label: "Tester requests",
+            icon: MapPin,
+            href: "/admin/requests",
+            color: "text-sky-400",
+            description: "CRM-IoT beta, map"
         },
         {
             label: "Chat Messages",

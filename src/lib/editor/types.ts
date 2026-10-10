@@ -144,6 +144,8 @@ export type ProjectBlock = {
     secondaryLink?: {
       label: LocalizedString
       url: string
+      /** Optional per-language URL (e.g. a manual in EN / DE / RU); falls back to `url`. */
+      urlByLang?: LocalizedString
     }
     /**
      * "side" (default): image to the right of the text.
