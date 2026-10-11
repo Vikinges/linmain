@@ -140,7 +140,7 @@ cd /opt/linart && \
 docker compose --env-file .env down && \
 docker load -i linart-web.tar && \
 IMAGE_REF=linart-web:local docker compose --env-file .env up -d --no-build && \
-docker compose --env-file .env exec -T web_sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && \
+docker compose --env-file .env exec -T web sh -lc "HOME=/tmp prisma db push --skip-generate --schema /app/prisma/schema.prisma" && \
 rm -f /opt/linart/linart-web.tar && \
 echo "DEPLOY OK"
 ```
@@ -301,6 +301,8 @@ Each subdomain running as an independent service must have its own Impressum and
 ## Change Log
 
 ### 2026-10-10 (v1.26) — tester request form with map
+
+- **Deployed 2026-10-11** (Method C, only the `web` container recreated: `IMAGE_REF=linart-web:local docker compose --env-file .env up -d --no-build web`, then `prisma db push`). DB dump before the deploy: `/opt/linart/backups/linart-2026-10-11-pre-v1.26.sql.gz`. Rollback image still on the VPS: `ghcr.io/vikinges/linmain:latest` (v1.22). Note: `.env` on the VPS still says `IMAGE_REF=ghcr.io/vikinges/linmain:latest` — always pass `IMAGE_REF=linart-web:local` on the command line, or a plain `docker compose up` brings back v1.22.
 
 - New `/tester` form for CRM-IoT tester access with a map pin for the property and the question about automation (locks, air-quality sensors, heating, AC); admin inbox `/admin/requests` with all pins on a map (see "Tester requests"). CRM-IoT card CTA → `/tester` (owner decision 2026-10-10: testers contact us, access is unlocked by hand).
 - CRM-IoT card: host guide link per visitor language (EN/RU manuals live on host.crm-iot.com since v4.55.0), "(DE)" removed; price after the beta in the copy.
