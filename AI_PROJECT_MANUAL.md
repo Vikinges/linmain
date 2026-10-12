@@ -302,6 +302,10 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-10-12 (v1.28) — fixes from the re-audit
+
+- Re-audit after v1.27: both reviews 6/10 (was 4/10). Fixed the three regressions they found: hero is now visible in the server-rendered HTML (`Reveal`/`RevealItem` `noFade`, LCP on mobile was delayed ~2 s by `opacity:0`); showcase steps are real `<li>` in the `<ol>` (`RevealItem as="li"`, Lighthouse list/listitem); side-layout project cards no longer overflow on phones (single grid column, `min-w-0`, image width capped with `max-width:100%` + aspect-ratio).
+
 ### 2026-10-12 (v1.27) — IoT showcase, trust strip, SEO, hardening, owner notifications
 
 - IoT Cloud card → showcase (live home screen, steps, current prices); Private Cloud gets a service illustration instead of the site logo (`public/assets/private-cloud.jpeg`); hero trust strip; hero subtitle gradient #e2e8f0 → #7dd3fc (was grey on grey); background video poster `public/assets/bg-poster.jpg` (first frame). Live content via migrations `v1.27-iot-showcase-trust` and `v1.27-hero-style-poster` (SiteConfig contentStyles / theme, only when still on the old defaults).

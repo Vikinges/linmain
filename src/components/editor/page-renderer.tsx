@@ -124,11 +124,12 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
               <Reveal
                 key={block.id}
                 id={block.id}
+                noFade
                 className="relative z-10 flex items-center justify-center px-4 py-20"
               >
                 <div className="container mx-auto max-w-6xl">
                   <div className="text-center space-y-8">
-                    <RevealItem index={0}>
+                    <RevealItem index={0} noFade>
                     <div
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-sm"
                       style={{
@@ -156,7 +157,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                       </div>
                     )}
 
-                    <RevealItem index={1} className="space-y-4">
+                    <RevealItem index={1} noFade className="space-y-4">
                       <h1 className="text-5xl md:text-7xl font-bold">
                         <span
                           className="block mb-2"
@@ -190,7 +191,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                       />
                     </RevealItem>
 
-                    <RevealItem index={2} className="flex flex-wrap items-center justify-center gap-4">
+                    <RevealItem index={2} noFade className="flex flex-wrap items-center justify-center gap-4">
                       {block.data.primaryCta.url && (
                         <Button
                           size="lg"
@@ -219,7 +220,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     </RevealItem>
 
                     {Array.isArray(block.data.highlights) && block.data.highlights.length > 0 && (
-                      <RevealItem index={3}>
+                      <RevealItem index={3} noFade>
                         <ul className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-6 gap-y-3 pt-4">
                           {block.data.highlights.map((item, index) => {
                             const Icon = HIGHLIGHT_ICONS[item.icon] || ShieldCheck
@@ -498,8 +499,12 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         {steps.length > 0 && (
                           <ol className="relative space-y-4 lg:pt-14">
                             {steps.map((step, index) => (
-                              <RevealItem key={index} index={index}>
-                                <li className="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition-colors duration-300 hover:border-sky-400/30 hover:bg-white/[0.05]">
+                              <RevealItem
+                                key={index}
+                                index={index}
+                                as="li"
+                                className="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition-colors duration-300 hover:border-sky-400/30 hover:bg-white/[0.05]"
+                              >
                                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-sky-600 text-sm font-bold text-white shadow-lg shadow-sky-900/40">
                                     {index + 1}
                                   </span>
@@ -507,7 +512,6 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                     <p className="font-semibold text-white">{step.title}</p>
                                     {step.text && <p className="text-sm leading-relaxed text-gray-400">{step.text}</p>}
                                   </div>
-                                </li>
                               </RevealItem>
                             ))}
                           </ol>
@@ -553,8 +557,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                     <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
                     <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-purple-600/10 blur-3xl" />
 
-                    <div className="relative grid gap-10 lg:grid-cols-[1fr_auto] items-start">
-                      <div className="space-y-6 max-w-2xl">
+                    <div className="relative grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_auto] items-start">
+                      <div className="min-w-0 space-y-6 max-w-2xl">
                         {/* Status badge (configurable per block; legacy blocks show "Live") */}
                         {badgeNode}
 
@@ -569,14 +573,17 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
 
                       {/* Right (desktop) / top (mobile): image, or a server icon on desktop only */}
                       <div
-                        className={`flex items-center justify-center lg:self-center ${
+                        className={`min-w-0 flex items-center justify-center lg:self-center ${
                           block.data.image.url ? "order-first lg:order-none" : "hidden lg:flex"
                         }`}
                       >
                         {block.data.image.url ? (
                           <div
                             className="overflow-hidden rounded-2xl max-w-full transition-transform duration-500 group-hover:scale-[1.02]"
-                            style={{ width: `${block.data.image.width || 256}px`, height: `${block.data.image.height || 256}px` }}
+                            style={{
+                              width: `${block.data.image.width || 256}px`,
+                              aspectRatio: `${block.data.image.width || 256} / ${block.data.image.height || 256}`,
+                            }}
                           >
                             <Image
                               src={block.data.image.url}
