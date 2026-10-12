@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { validateTesterRequest } from "@/lib/tester-request"
+import { notifyTesterRequest } from "@/lib/tester-notify"
 
 /**
  * Public endpoint behind linart.club/tester. A plain route handler (not a server action) on purpose:
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
     })
     if (duplicate) return NextResponse.json({ ok: true, duplicate: true })
 
-    await prisma.testerRequest.create({
+    const created = await prisma.testerRequest.create({
       data: {
         name: data.name,
         email: data.email,
@@ -70,6 +71,8 @@ export async function POST(request: Request) {
         lang: data.lang,
       },
     })
+    // Owner e-mail + push via host.crm-iot.com (no-op until TESTER_NOTIFY_URL / _TOKEN are set).
+    await notifyTesterRequest(created)
   } catch (error) {
     console.error("tester-request: save failed", error)
     return NextResponse.json({ ok: false, error: "server" }, { status: 500 })

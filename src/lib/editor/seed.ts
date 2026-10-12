@@ -8,6 +8,9 @@ import {
   buildAppItems,
   buildColdartBlock,
   buildCrmIotData,
+  buildIotCloudData,
+  buildTrustHighlights,
+  PRIVATE_CLOUD_IMAGE,
   buildKidsLabItems,
   buildLinartIdItem,
   runHomeMigrations,
@@ -356,6 +359,7 @@ export async function ensureDefaultPages() {
         description: SHOWCASE_COPY.hero.description,
         primaryCta: { label: SHOWCASE_COPY.hero.primaryCta, url: "#projects" },
         secondaryCta: { label: SHOWCASE_COPY.hero.secondaryCta, url: "#contact" },
+        highlights: buildTrustHighlights(),
         image: {
           url: content.media?.heroImageUrl || "",
           alt: {
@@ -370,16 +374,7 @@ export async function ensureDefaultPages() {
     {
       id: "iot-server",
       type: "project",
-      data: {
-        title: portfolioText.hostLinart.title,
-        description: portfolioText.hostLinart.description,
-        image: { url: "", alt: emptyLocalized() },
-        linkLabel: portfolioText.hostLinart.linkLabel,
-        linkUrl: "https://host.crm-iot.com/",
-        align: "left",
-        badge: { label: SHOWCASE_COPY.badges.live, tone: "live" },
-        secondaryLink: { label: SHOWCASE_COPY.iotApp, url: SHOWCASE_COPY.appSmartHome.linkUrl },
-      },
+      data: buildIotCloudData(),
     },
     // 3. CRM-IoT — rentals host app, open beta (showcase layout: steps + host calendar screenshot)
     {
@@ -394,7 +389,7 @@ export async function ensureDefaultPages() {
       data: {
         title: portfolioText.cloud.title,
         description: portfolioText.cloud.description,
-        image: { url: "", alt: emptyLocalized() },
+        image: { url: PRIVATE_CLOUD_IMAGE, alt: emptyLocalized(), width: 420, height: 420 },
         linkLabel: SHOWCASE_COPY.cloudRequest,
         linkUrl: `mailto:${SHOWCASE_COPY.contact.email}?subject=Private%20Cloud%20invite`,
         align: "left",

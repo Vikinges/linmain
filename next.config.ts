@@ -6,6 +6,23 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: '/favicon.ico', destination: '/logo.png' }];
   },
+  // Basic hardening (audit 2026-10). No CSP yet: the AI widget, OSM tiles and Nominatim would each need an
+  // allow-list entry — add it with a report-only phase first.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          // geolocation: "use my location" in the tester form; microphone: voice messages in the AI widget
+          { key: 'Permissions-Policy', value: 'camera=(), geolocation=(self), microphone=(self), payment=()' },
+        ],
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '100mb',

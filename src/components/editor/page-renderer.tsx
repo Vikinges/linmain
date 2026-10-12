@@ -13,6 +13,9 @@ import {
   Linkedin,
   Youtube,
   Globe,
+  ShieldCheck,
+  Cloud,
+  MapPin,
 } from "lucide-react"
 import type { Language } from "@/lib/i18n-config"
 import type { PageBlock } from "@/lib/editor/types"
@@ -23,7 +26,17 @@ import { ChatBox } from "@/components/chat/chat-box"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Reveal, RevealItem } from "@/components/editor/reveal"
-import type { ProjectBadgeTone } from "@/lib/editor/types"
+import type { HeroHighlightIcon, ProjectBadgeTone } from "@/lib/editor/types"
+
+const HIGHLIGHT_ICONS: Record<HeroHighlightIcon, typeof Server> = {
+  server: Server,
+  shield: ShieldCheck,
+  cloud: Cloud,
+  cpu: Cpu,
+  lock: Lock,
+  map: MapPin,
+  sparkles: Sparkles,
+}
 
 /** Status pill styles for project blocks. Legacy blocks without a badge keep the green "Live". */
 const BADGE_TONES: Record<Exclude<ProjectBadgeTone, "none">, { ring: string; dot: string }> = {
@@ -204,6 +217,26 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         </Button>
                       )}
                     </RevealItem>
+
+                    {Array.isArray(block.data.highlights) && block.data.highlights.length > 0 && (
+                      <RevealItem index={3}>
+                        <ul className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-6 gap-y-3 pt-4">
+                          {block.data.highlights.map((item, index) => {
+                            const Icon = HIGHLIGHT_ICONS[item.icon] || ShieldCheck
+                            const label = getLocalizedValue(item.label, language)
+                            if (!label) return null
+                            return (
+                              <li key={index} className="flex items-center gap-2 text-sm text-gray-300 md:text-base">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-sky-400/30 bg-sky-500/10 text-sky-300">
+                                  <Icon className="h-4 w-4" />
+                                </span>
+                                {label}
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      </RevealItem>
+                    )}
                   </div>
                 </div>
               </Reveal>

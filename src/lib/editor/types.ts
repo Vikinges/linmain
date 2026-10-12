@@ -20,10 +20,17 @@ export type PageBlock =
   | SocialBlock
   | ChatBlock
 
+export type HeroHighlightIcon = "server" | "shield" | "cloud" | "cpu" | "lock" | "map" | "sparkles"
+
 export type HeroBlock = {
   id: string
   type: "hero"
   data: {
+    /** Trust strip under the buttons, e.g. "Servers in Bavaria", "GDPR by design". */
+    highlights?: Array<{
+      icon: HeroHighlightIcon
+      label: LocalizedString
+    }>
     badge: LocalizedString
     title: LocalizedString
     subtitle: LocalizedString

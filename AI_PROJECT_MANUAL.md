@@ -210,8 +210,8 @@ Then SSH to VPS and run Step 3.
 
 The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in order:
 
-1. **hero** — HeroBlock — "LinArt Labs" positioning (badge "Hosted in Bavaria · No US cloud", one promise, CTAs → `#projects` / `#contact`)
-2. **iot-server** — ProjectBlock — Linart IoT Cloud (host.crm-iot.com, pricing) + secondary button → "Smart Home IoT Dashboard" on the App Store. Badge: Live
+1. **hero** — HeroBlock — trust strip (`highlights`: Servers in Bavaria · GDPR by design · own hardware, no US cloud · self-hosted AI, editable in the block editor) and the "LinArt Labs" positioning (badge "Hosted in Bavaria · No US cloud", one promise, CTAs → `#projects` / `#contact`)
+2. **iot-server** — ProjectBlock, layout **showcase** — Linart IoT Cloud: real home-screen screenshot (`public/assets/iot-cloud-home.jpeg`, test account, family names / town / door warning hidden in the DOM only), 3 steps, prices from the public catalog (`/api/plans`: free 1 device, home from €12/year, developers from €49/year). CTA → host.crm-iot.com/tarife, secondary → iOS app. Badge: Live
 3. **crm-iot** — ProjectBlock, layout **showcase** — CRM-IoT host app for rentals (open beta, free for testers): text + 3 "how it works" steps, real host-calendar screenshot (`public/assets/crm-iot-host-calendar.jpeg`) in a browser frame; CTA "Request free tester access" → `/tester` (form, see below) — tester access is unlocked by hand; secondary → host guide in the visitor's language (`secondaryLink.urlByLang`: `/manuals/app/{en/,ru/}rentals-host.html`). The copy shows the price after the beta (€15 per unit / month, €160 / year — public in host.crm-iot.com `/api/plans` since v4.55.0). Badge: pilot (blue) "Open beta · free for testers"
 4. **cloud-services** — ProjectBlock — Immich + Nextcloud (nex.crm-iot.com) + ColdArt/GitLab/RustDesk; main CTA = mailto invite, secondary = /login. Badge: Live
 5. **coldart** — ProjectBlock — ColdART remote access & zero trust (zerotrust.crm-iot.com; free remote-support sessions + commercial control plane)
@@ -242,6 +242,8 @@ Already implemented via `@dnd-kit/core` + `@dnd-kit/sortable` in `src/components
 Use the `GripVertical` handle (⠿) on each block to drag and reorder. No extra setup needed.
 
 ## Tester requests (CRM-IoT open beta)
+
+- **Owner notification:** after saving, `src/lib/tester-notify.ts` POSTs the request to host.crm-iot.com `/api/integrations/linart/tester-request` (Bearer token), which sends an e-mail to OPERATOR_EMAIL and a push to the owner. Env on the VPS: `TESTER_NOTIFY_URL`, `TESTER_NOTIFY_TOKEN` (passed through `docker-compose.yml`; empty = off; 5 s timeout, never blocks the form). The token lives only in the VPS `.env`, in host.crm-iot.com `.env.crm` (`LINART_TESTER_NOTIFY_TOKEN`) and in `C:\Users\video\.linart\tester_notify_token` on the owner's laptop — never paste it into chats or commits.
 
 - Public form: `/tester` (`src/app/tester/page.tsx` → `src/components/tester/tester-form.tsx` inside `PublicPage` via `renderExtra`). EN/DE/RU; `?lang=de|en|ru` in any public URL picks the language (used by links from host.crm-iot.com).
 - Asks: name, e-mail, phone, company, what is rented (flat / house / hotel / boarding / rooms / vehicle / sauna), units, channels, **location** (address search via OSM Nominatim, "use my location", or a click on the map; the pin is draggable; the address is filled back from the pin) and **"Would you like to use our automation in your hotel or rental?"** — smart locks, air-quality sensors, heating control, AC control, or software only.
@@ -299,6 +301,14 @@ Each subdomain running as an independent service must have its own Impressum and
 - **YouTube embeds**: Must be mentioned in Datenschutz; use `youtube-nocookie.com` domain
 
 ## Change Log
+
+### 2026-10-12 (v1.27) — IoT showcase, trust strip, SEO, hardening, owner notifications
+
+- IoT Cloud card → showcase (live home screen, steps, current prices); Private Cloud gets a service illustration instead of the site logo (`public/assets/private-cloud.jpeg`); hero trust strip; hero subtitle gradient #e2e8f0 → #7dd3fc (was grey on grey); background video poster `public/assets/bg-poster.jpg` (first frame). Live content via migrations `v1.27-iot-showcase-trust` and `v1.27-hero-style-poster` (SiteConfig contentStyles / theme, only when still on the old defaults).
+- SEO: Open Graph / Twitter image `public/og-image.jpg` (1200×630, `summary_large_image`), `src/app/robots.ts`, `src/app/sitemap.ts`.
+- Security headers in `next.config.ts`: HSTS (no includeSubDomains — other *.linart.club hosts are separate servers), nosniff, Referrer-Policy, X-Frame-Options SAMEORIGIN, Permissions-Policy (geolocation and microphone only for self). No CSP yet.
+- Tester requests notify the owner by e-mail + push through host.crm-iot.com (see "Tester requests").
+- VPS: `.env` now has `IMAGE_REF=linart-web:local` (backups in `/opt/linart/backups/`), so a plain `docker compose up` keeps the current site.
 
 ### 2026-10-10 (v1.26) — tester request form with map
 

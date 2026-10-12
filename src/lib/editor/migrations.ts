@@ -24,6 +24,10 @@ const MIGRATIONS_KEY = "homeMigrations"
 const SHOWCASE_V124 = "v1.24-showcase"
 const CRM_BETA_V125 = "v1.25-crm-iot-beta"
 const DATENSCHUTZ_V126 = "v1.26-datenschutz-tester"
+const IOT_SHOWCASE_V127 = "v1.27-iot-showcase-trust"
+const STYLE_V127 = "v1.27-hero-style-poster"
+const BG_POSTER = "/assets/bg-poster.jpg"
+export const PRIVATE_CLOUD_IMAGE = "/assets/private-cloud.jpeg"
 
 const CONTACT_EMAIL = "vladimir@linart.club"
 
@@ -60,6 +64,76 @@ export const SHOWCASE_COPY = {
   },
   iotApp: L("iOS app", "iOS-App", "iOS-приложение"),
   crmRequest: L("Request a smart lock", "Smart Lock anfragen", "Запросить умный замок"),
+  trust: [
+    { icon: "map" as const, label: L("Servers in Bavaria", "Server in Bayern", "Серверы в Баварии") },
+    { icon: "shield" as const, label: L("GDPR by design", "DSGVO von Anfang an", "GDPR с первого дня") },
+    { icon: "server" as const, label: L("Our own hardware — no US cloud", "Eigene Hardware — keine US-Cloud", "Своё железо, без облаков США") },
+    { icon: "cpu" as const, label: L("Self-hosted AI", "Selbst gehostete KI", "Собственный ИИ на своих серверах") },
+  ],
+  iotCloud: {
+    title: L(
+      "Linart IoT Cloud — your devices, your data, our server in Bavaria",
+      "Linart IoT Cloud — Ihre Geräte, Ihre Daten, unser Server in Bayern",
+      "Linart IoT Cloud — ваши устройства, ваши данные, наш сервер в Баварии"
+    ),
+    description: L(
+      "<p>One place for sensors, relays, door locks, solar inverters and gateways: live charts, alerts, automations and remote access — in the browser and in the iOS app. Data stays in Germany and is never sold.</p>" +
+        "<ul><li><strong>Home</strong> — free for 1 device, plans from €12 / year</li>" +
+        "<li><strong>Family</strong> — up to 10 people, door codes for guests that expire on their own, child profiles</li>" +
+        "<li><strong>Developers</strong> — API, MQTT and firmware tools, from €49 / year</li>" +
+        "<li><strong>Business &amp; rentals</strong> — several sites, white label and the CRM-IoT host app</li></ul>" +
+        "<p>New features ship almost every day — early users decide what comes next.</p>",
+      "<p>Ein Ort für Sensoren, Relais, Türschlösser, Wechselrichter und Gateways: Live-Diagramme, Alarme, Automationen und Fernzugriff — im Browser und in der iOS-App. Die Daten bleiben in Deutschland und werden nie verkauft.</p>" +
+        "<ul><li><strong>Zuhause</strong> — kostenlos für 1 Gerät, Tarife ab 12 € / Jahr</li>" +
+        "<li><strong>Familie</strong> — bis zu 10 Personen, Türcodes für Gäste, die von selbst ablaufen, Kinderprofile</li>" +
+        "<li><strong>Entwickler</strong> — API, MQTT und Firmware-Werkzeuge, ab 49 € / Jahr</li>" +
+        "<li><strong>Business &amp; Vermietung</strong> — mehrere Standorte, White Label und die Gastgeber-App CRM-IoT</li></ul>" +
+        "<p>Neue Funktionen kommen fast täglich — frühe Nutzer bestimmen, was als Nächstes kommt.</p>",
+      "<p>Одно место для датчиков, реле, дверных замков, солнечных инверторов и шлюзов: живые графики, оповещения, автоматизации и удалённый доступ — в браузере и в iOS-приложении. Данные остаются в Германии и никогда не продаются.</p>" +
+        "<ul><li><strong>Дом</strong> — бесплатно для 1 устройства, тарифы от 12 € в год</li>" +
+        "<li><strong>Семья</strong> — до 10 человек, коды двери для гостей, которые истекают сами, детские профили</li>" +
+        "<li><strong>Разработчики</strong> — API, MQTT и инструменты прошивки, от 49 € в год</li>" +
+        "<li><strong>Бизнес и аренда</strong> — несколько объектов, white label и приложение хоста CRM-IoT</li></ul>" +
+        "<p>Новые функции выходят почти каждый день — первые пользователи решают, что будет дальше.</p>"
+    ),
+    steps: [
+      {
+        title: L("Connect a device", "Gerät verbinden", "Подключите устройство"),
+        text: L(
+          "Sensor Hub, relay, LockHub or your own ESP32 — Wi-Fi setup right from the app or the browser.",
+          "Sensor Hub, Relais, LockHub oder Ihr eigener ESP32 — WLAN-Einrichtung direkt aus App oder Browser.",
+          "Sensor Hub, реле, LockHub или ваш собственный ESP32 — настройка Wi-Fi прямо из приложения или браузера."
+        ),
+      },
+      {
+        title: L("See your home live", "Ihr Zuhause live sehen", "Дом в реальном времени"),
+        text: L(
+          "Rooms, energy and doors on one screen — via cloud, Bluetooth or local Wi-Fi.",
+          "Räume, Energie und Türen auf einem Bildschirm — über Cloud, Bluetooth oder lokales WLAN.",
+          "Комнаты, энергия и двери на одном экране — через облако, Bluetooth или локальный Wi-Fi."
+        ),
+      },
+      {
+        title: L("Let it act for you", "Lassen Sie es für sich arbeiten", "Пусть работает за вас"),
+        text: L(
+          "Push alerts, automations and guest codes that expire on their own.",
+          "Push-Alarme, Automationen und Gastcodes, die von selbst ablaufen.",
+          "Push-оповещения, автоматизации и гостевые коды, которые истекают сами."
+        ),
+      },
+    ],
+    linkLabel: L("View plans", "Tarife ansehen", "Смотреть тарифы"),
+    linkUrl: "https://host.crm-iot.com/tarife",
+    imageUrl: "/assets/iot-cloud-home.jpeg",
+    imageAlt: L(
+      "Linart IoT Cloud home screen: weather, solar roof and live room sensors",
+      "Startbildschirm von Linart IoT Cloud: Wetter, Solardach und Raumsensoren live",
+      "Главный экран Linart IoT Cloud: погода, солнечная крыша и датчики комнат в реальном времени"
+    ),
+    imageWidth: 2600,
+    imageHeight: 1660,
+    showcaseUrl: "host.crm-iot.com/app",
+  },
   crmIot: {
     badge: L("Open beta · free for testers", "Offene Beta · kostenlos für Tester", "Открытая бета · бесплатно для тестеров"),
     title: L(
@@ -320,6 +394,27 @@ export const buildLinartIdItem = (): PortfolioBlock["data"]["items"][number] => 
   linkLabel: SHOWCASE_COPY.linartId.linkLabel,
   linkUrl: SHOWCASE_COPY.linartId.linkUrl,
 })
+
+/** The IoT Cloud block in its v1.27 "showcase" form (real home screen, steps, current plan prices). */
+export const buildIotCloudData = (): ProjectBlock["data"] => {
+  const c = SHOWCASE_COPY.iotCloud
+  return {
+    title: c.title,
+    description: c.description,
+    image: { url: c.imageUrl, alt: c.imageAlt, width: c.imageWidth, height: c.imageHeight },
+    linkLabel: c.linkLabel,
+    linkUrl: c.linkUrl,
+    align: "left",
+    badge: { label: SHOWCASE_COPY.badges.live, tone: "live" },
+    secondaryLink: { label: SHOWCASE_COPY.iotApp, url: SHOWCASE_COPY.appSmartHome.linkUrl },
+    layout: "showcase",
+    showcaseUrl: c.showcaseUrl,
+    steps: c.steps.map((s) => ({ title: s.title, text: s.text })),
+  }
+}
+
+export const buildTrustHighlights = (): NonNullable<HeroBlock["data"]["highlights"]> =>
+  SHOWCASE_COPY.trust.map((t) => ({ icon: t.icon, label: t.label }))
 
 /** The CRM-IoT rentals block in its v1.25 "showcase" form (open beta, free for testers). */
 export const buildCrmIotData = (): ProjectBlock["data"] => {
@@ -677,6 +772,67 @@ async function runDatenschutzMigration(applied: string[]) {
   await markAllApplied(applied, [DATENSCHUTZ_V126])
 }
 
+/**
+ * v1.27: IoT Cloud card → showcase (home-screen screenshot, steps, prices from the public catalog), replacing the
+ * old long text with outdated prices — only while the block still carries the original seed text. Hero gets the
+ * trust strip if it has none yet.
+ */
+export function applyIotShowcaseV127(blocks: PageBlock[]): { blocks: PageBlock[]; changed: boolean } {
+  let changed = false
+  const next = blocks.map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  for (const block of next) {
+    if (block.type === "project" && (block.id === "iot-server" || (block.data.linkUrl || "").startsWith("https://host.crm-iot.com"))) {
+      const en = block.data.description?.en || ""
+      if (/first buyers|first Apple customers/i.test(en) && block.data.layout !== "showcase") {
+        block.data = { ...block.data, ...buildIotCloudData() }
+        changed = true
+      }
+    }
+    // Private Cloud showed the site logo (black on dark, nearly invisible) → service illustration
+    if (block.type === "project" && block.id === "cloud-services") {
+      const url = block.data.image?.url || ""
+      if (!url || /Linart-PNG.png$/i.test(url)) {
+        block.data.image = { ...block.data.image, url: PRIVATE_CLOUD_IMAGE, width: 420, height: 420 }
+        changed = true
+      }
+    }
+    if (block.type === "hero" && !(block.data.highlights && block.data.highlights.length)) {
+      block.data.highlights = buildTrustHighlights()
+      changed = true
+    }
+  }
+  return { blocks: next, changed }
+}
+
+/** v1.27: readable hero subtitle (was grey on grey) and a poster frame for the background video. */
+async function runStyleMigration(applied: string[]) {
+  if (applied.includes(STYLE_V127)) return
+  const [stylesRow, themeRow] = await Promise.all([
+    prisma.siteConfig.findUnique({ where: { key: "contentStyles" } }),
+    prisma.siteConfig.findUnique({ where: { key: "theme" } }),
+  ])
+
+  const styles = (stylesRow?.value || {}) as { hero?: Record<string, unknown> }
+  const from = (styles.hero?.subtitleGradientFrom as string | undefined) || "#9ca3af"
+  const to = (styles.hero?.subtitleGradientTo as string | undefined) || "#6b7280"
+  if (from.toLowerCase() === "#9ca3af" && to.toLowerCase() === "#6b7280") {
+    const value = { ...styles, hero: { ...(styles.hero || {}), subtitleGradientFrom: "#e2e8f0", subtitleGradientTo: "#7dd3fc" } }
+    await prisma.siteConfig.upsert({
+      where: { key: "contentStyles" },
+      update: { value: value as object },
+      create: { key: "contentStyles", value: value as object },
+    })
+  }
+
+  const theme = (themeRow?.value || null) as { background?: Record<string, unknown> } | null
+  if (theme && theme.background && !theme.background.fallbackImage && theme.background.videoUrl) {
+    const value = { ...theme, background: { ...theme.background, fallbackImage: BG_POSTER } }
+    await prisma.siteConfig.update({ where: { key: "theme" }, data: { value: value as object } })
+  }
+
+  await markAllApplied(applied, [STYLE_V127])
+}
+
 async function readApplied(): Promise<string[]> {
   const row = await prisma.siteConfig.findUnique({ where: { key: MIGRATIONS_KEY } })
   const value = row?.value as { applied?: unknown } | null
@@ -700,10 +856,12 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
   const migrations: Array<{ name: string; apply: (blocks: PageBlock[]) => { blocks: PageBlock[]; changed: boolean } }> = [
     { name: SHOWCASE_V124, apply: (blocks) => applyShowcaseV124(blocks, pillarsHtml) },
     { name: CRM_BETA_V125, apply: applyCrmBetaV125 },
+    { name: IOT_SHOWCASE_V127, apply: applyIotShowcaseV127 },
   ]
 
   const appliedBefore = await readApplied()
   await runDatenschutzMigration(appliedBefore)
+  await runStyleMigration(await readApplied())
   const applied = await readApplied()
   const pending = migrations.filter((m) => !applied.includes(m.name))
   if (pending.length === 0) return

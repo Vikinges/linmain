@@ -389,8 +389,8 @@ export const defaultStyles: TextStyles = {
         nameOutlineWidth: 0,
         nameGlow: "#8b5cf6",
         nameGlowIntensity: 0,
-        subtitleGradientFrom: "#9ca3af",
-        subtitleGradientTo: "#6b7280"
+        subtitleGradientFrom: "#e2e8f0",
+        subtitleGradientTo: "#7dd3fc"
     },
     badge: {
         textColor: "#d1d5db",

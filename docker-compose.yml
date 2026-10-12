@@ -22,6 +22,9 @@ services:
       # здесь — чтобы деплой готовым образом работал без правки .env на сервере.
       - AI_CONSULTANT_CLIENT_ID=${AI_CONSULTANT_CLIENT_ID:-105}
       - AI_CONSULTANT_API_URL=${AI_CONSULTANT_API_URL:-https://ai.crm-iot.com}
+      # New tester request → owner e-mail + push via host.crm-iot.com (both empty = off)
+      - TESTER_NOTIFY_URL=${TESTER_NOTIFY_URL:-}
+      - TESTER_NOTIFY_TOKEN=${TESTER_NOTIFY_TOKEN:-}
     depends_on:
       - db
     volumes:

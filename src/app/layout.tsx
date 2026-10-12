@@ -46,16 +46,16 @@ export const metadata: Metadata = {
     description:
       "IoT platform, smart-lock automation, private cloud and AI assistants — hosted on our own hardware in Germany.",
     url: SITE_URL,
-    images: [{ url: "/logo.png", width: 512, height: 512, alt: "LinArt Labs" }],
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "LinArt Labs — private IoT, cloud and AI from Bavaria" }],
     locale: "en_US",
     alternateLocale: ["de_DE", "ru_RU"],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "LinArt Labs — Private IoT, Cloud & AI from Bavaria",
     description:
       "IoT platform, smart-lock automation, private cloud and AI assistants — hosted on our own hardware in Germany.",
-    images: ["/logo.png"],
+    images: ["/og-image.jpg"],
   },
   robots: { index: true, follow: true },
 };

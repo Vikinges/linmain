@@ -624,6 +624,14 @@ export function PageEditor({ pageId }: PageEditorProps) {
               ...block.data.image,
               alt: await translateLocalized(block.data.image.alt, "text"),
             },
+            highlights: block.data.highlights
+              ? await Promise.all(
+                  block.data.highlights.map(async (item) => ({
+                    ...item,
+                    label: await translateLocalized(item.label, "text"),
+                  }))
+                )
+              : undefined,
           },
         }
       case "richText":
@@ -1151,6 +1159,77 @@ function BlockFields({
               updateData({ ...block.data, image: { ...block.data.image, alt: value } })
             }
           />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm text-gray-300">Trust strip (icons under the buttons)</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  updateData({
+                    ...block.data,
+                    highlights: [...(block.data.highlights ?? []), { icon: "shield", label: { en: "", de: "", ru: "" } }],
+                  })
+                }
+              >
+                + Item
+              </Button>
+            </div>
+            {(block.data.highlights ?? []).map((item, index) => (
+              <div key={index} className="grid gap-3 rounded-lg border border-white/10 p-3 md:grid-cols-[160px_1fr_auto] md:items-end">
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-300">Icon</Label>
+                  <Select
+                    value={item.icon}
+                    onValueChange={(value) =>
+                      updateData({
+                        ...block.data,
+                        highlights: (block.data.highlights ?? []).map((h, i) =>
+                          i === index ? { ...h, icon: value as typeof item.icon } : h
+                        ),
+                      })
+                    }
+                  >
+                    <SelectTrigger className="bg-white/5 border-white/10">
+                      <SelectValue placeholder="Icon" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["server", "shield", "cloud", "cpu", "lock", "map", "sparkles"].map((icon) => (
+                        <SelectItem key={icon} value={icon}>
+                          {icon}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <LocalizedInput
+                  label={`Item ${index + 1}`}
+                  value={item.label}
+                  language={language}
+                  onChange={(value) =>
+                    updateData({
+                      ...block.data,
+                      highlights: (block.data.highlights ?? []).map((h, i) => (i === index ? { ...h, label: value } : h)),
+                    })
+                  }
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    updateData({
+                      ...block.data,
+                      highlights: (block.data.highlights ?? []).filter((_, i) => i !== index),
+                    })
+                  }
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
       )
     case "richText":
