@@ -156,3 +156,35 @@
 .leaflet-control-attribution a {
   color: #7dd3fc !important;
 }
+
+/* ColdART mark animation (same motion as the ColdART pages, deploy/scripts/coldart-50x.html in the ColdART repo) */
+.ca-peak { transform-box: fill-box; transform-origin: 50% 100%; animation: ca-grow 5s cubic-bezier(.22,.9,.25,1) infinite; }
+.ca-cap { animation: ca-glint 5s ease-in-out infinite; }
+.ca-base { transform-box: fill-box; transform-origin: 0% 50%; animation: ca-base 5s cubic-bezier(.22,.9,.25,1) infinite; }
+.ca-ridge { stroke-dasharray: 40 380; animation: ca-dash 4s linear infinite; }
+.ca-node { opacity: .5; animation: ca-node 2.6s ease-in-out infinite; }
+.ca-sheen::after {
+  content: ""; position: absolute; top: 0; left: 0; width: 44%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: translateX(-160%); animation: ca-sheen 4.5s ease-in-out infinite; mix-blend-mode: overlay;
+}
+.ca-stars {
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(255,255,255,.8), transparent),
+    radial-gradient(1.2px 1.2px at 78% 14%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1.6px 1.6px at 46% 8%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.2px 1.2px at 88% 32%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.3px 1.3px at 28% 40%, rgba(255,255,255,.45), transparent),
+    radial-gradient(1.5px 1.5px at 64% 26%, rgba(255,255,255,.6), transparent);
+  animation: ca-twinkle 6s ease-in-out infinite;
+}
+@keyframes ca-grow { 0% { transform: scaleY(.62); opacity: .4 } 24% { transform: scaleY(1); opacity: 1 } 82% { transform: scaleY(1); opacity: 1 } 100% { transform: scaleY(.62); opacity: .4 } }
+@keyframes ca-glint { 0%, 34% { opacity: .4 } 46% { opacity: 1 } 70%, 100% { opacity: .4 } }
+@keyframes ca-base { 0% { transform: scaleX(.2) } 30% { transform: scaleX(1) } 88% { transform: scaleX(1) } 100% { transform: scaleX(.2) } }
+@keyframes ca-dash { to { stroke-dashoffset: -420 } }
+@keyframes ca-node { 50% { opacity: 1 } }
+@keyframes ca-sheen { 0% { transform: translateX(-160%) } 55%, 100% { transform: translateX(320%) } }
+@keyframes ca-twinkle { 50% { opacity: .55 } }
+@media (prefers-reduced-motion: reduce) {
+  .ca-peak, .ca-cap, .ca-base, .ca-ridge, .ca-node, .ca-stars, .ca-sheen::after { animation: none; }
+}

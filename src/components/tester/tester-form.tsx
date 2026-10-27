@@ -15,6 +15,7 @@ import {
   type TesterKind,
 } from "@/lib/tester-request"
 import type { MapPoint } from "@/components/tester/linart-map"
+import { BrandMark } from "@/components/brand/brand-mark"
 
 const LinartMap = dynamic(() => import("@/components/tester/linart-map").then((m) => m.LinartMap), {
   ssr: false,
@@ -389,6 +390,9 @@ export function TesterForm({ language }: { language: Language }) {
   return (
     <form onSubmit={submit} className="mx-auto max-w-4xl space-y-6 px-4" noValidate>
       <header className="space-y-5 pb-4 text-center">
+        <div>
+          <BrandMark logo="crm-iot" size={64} />
+        </div>
         <span className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-4 py-1.5 text-sm font-medium text-sky-300">
           <span className="h-2 w-2 rounded-full bg-sky-400" />
           <span>{t.badge}</span>

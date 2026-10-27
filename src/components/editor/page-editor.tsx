@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/dialog"
 import { RichTextEditor } from "@/components/editor/rich-text-editor"
 import { MediaLibrary } from "@/components/editor/media-library"
+import { BRAND_KEYS, BRAND_LABELS, BrandMark } from "@/components/brand/brand-mark"
 import { createBlock } from "@/lib/editor/factory"
 import { getLocalizedValue, setLocalizedValue } from "@/lib/editor/locales"
 import { defaultLanguage, languages, type Language } from "@/lib/i18n-config"
@@ -209,6 +210,32 @@ function SortableBlock({
         </div>
       </div>
       <div className="space-y-4 px-4 py-4">{children}</div>
+    </div>
+  )
+}
+
+/** Product mark: one of the built-in brand keys (suggested) or an image URL, with a live preview. */
+function LogoField({ value, onChange }: { value?: string; onChange: (value: string) => void }) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm text-gray-300">Logo — brand key or image URL (empty = none)</Label>
+      <div className="flex items-center gap-3">
+        <Input
+          value={value ?? ""}
+          list="brand-logo-keys"
+          placeholder="coldart, duet, iot-cloud, /uploads/logo.png …"
+          onChange={(event) => onChange(event.target.value)}
+          className="bg-white/5 border-white/10"
+        />
+        <BrandMark logo={value} size={40} />
+      </div>
+      <datalist id="brand-logo-keys">
+        {BRAND_KEYS.map((key) => (
+          <option key={key} value={key}>
+            {BRAND_LABELS[key]}
+          </option>
+        ))}
+      </datalist>
     </div>
   )
 }
@@ -1576,6 +1603,7 @@ function BlockFields({
               />
             </div>
           </div>
+          <LogoField value={block.data.logo} onChange={(logo) => updateData({ ...block.data, logo })} />
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm text-gray-300">How-it-works steps (showcase)</Label>
@@ -1936,6 +1964,15 @@ function BlockFields({
                     Choose
                   </Button>
                 </div>
+                <LogoField
+                  value={item.logo}
+                  onChange={(logo) =>
+                    updateData({
+                      ...block.data,
+                      items: block.data.items.map((entry) => (entry.id === item.id ? { ...entry, logo } : entry)),
+                    })
+                  }
+                />
                 <div className="grid gap-4 md:grid-cols-[1fr_auto]">
                   <div className="space-y-2">
                     <Label className="text-sm text-gray-300">Image URL</Label>

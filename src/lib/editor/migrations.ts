@@ -28,6 +28,7 @@ const IOT_SHOWCASE_V127 = "v1.27-iot-showcase-trust"
 const STYLE_V127 = "v1.27-hero-style-poster"
 const AI_OPERATOR_V129 = "v1.29-ai-operator-app"
 const DUET_V130 = "v1.30-duet-file-manager"
+const BRAND_LOGOS_V131 = "v1.31-brand-logos"
 const BG_POSTER = "/assets/bg-poster.jpg"
 export const PRIVATE_CLOUD_IMAGE = "/assets/private-cloud.jpeg"
 
@@ -228,6 +229,57 @@ export const SHOWCASE_COPY = {
     linkUrl: "https://zerotrust.crm-iot.com/",
     secondaryLabel: L("Request remote support", "Remote-Support anfragen", "Запросить удалённую поддержку"),
     secondaryUrl: `mailto:${CONTACT_EMAIL}?subject=ColdART%20remote%20support`,
+    // Capability cards: the slides of the crm-iot.com sign-in gallery (features-data.js) — kicker, headline, "why it matters".
+    features: [
+      {
+        icon: "globe", accent: "56,190,255",
+        kicker: L("Secure tunnels", "Sichere Tunnel", "Защищённые туннели"),
+        title: L("Publish any service in one command", "Jeden Dienst mit einem Befehl veröffentlichen", "Любой сервис в интернет одной командой"),
+        text: L("Works behind NAT, CGNAT and Starlink: no public IP and no open ports at the client.", "Funktioniert hinter NAT, CGNAT und Starlink: keine öffentliche IP, keine offenen Ports beim Kunden.", "Работает за NAT, CGNAT и Starlink: клиенту не нужен белый IP и открытые порты."),
+      },
+      {
+        icon: "zap", accent: "74,222,128",
+        kicker: L("Zero-touch onboarding", "Zero-Touch-Onboarding", "Подключение без рук"),
+        title: L("Gateways register themselves", "Gateways registrieren sich selbst", "Шлюзы регистрируются сами"),
+        text: L("Rolling out dozens of devices takes minutes instead of service trips.", "Dutzende Geräte in Minuten ausrollen — statt Serviceeinsätzen.", "Развернуть десятки устройств — минуты, а не выезды."),
+      },
+      {
+        icon: "shield", accent: "255,213,128",
+        kicker: L("Access by consent", "Zugriff mit Zustimmung", "Доступ по согласию"),
+        title: L("The owner decides who gets in", "Der Eigentümer entscheidet", "Кто войдёт — решает владелец"),
+        text: L("No permanent backdoors: every session is explicit, time-boxed and revocable in one click.", "Keine dauerhaften Hintertüren: jede Sitzung ist explizit, befristet und mit einem Klick widerrufbar.", "Никаких вечных лазеек: каждая сессия явная, ограничена по времени и отзывается в один клик."),
+      },
+      {
+        icon: "terminal", accent: "99,102,241",
+        kicker: L("Browser terminal", "Browser-Terminal", "Терминал в браузере"),
+        title: L("SSH in the browser, no keys to share", "SSH im Browser, ohne Schlüssel weiterzugeben", "SSH прямо в браузере, без передачи ключей"),
+        text: L("Support staff install nothing, and no password or key ever leaves ColdART.", "Der Support installiert nichts, kein Passwort und kein Schlüssel verlässt ColdART.", "Поддержке ничего не нужно ставить, пароли и ключи никуда не передаются."),
+      },
+      {
+        icon: "monitor", accent: "124,92,252",
+        kicker: L("Remote desktop", "Fernwartung", "Удалённый рабочий стол"),
+        title: L("Your own TeamViewer", "Ihr eigener TeamViewer", "Свой TeamViewer"),
+        text: L("No per-seat licences and no third-party cloud in the middle.", "Keine Lizenzen pro Arbeitsplatz, keine fremde Cloud dazwischen.", "Никаких лицензий за рабочее место и чужого облака посередине."),
+      },
+      {
+        icon: "lock", accent: "130,220,255",
+        kicker: L("Zero Trust policies", "Zero-Trust-Richtlinien", "Политики Zero Trust"),
+        title: L("Every resource under lock", "Jede Ressource abgesichert", "Каждый ресурс под замком"),
+        text: L("Only the right people reach the right service — even if a link leaks.", "Nur die Richtigen erreichen den richtigen Dienst — selbst wenn ein Link durchsickert.", "Нужные люди попадают к нужному сервису — даже если ссылка утекла."),
+      },
+      {
+        icon: "activity", accent: "255,140,170",
+        kicker: L("Audit & alerts", "Audit & Alarme", "Аудит и оповещения"),
+        title: L("See everything, react first", "Alles sehen, zuerst reagieren", "Видно всё, реагируете первыми"),
+        text: L("You learn about a problem before your customers do.", "Sie erfahren von einem Problem vor Ihren Kunden.", "О проблеме вы узнаёте раньше клиента."),
+      },
+      {
+        icon: "server", accent: "180,143,255",
+        kicker: L("Self-hosted", "Selbst gehostet", "На своём сервере"),
+        title: L("Your infrastructure, your rules", "Ihre Infrastruktur, Ihre Regeln", "Ваша инфраструктура — ваши правила"),
+        text: L("The comfort of Cloudflare Tunnel and TeamViewer — without monthly fees and without handing your data to anyone.", "Komfort wie Cloudflare Tunnel und TeamViewer — ohne Monatsgebühren und ohne Daten an Dritte zu geben.", "Удобство Cloudflare Tunnel и TeamViewer — без абонентской платы и без передачи данных третьим лицам."),
+      },
+    ] satisfies NonNullable<ProjectBlock["data"]["features"]>,
   },
   linartId: {
     title: L("LinArt ID — one account for all services", "LinArt ID — ein Konto für alle Dienste", "LinArt ID — один аккаунт для всех сервисов"),
@@ -546,8 +598,81 @@ export const buildColdartBlock = (): ProjectBlock => ({
     align: "left",
     badge: { label: SHOWCASE_COPY.badges.live, tone: "live" },
     secondaryLink: { label: SHOWCASE_COPY.coldart.secondaryLabel, url: SHOWCASE_COPY.coldart.secondaryUrl },
+    logo: "coldart",
+    features: SHOWCASE_COPY.coldart.features,
   },
 })
+
+/** Product marks (BRAND_KEYS in src/components/brand/brand-mark.tsx) by block id, then by link. */
+const BRAND_BY_BLOCK_ID: Record<string, string> = {
+  "iot-server": "iot-cloud",
+  "crm-iot": "crm-iot",
+  "cloud-services": "private-cloud",
+  coldart: "coldart",
+  duet: "duet",
+  "linart-id": "linart-id",
+  "app-ai-operator": "ai-consultant",
+  "app-nfc-qr-card": "nfc-qr",
+  "app-smart-home-iot": "iot-cloud",
+  sensorhub: "smart-hub",
+  "qr-generator": "qr",
+  commercial: "commercial-hub",
+  "game-monster-apocalypse": "kids-monster",
+  "game-boat-shutter": "kids-boat",
+}
+const BRAND_BY_LINK: Array<[RegExp, string]> = [
+  [/^https:\/\/ai\.crm-iot\.com/, "ai-consultant"],
+  [/id6799751631/, "ai-consultant"],
+  [/id6785651800/, "nfc-qr"],
+  [/id6782025663/, "iot-cloud"],
+  [/^https:\/\/shop\.linart\.club/, "smart-hub"],
+  [/^https:\/\/qr\.linart\.club/, "qr"],
+  [/^https:\/\/lsc-led\.de/, "commercial-hub"],
+  [/^https:\/\/llm\.crm-iot\.com/, "llm-lab"],
+  [/^https:\/\/id\.crm-iot\.com/, "linart-id"],
+  [/^https:\/\/zerotrust\.crm-iot\.com/, "coldart"],
+  [/^https:\/\/monst\.crm-iot\.com/, "kids-monster"],
+  [/^https:\/\/boat\.crm-iot\.com/, "kids-boat"],
+  [/^\/duet$/, "duet"],
+]
+const brandFor = (id: string, linkUrl: string | undefined) =>
+  BRAND_BY_BLOCK_ID[id] ?? BRAND_BY_LINK.find(([pattern]) => pattern.test((linkUrl || "").trim()))?.[1]
+
+/**
+ * Gives every known product card its mark (and the ColdART card its capability cards from crm-iot.com).
+ * Never replaces a logo or features the owner has set in the editor.
+ */
+export function withBrandLogos(blocks: PageBlock[]): PageBlock[] {
+  return applyBrandLogosV131(blocks).blocks
+}
+
+export function applyBrandLogosV131(blocks: PageBlock[]): { blocks: PageBlock[]; changed: boolean } {
+  let changed = false
+  const next = blocks.map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  for (const block of next) {
+    if (block.type === "project") {
+      const brand = brandFor(block.id, block.data.linkUrl)
+      if (brand && !block.data.logo) {
+        block.data.logo = brand
+        changed = true
+      }
+      if (brand === "coldart" && !(block.data.features && block.data.features.length)) {
+        block.data.features = SHOWCASE_COPY.coldart.features
+        changed = true
+      }
+    }
+    if (block.type === "portfolio") {
+      for (const item of block.data.items) {
+        const brand = brandFor(item.id, item.linkUrl)
+        if (brand && !item.logo) {
+          item.logo = brand
+          changed = true
+        }
+      }
+    }
+  }
+  return { blocks: next, changed }
+}
 
 const asParagraph = (html: string) => (html.trim().startsWith("<") ? html : `<p>${html}</p>`)
 
@@ -986,6 +1111,7 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
     { name: IOT_SHOWCASE_V127, apply: applyIotShowcaseV127 },
     { name: AI_OPERATOR_V129, apply: applyAiOperatorV129 },
     { name: DUET_V130, apply: applyDuetV130 },
+    { name: BRAND_LOGOS_V131, apply: applyBrandLogosV131 },
   ]
 
   const appliedBefore = await readApplied()

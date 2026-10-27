@@ -16,7 +16,12 @@ import {
   ShieldCheck,
   Cloud,
   MapPin,
+  Zap,
+  SquareTerminal,
+  Monitor,
+  Activity,
 } from "lucide-react"
+import { BrandMark, BrandPanel, ColdartShowcase } from "@/components/brand/brand-mark"
 import type { Language } from "@/lib/i18n-config"
 import type { PageBlock } from "@/lib/editor/types"
 import { getLocalizedValue } from "@/lib/editor/locales"
@@ -26,7 +31,18 @@ import { ChatBox } from "@/components/chat/chat-box"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Reveal, RevealItem } from "@/components/editor/reveal"
-import type { HeroHighlightIcon, ProjectBadgeTone } from "@/lib/editor/types"
+import type { HeroHighlightIcon, ProjectBadgeTone, ProjectFeatureIcon } from "@/lib/editor/types"
+
+const FEATURE_ICONS: Record<ProjectFeatureIcon, typeof Server> = {
+  globe: Globe,
+  zap: Zap,
+  shield: ShieldCheck,
+  terminal: SquareTerminal,
+  monitor: Monitor,
+  lock: Lock,
+  activity: Activity,
+  server: Server,
+}
 
 const HIGHLIGHT_ICONS: Record<HeroHighlightIcon, typeof Server> = {
   server: Server,
@@ -339,6 +355,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                     sizes="(min-width: 768px) 55vw, 100vw"
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                   />
+                                ) : item.kind === "image" && item.logo ? (
+                                  <BrandPanel logo={item.logo} />
                                 ) : item.kind === "image" ? (
                                   <div className="flex h-full items-center justify-center bg-gradient-to-br from-sky-900/40 via-gray-900/60 to-violet-900/40">
                                     <Sparkles className="h-16 w-16 text-sky-300/60" />
@@ -352,6 +370,9 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                               </div>
                               <div className="flex h-full flex-col gap-4">
                                 <div className="flex items-center gap-3">
+                                  {item.logo ? (
+                                    <BrandMark logo={item.logo} size={48} />
+                                  ) : (
                                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-lg shadow-gray-900/50">
                                     {item.kind === "video" ? (
                                       <Cpu className="w-6 h-6 text-gray-200" />
@@ -361,6 +382,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                       <Server className="w-6 h-6 text-gray-200" />
                                     )}
                                   </div>
+                                  )}
                                   <h3
                                     className="text-xl font-bold"
                                     style={{ color: palette.pillars.titleColor }}
@@ -423,10 +445,54 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
               .filter((step) => step.title)
             const isExternal = (url: string) => /^https?:\/\//.test(url)
 
-            const badgeNode = badgeStyle && badgeLabel && (
+            const logo = (block.data.logo || "").trim()
+            const badgePill = badgeStyle && badgeLabel && (
               <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium ${badgeStyle.ring}`}>
                 <span className={`h-2 w-2 rounded-full ${badgeStyle.dot}`} />
-                {badgeLabel}
+                <span>{badgeLabel}</span>
+              </div>
+            )
+            // The product mark sits next to the status pill; the big ColdART lockup already shows its mark.
+            const showHeadMark = Boolean(logo) && !(logo === "coldart" && !block.data.image.url)
+            const badgeNode = (showHeadMark || badgePill) && (
+              <div className="flex items-center gap-4">
+                {showHeadMark && <BrandMark logo={logo} size={56} />}
+                {badgePill}
+              </div>
+            )
+            const features = (block.data.features || [])
+              .map((f) => ({
+                Icon: FEATURE_ICONS[f.icon] ?? Server,
+                accent: /^\d{1,3},\s*\d{1,3},\s*\d{1,3}$/.test(f.accent || "") ? f.accent : "56,190,255",
+                kicker: getLocalizedValue(f.kicker, language),
+                title: getLocalizedValue(f.title, language),
+                text: getLocalizedValue(f.text, language),
+              }))
+              .filter((f) => f.title)
+            const featuresNode = features.length > 0 && (
+              <div className="relative mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {features.map((f, index) => (
+                  <RevealItem key={index} index={Math.min(index, 4)} className="h-full">
+                  <div
+                    className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-colors duration-300 hover:bg-white/[0.06]"
+                    style={{ backgroundImage: `radial-gradient(120% 90% at 100% 0%, rgba(${f.accent},0.13), transparent 60%)` }}
+                  >
+                    <div
+                      className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl"
+                      style={{ color: `rgb(${f.accent})`, background: `rgba(${f.accent},0.12)`, boxShadow: `0 0 0 1px rgba(${f.accent},0.35) inset, 0 0 24px rgba(${f.accent},0.2)` }}
+                    >
+                      <f.Icon className="h-5 w-5" />
+                    </div>
+                    {f.kicker && (
+                      <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: `rgb(${f.accent})` }}>
+                        {f.kicker}
+                      </p>
+                    )}
+                    <p className="font-semibold leading-snug text-white">{f.title}</p>
+                    {f.text && <p className="mt-2 text-sm leading-relaxed text-gray-400">{f.text}</p>}
+                  </div>
+                  </RevealItem>
+                ))}
               </div>
             )
 
@@ -519,6 +585,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         )}
                       </div>
 
+                      {featuresNode}
+
                       {block.data.image.url && (
                         <RevealItem index={1} className="relative mt-12">
                           {/* Product screenshot in a browser window */}
@@ -572,10 +640,10 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         {buttonsNode}
                       </div>
 
-                      {/* Right (desktop) / top (mobile): image, or a server icon on desktop only */}
+                      {/* Right (desktop) / top (mobile): image, the product mark, or a server icon on desktop only */}
                       <div
                         className={`min-w-0 flex items-center justify-center lg:self-center ${
-                          block.data.image.url ? "order-first lg:order-none" : "hidden lg:flex"
+                          block.data.image.url || logo ? "order-first lg:order-none" : "hidden lg:flex"
                         }`}
                       >
                         {block.data.image.url ? (
@@ -595,6 +663,10 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                               className="h-full w-full object-cover"
                             />
                           </div>
+                        ) : logo === "coldart" ? (
+                          <ColdartShowcase tagline="Zero-Trust Tunnel" />
+                        ) : logo ? (
+                          <BrandMark logo={logo} size={208} />
                         ) : (
                           <div className="flex h-52 w-52 items-center justify-center rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/40 to-purple-900/40 shadow-2xl shadow-blue-900/20">
                             <Server className="h-24 w-24 text-blue-400/60" />
@@ -602,6 +674,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                         )}
                       </div>
                     </div>
+
+                    {featuresNode}
                   </div>
                 </div>
               </Reveal>

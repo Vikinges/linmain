@@ -12,6 +12,7 @@ import {
   buildDuetBlock,
   buildIotCloudData,
   buildTrustHighlights,
+  withBrandLogos,
   PRIVATE_CLOUD_IMAGE,
   buildKidsLabItems,
   buildLinartIdItem,
@@ -349,7 +350,7 @@ export async function ensureDefaultPages() {
     },
   }
 
-  const blocks: PageBlock[] = [
+  const blocks: PageBlock[] = withBrandLogos([
     // 1. Hero
     {
       id: "hero",
@@ -496,7 +497,7 @@ export async function ensureDefaultPages() {
         address: SHOWCASE_COPY.contact.address,
       },
     },
-  ]
+  ])
 
   if (count > 0) {
     // Pages already exist — only create the home page if it's missing.

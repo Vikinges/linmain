@@ -121,9 +121,14 @@ export type PortfolioBlock = {
       imageHeight?: number
       linkLabel: LocalizedString
       linkUrl: string
+      /** Product mark next to the title: a key of BRAND_KEYS (src/components/brand/brand-mark.tsx) or an image URL. */
+      logo?: string
     }>
   }
 }
+
+/** Icons for ProjectBlock `features` (lucide glyphs, mapped in page-renderer). */
+export type ProjectFeatureIcon = "globe" | "zap" | "shield" | "terminal" | "monitor" | "lock" | "activity" | "server"
 
 export type ProjectBadgeTone = "live" | "pilot" | "dev" | "soon" | "free" | "none"
 
@@ -163,6 +168,16 @@ export type ProjectBlock = {
     showcaseUrl?: string
     /** "How it works" steps shown next to the text in the showcase layout. */
     steps?: Array<{
+      title: LocalizedString
+      text: LocalizedString
+    }>
+    /** Product mark next to the badge: a key of BRAND_KEYS (src/components/brand/brand-mark.tsx) or an image URL. */
+    logo?: string
+    /** Capability cards under the text, e.g. the ColdART features from crm-iot.com. `accent` is "r,g,b". */
+    features?: Array<{
+      icon: ProjectFeatureIcon
+      accent: string
+      kicker: LocalizedString
       title: LocalizedString
       text: LocalizedString
     }>
