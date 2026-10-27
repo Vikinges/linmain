@@ -1,0 +1,13 @@
+# The image is built from source: dependencies come from `npm ci` in the deps stage, settings from
+# docker-compose env at runtime. Without this file `COPY . .` sent ~1.4 GB (Windows node_modules,
+# the dev .next cache) and baked the laptop's .env files into the image.
+node_modules
+.next
+.git
+.env*
+!.env.example
+duet
+public/uploads
+*.tar
+*.tsbuildinfo
+npm-debug.log*
