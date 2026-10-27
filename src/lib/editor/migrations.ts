@@ -27,6 +27,7 @@ const DATENSCHUTZ_V126 = "v1.26-datenschutz-tester"
 const IOT_SHOWCASE_V127 = "v1.27-iot-showcase-trust"
 const STYLE_V127 = "v1.27-hero-style-poster"
 const AI_OPERATOR_V129 = "v1.29-ai-operator-app"
+const DUET_V130 = "v1.30-duet-file-manager"
 const BG_POSTER = "/assets/bg-poster.jpg"
 export const PRIVATE_CLOUD_IMAGE = "/assets/private-cloud.jpeg"
 
@@ -62,6 +63,7 @@ export const SHOWCASE_COPY = {
     live: L("Live", "Live", "Работает"),
     dev: L("In development", "In Entwicklung", "В разработке"),
     pilot: L("Pilot program", "Pilotprogramm", "Пилот"),
+    free: L("Completely free", "Komplett kostenlos", "Полностью бесплатно"),
   },
   iotApp: L("iOS app", "iOS-App", "iOS-приложение"),
   crmRequest: L("Request a smart lock", "Smart Lock anfragen", "Запросить умный замок"),
@@ -265,6 +267,47 @@ export const SHOWCASE_COPY = {
     linkUrl: "https://apps.apple.com/de/app/nfc-qr-business-card-3d-maker/id6785651800",
     imageUrl: "/assets/appstore-nfc-qr-card.png",
   },
+  duet: {
+    title: L(
+      "LinArt Duet — free file manager for Windows",
+      "LinArt Duet — kostenloser Dateimanager für Windows",
+      "LinArt Duet — бесплатный файловый менеджер для Windows"
+    ),
+    description: L(
+      "<p>A fast two-pane file manager in the spirit of Total Commander, with a modern look: tabs, Quick Look preview, command palette, background copy queue, folder compare &amp; sync, multi-rename, colour labels and a disk space map.</p>" +
+        "<p><strong>Completely free</strong> — for personal and commercial use. No ads, no account. Windows 10 / 11, English, Deutsch, Русский.</p>",
+      "<p>Ein schneller Zwei-Fenster-Dateimanager im Geist des Total Commander, modern gestaltet: Tabs, Quick-Look-Vorschau, Befehlspalette, Kopier-Warteschlange im Hintergrund, Ordnervergleich &amp; Sync, Mehrfach-Umbenennen, Farbmarkierungen und Speicherkarte.</p>" +
+        "<p><strong>Komplett kostenlos</strong> — privat und kommerziell. Ohne Werbung, ohne Konto. Windows 10 / 11, English, Deutsch, Русский.</p>",
+      "<p>Быстрый двухпанельный файловый менеджер в духе Total Commander в современном виде: вкладки, просмотр Quick Look, палитра команд, фоновая очередь копирования, сравнение и синхронизация папок, групповое переименование, цветные метки и карта диска.</p>" +
+        "<p><strong>Полностью бесплатно</strong> — для личного и коммерческого использования. Без рекламы и регистрации. Windows 10 / 11, English, Deutsch, Русский.</p>"
+    ),
+    linkLabel: L("Download free", "Kostenlos herunterladen", "Скачать бесплатно"),
+    linkUrl: "/duet",
+    imageUrl: "/assets/duet/main-en.png",
+    frame: "LinArt Duet · Windows 10 / 11",
+    steps: [
+      {
+        title: L("Download one file", "Eine Datei laden", "Скачайте один файл"),
+        text: L("About 50 MB, nothing else to install.", "Etwa 50 MB, sonst nichts zu installieren.", "Около 50 МБ, больше ничего ставить не нужно."),
+      },
+      {
+        title: L("Start it — no admin rights", "Starten — ohne Adminrechte", "Запустите — без прав администратора"),
+        text: L(
+          "Start menu, desktop and “Open in LinArt Duet” in Explorer.",
+          "Startmenü, Desktop und „In LinArt Duet öffnen“ im Explorer.",
+          "«Пуск», рабочий стол и «Открыть в LinArt Duet» в Проводнике."
+        ),
+      },
+      {
+        title: L("Updates itself", "Aktualisiert sich selbst", "Обновляется сама"),
+        text: L(
+          "Signed updates, checked before install.",
+          "Signierte Updates, vor der Installation geprüft.",
+          "Подписанные обновления, проверка перед установкой."
+        ),
+      },
+    ],
+  },
   appAiOperator: {
     title: L("LinArt AI Operator (iOS)", "LinArt AI Operator (iOS)", "LinArt AI Operator (iOS)"),
     description: L(
@@ -421,6 +464,24 @@ export const buildAiOperatorItem = (): PortfolioBlock["data"]["items"][number] =
   imageUrl: SHOWCASE_COPY.appAiOperator.imageUrl,
   linkLabel: SHOWCASE_COPY.appAiOperator.linkLabel,
   linkUrl: SHOWCASE_COPY.appAiOperator.linkUrl,
+})
+
+/** LinArt Duet, the free Windows file manager; downloads and updates come from /duet (src/lib/duet.ts). */
+export const buildDuetBlock = (): ProjectBlock => ({
+  id: "duet",
+  type: "project",
+  data: {
+    title: SHOWCASE_COPY.duet.title,
+    description: SHOWCASE_COPY.duet.description,
+    image: { url: SHOWCASE_COPY.duet.imageUrl, alt: L("LinArt Duet", "LinArt Duet", "LinArt Duet"), width: 2910, height: 1830 },
+    linkLabel: SHOWCASE_COPY.duet.linkLabel,
+    linkUrl: SHOWCASE_COPY.duet.linkUrl,
+    align: "left",
+    badge: { label: SHOWCASE_COPY.badges.free, tone: "free" },
+    layout: "showcase",
+    showcaseUrl: SHOWCASE_COPY.duet.frame,
+    steps: SHOWCASE_COPY.duet.steps.map((s) => ({ title: s.title, text: s.text })),
+  },
 })
 
 export const buildLinartIdItem = (): PortfolioBlock["data"]["items"][number] => ({
@@ -857,6 +918,19 @@ export function applyAiOperatorV129(blocks: PageBlock[]): { blocks: PageBlock[];
   return { blocks: next, changed: true }
 }
 
+/** v1.30: the LinArt Duet block, after ColdART (or before the portfolio when ColdART is gone). */
+export function applyDuetV130(blocks: PageBlock[]): { blocks: PageBlock[]; changed: boolean } {
+  const next = blocks.map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  if (next.some((b) => b.id === "duet" || (b.type === "project" && b.data.linkUrl === "/duet"))) {
+    return { blocks: next, changed: false }
+  }
+  const coldart = next.findIndex((b) => b.id === "coldart")
+  const portfolio = next.findIndex((b) => b.type === "portfolio")
+  const insertAt = coldart >= 0 ? coldart + 1 : portfolio >= 0 ? portfolio : next.length
+  next.splice(insertAt, 0, buildDuetBlock())
+  return { blocks: next, changed: true }
+}
+
 /** v1.27: readable hero subtitle (was grey on grey) and a poster frame for the background video. */
 async function runStyleMigration(applied: string[]) {
   if (applied.includes(STYLE_V127)) return
@@ -911,6 +985,7 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
     { name: CRM_BETA_V125, apply: applyCrmBetaV125 },
     { name: IOT_SHOWCASE_V127, apply: applyIotShowcaseV127 },
     { name: AI_OPERATOR_V129, apply: applyAiOperatorV129 },
+    { name: DUET_V130, apply: applyDuetV130 },
   ]
 
   const appliedBefore = await readApplied()

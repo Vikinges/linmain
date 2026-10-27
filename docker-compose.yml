@@ -29,6 +29,8 @@ services:
       - db
     volumes:
       - ./public/uploads:/app/public/uploads
+      # LinArt Duet releases (update.json + setup exe), served at /duet/<file>; upload new versions here
+      - ./duet:/app/duet:ro
     networks:
       - linart_net
 

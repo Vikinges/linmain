@@ -1542,6 +1542,7 @@ function BlockFields({
                   <SelectItem value="pilot">Pilot (blue)</SelectItem>
                   <SelectItem value="dev">In development (orange)</SelectItem>
                   <SelectItem value="soon">Coming soon (violet)</SelectItem>
+                  <SelectItem value="free">Free (emerald)</SelectItem>
                   <SelectItem value="none">Hidden</SelectItem>
                 </SelectContent>
               </Select>

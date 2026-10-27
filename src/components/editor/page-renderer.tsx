@@ -44,6 +44,7 @@ const BADGE_TONES: Record<Exclude<ProjectBadgeTone, "none">, { ring: string; dot
   pilot: { ring: "border-sky-500/30 bg-sky-500/10 text-sky-300", dot: "bg-sky-400" },
   dev: { ring: "border-orange-500/40 bg-orange-500/10 text-orange-300", dot: "bg-orange-400 animate-pulse" },
   soon: { ring: "border-violet-500/30 bg-violet-500/10 text-violet-300", dot: "bg-violet-400" },
+  free: { ring: "border-emerald-400/40 bg-emerald-500/15 text-emerald-300", dot: "bg-emerald-300" },
 }
 
 /** Anchor used by the hero/nav "View Projects" buttons: the first product block gets id="projects". */

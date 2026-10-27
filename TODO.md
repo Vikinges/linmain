@@ -3,6 +3,7 @@
 - [x] Stabilize container startup (ports/URL alignment, DB wait, remove network dependency on npx).
 - [x] Unify visual style (shared brand header, consistent glass surfaces, shared theme across public/admin/dashboard).
 - [x] Fix small UI issues (encoding glitches, extra paddings) without a major redesign.
+- [x] v1.30 (2026-10-27): LinArt Duet download page `/duet`, update feed folder, home card.
 - [x] v1.24–v1.28 (2026-10-10 … 12): site audit fixes, LinArt Labs hero, showcases for IoT Cloud and CRM-IoT, ColdART, iOS apps, Kids Lab, tester form with map + admin inbox, owner notifications, OG image, robots/sitemap, security headers.
 
 ## Waiting for others

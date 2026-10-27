@@ -215,13 +215,14 @@ The home page blocks are defined in `src/lib/editor/seed.ts` and rendered in ord
 3. **crm-iot** — ProjectBlock, layout **showcase** — CRM-IoT host app for rentals (open beta, free for testers): text + 3 "how it works" steps, real host-calendar screenshot (`public/assets/crm-iot-host-calendar.jpeg`) in a browser frame; CTA "Request free tester access" → `/tester` (form, see below) — tester access is unlocked by hand; secondary → host guide in the visitor's language (`secondaryLink.urlByLang`: `/manuals/app/{en/,ru/}rentals-host.html`). The copy shows the price after the beta (€15 per unit / month, €160 / year — public in host.crm-iot.com `/api/plans` since v4.55.0). Badge: pilot (blue) "Open beta · free for testers"
 4. **cloud-services** — ProjectBlock — Immich + Nextcloud (nex.crm-iot.com) + ColdArt/GitLab/RustDesk; main CTA = mailto invite, secondary = /login. Badge: Live
 5. **coldart** — ProjectBlock — ColdART remote access & zero trust (zerotrust.crm-iot.com; free remote-support sessions + commercial control plane)
+5b. **duet** — ProjectBlock, layout **showcase** — LinArt Duet, the free Windows file manager; badge tone **free** (emerald, "Completely free"); CTA → `/duet` (download page, see "LinArt Duet downloads")
 6. **portfolio** — PortfolioBlock — cards: AI Consultant (first), Smart Hub Store, QR Generator, **NFC QR Business Card 3D Maker (iOS)**, **Smart Home IoT Dashboard (iOS)**, LinArt ID, Commercial Hub, Local LLM lab
 7. **entertainment** — PortfolioBlock — title "Kids Lab": Monster Apocalypse (monst.crm-iot.com) and Boat Shutter (boat.crm-iot.com), browser games built by the kids, free
 8. **about** — RichTextBlock — the personal story that used to be the hero + the three "pillars"
 9. **callout** — CtaBlock — "Let's Team Up" (button "Contact us" → `#contact`)
 10. **contact** — ContactBlock — vladimir@linart.club, Spalt / Bavaria
 
-Project blocks (`project`) render as dark gradient feature cards. `layout: "showcase"` (v1.25) puts the text and the numbered `steps` side by side and shows the image full width below in a browser-window frame whose address bar shows `showcaseUrl`; use it for wide product screenshots. Each has an optional `badge` (label + tone: live / pilot / dev / soon / none — blocks without one show the legacy green "Live") and an optional `secondaryLink` (second button). Both are editable in the admin block editor.
+Project blocks (`project`) render as dark gradient feature cards. `layout: "showcase"` (v1.25) puts the text and the numbered `steps` side by side and shows the image full width below in a browser-window frame whose address bar shows `showcaseUrl`; use it for wide product screenshots. Each has an optional `badge` (label + tone: live / pilot / dev / soon / free / none — blocks without one show the legacy green "Live") and an optional `secondaryLink` (second button). Both are editable in the admin block editor.
 
 The **Community Chat** block was removed from the home page in v1.24 (login-only chat on a showcase page; the AI consultant widget covers visitor questions). The `chat` block type, `ChatBox` and `/admin/chat` still exist and the dashboard keeps its chat.
 
@@ -240,6 +241,23 @@ Then visit the site — it auto-recreates from seed on first request.
 ### Drag-and-Drop in Admin Editor
 Already implemented via `@dnd-kit/core` + `@dnd-kit/sortable` in `src/components/editor/page-editor.tsx`.
 Use the `GripVertical` handle (⠿) on each block to drag and reorder. No extra setup needed.
+
+## LinArt Duet downloads (`/duet`)
+
+LinArt Duet is our free two-pane file manager for Windows (repo `C:\Code\filemanger`, GitLab `linart-labs/linartduet`). The installed apps poll **`https://linart.club/duet/update.json`** every 20 h, so the file names and the feed format are a contract with the app.
+
+- Files live on the VPS in **`/opt/linart/duet`** (compose volume `./duet:/app/duet:ro`, not in the image, not in git): `update.json` + `LinArtDuet-Setup-<version>.exe`. Old setup files may stay; only `update.json` decides what is current.
+- `src/app/duet/[file]/route.ts` serves them: `update.json` with `no-cache`, `.exe` as attachment with Range (resumable), `/duet/download` = 302 to the current setup (stable link for e-mails / other sites). Names are whitelisted (`DUET_FILE_NAME`), no sub-folders.
+- `src/lib/duet.ts` reads `update.json`, **verifies the ECDSA P-256 signature** with the public release key (same key as in the app's `UpdateService.cs`) and only then shows version / size / date / SHA-256 / notes on `/duet` (`src/components/duet/duet-landing.tsx`, EN/DE/RU). An invalid or missing feed → "Download coming soon", no broken link. Cached 60 s in memory.
+- Screenshots: `public/assets/duet/` from the filemanger repo `release\showcase\` (demo data under `C:\Demo` only — never use test snapshots, they show `C:\Users\…` paths). `HERO_SHOTS` (main window per language) and `GALLERY` in the landing component; `main-en.png` is also the home card image.
+
+**Publishing a new version** (after `build-release.ps1` in the filemanger repo made `release\<version>\`; the private signing key never leaves the laptop):
+```bash
+scp "C:/Code/filemanger/release/<v>/LinArtDuet-Setup-<v>.exe" root@85.215.32.66:/opt/linart/duet/   # exe FIRST
+scp "C:/Code/filemanger/release/<v>/update.json" root@85.215.32.66:/opt/linart/duet/update.json     # then the feed
+curl -s https://linart.club/duet/download -o /dev/null -w '%{redirect_url}\n'   # → the new setup
+```
+Upload the exe before `update.json`, otherwise apps see a version whose file is not there yet. No site rebuild needed.
 
 ## Tester requests (CRM-IoT open beta)
 
@@ -301,6 +319,12 @@ Each subdomain running as an independent service must have its own Impressum and
 - **YouTube embeds**: Must be mentioned in Datenschutz; use `youtube-nocookie.com` domain
 
 ## Change Log
+
+### 2026-10-27 (v1.30) — LinArt Duet, free file manager
+
+- New download page **`/duet`** for LinArt Duet 1.2.1 (free two-pane file manager for Windows): hero, "completely free", 12 features, install steps with the SmartScreen hint, details (Windows 10/11 x64, EN/DE/RU, portable mode, uninstall), release notes and SHA-256 from the signed `update.json`. In the sitemap.
+- Update / download folder `/duet/<file>` from the `/opt/linart/duet` volume (see "LinArt Duet downloads"); range streaming shared with `/uploads` in `src/lib/file-response.ts`.
+- Home: showcase block **duet** after ColdART (migration `v1.30-duet-file-manager`, seed too); new badge tone `free` (emerald), selectable in the editor.
 
 ### 2026-10-27 (v1.29) — LinArt AI Operator app
 

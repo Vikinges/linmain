@@ -9,6 +9,7 @@ import {
   buildAppItems,
   buildColdartBlock,
   buildCrmIotData,
+  buildDuetBlock,
   buildIotCloudData,
   buildTrustHighlights,
   PRIVATE_CLOUD_IMAGE,
@@ -400,6 +401,8 @@ export async function ensureDefaultPages() {
     },
     // 5. ColdART — remote access & zero trust
     buildColdartBlock(),
+    // 5b. LinArt Duet — free Windows file manager
+    buildDuetBlock(),
     // 6. Main portfolio — other projects
     {
       id: "portfolio",

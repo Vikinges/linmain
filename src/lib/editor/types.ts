@@ -125,7 +125,7 @@ export type PortfolioBlock = {
   }
 }
 
-export type ProjectBadgeTone = "live" | "pilot" | "dev" | "soon" | "none"
+export type ProjectBadgeTone = "live" | "pilot" | "dev" | "soon" | "free" | "none"
 
 export type ProjectBlock = {
   id: string
