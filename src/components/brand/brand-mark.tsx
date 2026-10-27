@@ -61,6 +61,28 @@ export function ColdartMark({ className, style }: { className?: string; style?: 
   )
 }
 
+/** LinArt ID accent from the design (Claude Design "Linart ID Logo", default of the accent prop). */
+export const LINART_ID_ACCENT = "#0f766e"
+
+/**
+ * LinArt ID, variant 1a "key in the pencil" (Claude Design "Linart ID Logo"): the LinArt mark unchanged in
+ * silhouette, the third pencil becomes a keyhole — one entrance to every service. The peak takes currentColor.
+ */
+export function LinartIdMark({ className, style }: { className?: string; style?: CSSProperties }) {
+  return (
+    <svg viewBox="0 0 240 246" className={className} style={style} aria-hidden>
+      <path d="M120 14 L200 112 L148 86 L130 112 L110 112 L92 86 L40 112 Z" fill="currentColor" />
+      <path d="M28 240 V162 Q28 132 54 132 Q80 132 80 162 V240 Z" fill="#cbd5e1" />
+      <path d="M94 240 V162 Q94 132 120 132 Q146 132 146 162 V240 Z" fill="#64748b" />
+      <path
+        d="M160 240 V162 Q160 132 186 132 Q212 132 212 162 V240 Z M176 184 A14 14 0 1 1 196 184 L192 222 L180 222 Z"
+        fillRule="evenodd"
+        fill={LINART_ID_ACCENT}
+      />
+    </svg>
+  )
+}
+
 /** AI Consultant / AI Operator app icon: the 3×3 grid with one green square. */
 function AiGridMark({ size }: { size: number }) {
   const cells: Array<[number, number, string]> = [
@@ -142,10 +164,10 @@ const TILES: Record<BrandKey, Tile> = {
   "crm-iot": { background: "linear-gradient(135deg, #7c5cfc, #38beff)", border: "rgba(130,220,255,.4)", glow: "rgba(124,92,252,.45)", render: glyph(CalendarDays) },
   "private-cloud": { background: "linear-gradient(135deg, #10b981, #0ea5e9)", border: "rgba(167,243,208,.35)", glow: "rgba(16,185,129,.4)", render: glyph(Cloud) },
   "linart-id": {
-    background: "linear-gradient(135deg, #7c5cfc, #38beff)",
-    border: "rgba(130,220,255,.4)",
-    glow: "rgba(56,190,255,.4)",
-    render: (size) => <span className="font-extrabold tracking-tight text-white" style={{ fontSize: size * 0.4 }}>ID</span>,
+    background: "#0b1220",
+    border: "rgba(45,212,191,.28)",
+    glow: "rgba(15,118,110,.45)",
+    render: (size) => <LinartIdMark className="text-slate-50" style={{ width: size * 0.69 }} />,
   },
   "ai-consultant": { background: "linear-gradient(160deg, #3b82f6, #1d4ed8)", border: "rgba(147,197,253,.35)", glow: "rgba(59,130,246,.5)", render: (size) => <AiGridMark size={size} /> },
   "smart-hub": { background: "linear-gradient(160deg, #1f2937, #0b1220)", border: "rgba(34,211,238,.35)", glow: "rgba(8,145,178,.4)", render: (size) => <SmartHubMark size={size} /> },
@@ -211,6 +233,19 @@ export function ColdartShowcase({ tagline }: { tagline: string }) {
           <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.24em] text-sky-300/85">{tagline}</p>
         </div>
       </div>
+    </div>
+  )
+}
+
+/** The LinArt ID lockup from the design: mark, LINART ID wordmark, a quiet caption, on the near-black panel. */
+export function LinartIdLockup({ caption }: { caption: string }) {
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[#05060b] bg-[radial-gradient(ellipse_at_50%_35%,rgba(15,118,110,0.22),transparent_60%)] px-6 text-center">
+      <LinartIdMark className="w-28 text-slate-50 drop-shadow-[0_10px_28px_rgba(15,118,110,.45)]" />
+      <p className="text-3xl font-black tracking-tight text-slate-50">
+        LINART <span style={{ color: LINART_ID_ACCENT }}>ID</span>
+      </p>
+      <p className="text-sm text-slate-300/60">{caption}</p>
     </div>
   )
 }

@@ -21,7 +21,14 @@ import {
   Monitor,
   Activity,
 } from "lucide-react"
-import { BrandMark, BrandPanel, ColdartShowcase } from "@/components/brand/brand-mark"
+import { BrandMark, BrandPanel, ColdartShowcase, LinartIdLockup } from "@/components/brand/brand-mark"
+
+// Caption under the LinArt ID lockup ("единый вход" in the design), with the address the service really lives at.
+const LINART_ID_CAPTION: Record<Language, string> = {
+  en: "single sign-on · id.crm-iot.com",
+  de: "ein Login für alles · id.crm-iot.com",
+  ru: "единый вход · id.crm-iot.com",
+}
 import type { Language } from "@/lib/i18n-config"
 import type { PageBlock } from "@/lib/editor/types"
 import { getLocalizedValue } from "@/lib/editor/locales"
@@ -355,6 +362,8 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                                     sizes="(min-width: 768px) 55vw, 100vw"
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                   />
+                                ) : item.kind === "image" && item.logo === "linart-id" ? (
+                                  <LinartIdLockup caption={LINART_ID_CAPTION[language] ?? LINART_ID_CAPTION.en} />
                                 ) : item.kind === "image" && item.logo ? (
                                   <BrandPanel logo={item.logo} />
                                 ) : item.kind === "image" ? (
