@@ -189,7 +189,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       }`}
     >
       {active && <Check className="h-4 w-4 text-sky-300" />}
-      {children}
+      <span>{children}</span>
     </button>
   )
 }
@@ -372,13 +372,13 @@ export function TesterForm({ language }: { language: Language }) {
           </div>
           <h1 className="text-3xl font-bold text-white md:text-4xl">{t.doneTitle}</h1>
           <p className="mt-4 text-lg text-gray-300">
-            {t.doneText} <span className="font-semibold text-white">{email.trim()}</span>.
+            <span>{t.doneText}</span> <span className="font-semibold text-white">{email.trim()}</span>.
           </p>
           <Link
             href="/"
             className="mt-8 inline-flex items-center gap-2 rounded-xl border border-white/15 px-5 py-3 font-semibold text-gray-100 transition hover:bg-white/10"
           >
-            {t.doneBack}
+            <span>{t.doneBack}</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -391,7 +391,7 @@ export function TesterForm({ language }: { language: Language }) {
       <header className="space-y-5 pb-4 text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-4 py-1.5 text-sm font-medium text-sky-300">
           <span className="h-2 w-2 rounded-full bg-sky-400" />
-          {t.badge}
+          <span>{t.badge}</span>
         </span>
         <h1 className="text-4xl font-bold leading-tight text-white md:text-6xl">{t.title}</h1>
         <p className="mx-auto max-w-2xl text-lg text-gray-300 md:text-xl">{t.subtitle}</p>
@@ -478,7 +478,7 @@ export function TesterForm({ language }: { language: Language }) {
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 font-medium text-white transition hover:bg-white/10"
             >
               {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              {t.search}
+              <span>{t.search}</span>
             </button>
             <button
               type="button"
@@ -515,7 +515,7 @@ export function TesterForm({ language }: { language: Language }) {
             }`}
           >
             <MapPin className="h-3.5 w-3.5" />
-            {pin ? `${t.pinSet} · ${pin.lat.toFixed(4)}, ${pin.lng.toFixed(4)}` : t.pinNone}
+            <span>{pin ? `${t.pinSet} · ${pin.lat.toFixed(4)}, ${pin.lng.toFixed(4)}` : t.pinNone}</span>
           </span>
         </div>
       </Section>
@@ -569,7 +569,7 @@ export function TesterForm({ language }: { language: Language }) {
             className="mt-0.5 h-5 w-5 shrink-0 accent-sky-500"
           />
           <span>
-            {t.consentA}
+            <span>{t.consentA}</span>
             <Link href="/p/datenschutz" target="_blank" className="text-sky-300 underline-offset-2 hover:underline">
               {t.consentLink}
             </Link>
@@ -588,7 +588,7 @@ export function TesterForm({ language }: { language: Language }) {
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 px-6 py-4 text-lg font-semibold text-white shadow-lg shadow-sky-900/40 transition hover:from-sky-400 hover:to-sky-500 disabled:opacity-60 md:w-auto"
         >
           {status === "sending" ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
-          {status === "sending" ? t.sending : t.submit}
+          <span>{status === "sending" ? t.sending : t.submit}</span>
         </button>
       </Section>
     </form>

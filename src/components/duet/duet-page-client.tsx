@@ -21,7 +21,8 @@ export function DuetPageClient({ globalContent, theme, styles, release }: Props)
       globalContent={globalContent}
       theme={theme}
       styles={styles}
-      renderExtra={(language) => <DuetLanding language={language} release={release} />}
+      // key: rebuilt on a language switch, see the PageRenderer note in PublicPage (browser page translation)
+      renderExtra={(language) => <DuetLanding key={language} language={language} release={release} />}
     />
   )
 }

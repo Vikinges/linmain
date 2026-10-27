@@ -155,7 +155,9 @@ export function PublicPage({ blocks, globalContent, theme, styles, renderExtra }
         </nav>
 
         <main className="flex-1 pt-32 pb-24">
-          <PageRenderer blocks={blocks} language={language} styles={styles} />
+          {/* key: a language switch rebuilds the blocks. Browser page translation (Chrome/Edge) swaps text
+              nodes for its own <font> wrappers, so an in-place update left icon buttons in the old language. */}
+          <PageRenderer key={`blocks-${language}`} blocks={blocks} language={language} styles={styles} />
           {renderExtra?.(language)}
         </main>
 
