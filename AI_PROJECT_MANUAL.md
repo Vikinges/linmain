@@ -302,6 +302,11 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-10-27 (v1.29) — LinArt AI Operator app
+
+- New portfolio card **LinArt AI Operator (iOS)** — free operator console for LinArt AI Consultant (App Store id6799751631, German storefront link; the US lookup did not list it yet on 2026-10-27). Card image `public/assets/app-ai-operator.png`: app icon + two real App Store screenshots (demo data) in iPhone frames on the dark site background. Inserted right after the AI Consultant card by migration `v1.29-ai-operator-app`; seed has it too.
+- App Store links checked on 2026-10-27 via the iTunes lookup API: Smart Home IoT Dashboard (id6782025663, v1.0.11) and NFC QR Business Card 3D Maker (id6785651800, v1.48) are live; their pages answer 200.
+
 ### 2026-10-12 (v1.28) — fixes from the re-audit
 
 - Re-audit after v1.27: both reviews 6/10 (was 4/10). Fixed the three regressions they found: hero is now visible in the server-rendered HTML (`Reveal`/`RevealItem` `noFade`, LCP on mobile was delayed ~2 s by `opacity:0`); showcase steps are real `<li>` in the `<ol>` (`RevealItem as="li"`, Lighthouse list/listitem); side-layout project cards no longer overflow on phones (single grid column, `min-w-0`, image width capped with `max-width:100%` + aspect-ratio).

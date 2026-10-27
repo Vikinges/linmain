@@ -26,6 +26,7 @@ const CRM_BETA_V125 = "v1.25-crm-iot-beta"
 const DATENSCHUTZ_V126 = "v1.26-datenschutz-tester"
 const IOT_SHOWCASE_V127 = "v1.27-iot-showcase-trust"
 const STYLE_V127 = "v1.27-hero-style-poster"
+const AI_OPERATOR_V129 = "v1.29-ai-operator-app"
 const BG_POSTER = "/assets/bg-poster.jpg"
 export const PRIVATE_CLOUD_IMAGE = "/assets/private-cloud.jpeg"
 
@@ -264,6 +265,32 @@ export const SHOWCASE_COPY = {
     linkUrl: "https://apps.apple.com/de/app/nfc-qr-business-card-3d-maker/id6785651800",
     imageUrl: "/assets/appstore-nfc-qr-card.png",
   },
+  appAiOperator: {
+    title: L("LinArt AI Operator (iOS)", "LinArt AI Operator (iOS)", "LinArt AI Operator (iOS)"),
+    description: L(
+      "<p>The mobile console for LinArt AI Consultant: the AI answers your website visitors around the clock, and when a person is needed the conversation lands on your iPhone — with full context.</p>" +
+        "<ul><li>See who is waiting and for how long — an AI briefing with topic, intent, urgency and mood before you type</li>" +
+        "<li>Reply in your own language — the platform translates into the visitor's language</li>" +
+        "<li>Push when a visitor asks for a human, quick replies, snooze and a daily lead summary</li>" +
+        "<li>Train the bot: save your answer to the knowledge base when you close the chat</li></ul>" +
+        "<p>Free. Needs a LinArt AI Consultant account (ai.crm-iot.com).</p>",
+      "<p>Die mobile Konsole für den LinArt KI-Berater: Die KI beantwortet Besucherfragen auf Ihrer Website rund um die Uhr — sobald ein Mensch gebraucht wird, landet das Gespräch mit vollem Kontext auf Ihrem iPhone.</p>" +
+        "<ul><li>Sehen, wer wartet und wie lange — KI-Briefing mit Thema, Absicht, Dringlichkeit und Stimmung vor der ersten Zeile</li>" +
+        "<li>Antworten Sie in Ihrer Sprache — die Plattform übersetzt automatisch in die Sprache des Besuchers</li>" +
+        "<li>Push, sobald ein Besucher einen Menschen anfordert, Schnellantworten, Erinnerungen und Tagesübersicht der Leads</li>" +
+        "<li>Bot trainieren: Ihre Antwort beim Schließen in die Wissensdatenbank übernehmen</li></ul>" +
+        "<p>Kostenlos. Erfordert ein LinArt AI Consultant Konto (ai.crm-iot.com).</p>",
+      "<p>Мобильная консоль для LinArt AI Consultant: ИИ круглосуточно отвечает посетителям вашего сайта, а когда нужен человек, разговор попадает на ваш iPhone — со всем контекстом.</p>" +
+        "<ul><li>Видно, кто ждёт и сколько — ИИ-сводка с темой, намерением, срочностью и настроением ещё до первого ответа</li>" +
+        "<li>Отвечайте на своём языке — платформа сама переводит на язык посетителя</li>" +
+        "<li>Push, когда посетитель зовёт человека, быстрые ответы, напоминания и сводка заявок за день</li>" +
+        "<li>Обучайте бота: при закрытии чата ваш ответ сохраняется в базу знаний</li></ul>" +
+        "<p>Бесплатно. Нужен аккаунт LinArt AI Consultant (ai.crm-iot.com).</p>"
+    ),
+    linkLabel: L("Get on the App Store", "Im App Store laden", "Скачать в App Store"),
+    linkUrl: "https://apps.apple.com/de/app/linart-ai-operator/id6799751631",
+    imageUrl: "/assets/app-ai-operator.png",
+  },
   appSmartHome: {
     title: L("Smart Home IoT Dashboard (iOS)", "Smart Home IoT Dashboard (iOS)", "Smart Home IoT Dashboard (iOS)"),
     description: L(
@@ -383,6 +410,18 @@ export const buildAppItems = (): PortfolioBlock["data"]["items"] => [
     linkUrl: SHOWCASE_COPY.appSmartHome.linkUrl,
   },
 ]
+
+/** iOS console for LinArt AI Consultant operators (App Store since 2026-10, free). */
+export const buildAiOperatorItem = (): PortfolioBlock["data"]["items"][number] => ({
+  id: "app-ai-operator",
+  kind: "image",
+  title: SHOWCASE_COPY.appAiOperator.title,
+  description: SHOWCASE_COPY.appAiOperator.description,
+  embedUrl: "",
+  imageUrl: SHOWCASE_COPY.appAiOperator.imageUrl,
+  linkLabel: SHOWCASE_COPY.appAiOperator.linkLabel,
+  linkUrl: SHOWCASE_COPY.appAiOperator.linkUrl,
+})
 
 export const buildLinartIdItem = (): PortfolioBlock["data"]["items"][number] => ({
   id: "linart-id",
@@ -804,6 +843,20 @@ export function applyIotShowcaseV127(blocks: PageBlock[]): { blocks: PageBlock[]
   return { blocks: next, changed }
 }
 
+/** v1.29: the LinArt AI Operator iOS app card, right after the AI Consultant card it belongs to. */
+export function applyAiOperatorV129(blocks: PageBlock[]): { blocks: PageBlock[]; changed: boolean } {
+  const next = blocks.map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  const portfolio = next.find((b): b is PortfolioBlock => b.type === "portfolio" && b.id === "portfolio")
+  if (!portfolio) return { blocks: next, changed: false }
+  const items = portfolio.data.items
+  if (items.some((i) => i.id === "app-ai-operator" || (i.linkUrl || "").includes("id6799751631"))) {
+    return { blocks: next, changed: false }
+  }
+  const aiIndex = items.findIndex((i) => (i.linkUrl || "").startsWith("https://ai.crm-iot.com"))
+  items.splice(aiIndex >= 0 ? aiIndex + 1 : 0, 0, buildAiOperatorItem())
+  return { blocks: next, changed: true }
+}
+
 /** v1.27: readable hero subtitle (was grey on grey) and a poster frame for the background video. */
 async function runStyleMigration(applied: string[]) {
   if (applied.includes(STYLE_V127)) return
@@ -857,6 +910,7 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
     { name: SHOWCASE_V124, apply: (blocks) => applyShowcaseV124(blocks, pillarsHtml) },
     { name: CRM_BETA_V125, apply: applyCrmBetaV125 },
     { name: IOT_SHOWCASE_V127, apply: applyIotShowcaseV127 },
+    { name: AI_OPERATOR_V129, apply: applyAiOperatorV129 },
   ]
 
   const appliedBefore = await readApplied()

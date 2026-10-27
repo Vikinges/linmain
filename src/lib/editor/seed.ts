@@ -5,6 +5,7 @@ import type { Language } from "@/lib/i18n-config"
 import { emptyLocalizedString, type LocalizedHtml, type PageBlock } from "@/lib/editor/types"
 import {
   SHOWCASE_COPY,
+  buildAiOperatorItem,
   buildAppItems,
   buildColdartBlock,
   buildCrmIotData,
@@ -431,6 +432,7 @@ export async function ensureDefaultPages() {
               content.portfolio?.qrGenerator?.linkUrl ||
               "https://qr.linart.club/",
           },
+          buildAiOperatorItem(),
           ...buildAppItems(),
           buildLinartIdItem(),
           {
