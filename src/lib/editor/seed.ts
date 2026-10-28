@@ -86,7 +86,8 @@ const IMPRESSUM_HTML = `<h2>Impressum</h2>
 <p>Vladimir Linartas<br>Lange Gasse 35<br>91174 Spalt<br>Deutschland</p>
 
 <h3>Kontakt</h3>
-<p>E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
+<p>Telefon: <a href="tel:+4991759069642">+49 9175 9069642</a><br>
+E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
 
 <h3>Hosting</h3>
 <p>Diese Website wird technisch betrieben durch:<br>
@@ -116,6 +117,7 @@ const DATENSCHUTZ_HTML = `<h2>Datenschutzerklärung</h2>
 
 <h3>1. Verantwortlicher</h3>
 <p>Vladimir Linartas<br>Lange Gasse 35<br>91174 Spalt<br>Deutschland<br>
+Telefon: <a href="tel:+4991759069642">+49 9175 9069642</a><br>
 E-Mail: <a href="mailto:vladimir@linart.club">vladimir@linart.club</a></p>
 
 <h3>2. Hosting und Server-Logfiles</h3>
@@ -493,7 +495,7 @@ export async function ensureDefaultPages() {
         title: emptyLocalizedString(),
         description: emptyLocalizedString(),
         email: SHOWCASE_COPY.contact.email,
-        phone: "",
+        phone: SHOWCASE_COPY.contact.phone,
         address: SHOWCASE_COPY.contact.address,
       },
     },

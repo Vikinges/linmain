@@ -322,6 +322,11 @@ Each subdomain running as an independent service must have its own Impressum and
 
 ## Change Log
 
+### 2026-10-28 (v1.32) — company landline instead of any mobile
+
+- The only published phone is the company landline **+49 9175 9069642** (`COMPANY_PHONE` in `migrations.ts`, owner 2026-10-28); the owner's mobile must not appear anywhere.
+- Impressum ("Kontakt") and Datenschutz ("1. Verantwortlicher") get "Telefon: +49 9175 9069642" before the e-mail; the home contact block shows it (migrations `v1.32-company-landline`, seed texts too). Any spelling of the mobile is replaced by the landline. `tel:` links use the digits only.
+
 ### 2026-10-27 (v1.31) — brand marks for every product, ColdART logo + capabilities
 
 - Every product card on the home page shows its own mark (`logo`, see "Brand marks" above): ColdART animated, Duet, IoT Cloud / Smart Home app icon, NFC QR app icon, AI Consultant grid, Smart Hub Store, LinArt ID, CRM-IoT, Private Cloud, QR Generator, Commercial Hub, LLM lab, Kids Lab games. The generic server icon is gone. Migration `v1.31-brand-logos` (also used by the seed) sets the logos and never overwrites one set in the editor.

@@ -894,7 +894,7 @@ export function PageRenderer({ blocks, language, styles }: PageRendererProps) {
                       <Card className="glass-card border-white/10">
                         <CardContent className="pt-6 pb-6 text-center space-y-2">
                           <Phone className="h-5 w-5 mx-auto text-gray-200" />
-                          <a className="text-sm text-gray-300" href={`tel:${block.data.phone}`}>
+                          <a className="text-sm text-gray-300" href={`tel:${block.data.phone.replace(/[^\d+]/g, "")}`}>
                             {block.data.phone}
                           </a>
                         </CardContent>

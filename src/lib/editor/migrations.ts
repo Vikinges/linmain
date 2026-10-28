@@ -29,10 +29,14 @@ const STYLE_V127 = "v1.27-hero-style-poster"
 const AI_OPERATOR_V129 = "v1.29-ai-operator-app"
 const DUET_V130 = "v1.30-duet-file-manager"
 const BRAND_LOGOS_V131 = "v1.31-brand-logos"
+const COMPANY_PHONE_V132 = "v1.32-company-landline"
 const BG_POSTER = "/assets/bg-poster.jpg"
 export const PRIVATE_CLOUD_IMAGE = "/assets/private-cloud.jpeg"
 
 const CONTACT_EMAIL = "vladimir@linart.club"
+/** The company landline (owner 2026-10-28): the only phone number we publish — never the owner's mobile. */
+export const COMPANY_PHONE = "+49 9175 9069642"
+export const COMPANY_PHONE_TEL = "+4991759069642"
 
 const L = (en: string, de: string, ru: string): LocalizedString => ({ en, de, ru })
 
@@ -456,6 +460,7 @@ export const SHOWCASE_COPY = {
   },
   contact: {
     email: CONTACT_EMAIL,
+    phone: COMPANY_PHONE,
     address: L("Spalt, Bavaria, Germany", "Spalt, Bayern, Deutschland", "Шпальт, Бавария, Германия"),
   },
 }
@@ -962,6 +967,72 @@ export function applyDatenschutzV126(html: string): string {
   return next
 }
 
+const COMPANY_PHONE_HTML = `Telefon: <a href="tel:${COMPANY_PHONE_TEL}">${COMPANY_PHONE}</a>`
+// The owner's mobile in any spelling (+49 175 4000261, 0175 4000261, wa.me/491754000261, …).
+const OWNER_MOBILE = /(?:\+|00)?(?:49[\s()/.-]*0?|0)175[\s()/.-]*4000[\s()/.-]*261/g
+
+/** v1.32: the landline next to the e-mail in Impressum ("Kontakt") and Datenschutz ("Verantwortlicher"). */
+export function applyCompanyPhoneV132(html: string): string {
+  let next = html.replace(OWNER_MOBILE, COMPANY_PHONE)
+  if (!next.includes("9069642")) {
+    next = next.replace(/E-Mail: <a href="mailto:/, `${COMPANY_PHONE_HTML}<br>\nE-Mail: <a href="mailto:`)
+  }
+  return next
+}
+
+/** Applies `apply` to every richText language of a static page and publishes a new revision when anything changed. */
+async function migrateStaticPage(slug: string, apply: (html: string) => string) {
+  const page = await prisma.page.findUnique({
+    where: { slug },
+    include: { publishedRevision: true, draftRevision: true },
+  })
+  const source = page?.publishedRevision || page?.draftRevision
+  if (!page || !source || !Array.isArray(source.blocks)) return
+  const blocks = (source.blocks as PageBlock[]).map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  let changed = false
+  for (const block of blocks) {
+    if (block.type !== "richText") continue
+    for (const lang of ["en", "de", "ru"] as const) {
+      const before = block.data.content[lang] || ""
+      const after = apply(before)
+      if (after !== before) {
+        block.data.content[lang] = after
+        changed = true
+      }
+    }
+  }
+  if (!changed) return
+  const revision = await prisma.pageRevision.create({
+    data: { pageId: page.id, title: source.title || page.title, blocks },
+  })
+  await prisma.page.update({
+    where: { id: page.id },
+    data: { publishedRevisionId: revision.id, draftRevisionId: revision.id },
+  })
+}
+
+async function runCompanyPhoneMigration(applied: string[]) {
+  if (applied.includes(COMPANY_PHONE_V132)) return
+  await migrateStaticPage("impressum", applyCompanyPhoneV132)
+  await migrateStaticPage("datenschutz", applyCompanyPhoneV132)
+  await markAllApplied(applied, [COMPANY_PHONE_V132])
+}
+
+/** v1.32: the contact block shows the landline (it had no phone; a mobile there would be replaced). */
+export function applyContactPhoneV132(blocks: PageBlock[]): { blocks: PageBlock[]; changed: boolean } {
+  let changed = false
+  const next = blocks.map((b) => JSON.parse(JSON.stringify(b)) as PageBlock)
+  for (const block of next) {
+    if (block.type !== "contact") continue
+    const phone = (block.data.phone || "").trim()
+    if (!phone || new RegExp(OWNER_MOBILE.source).test(phone)) {
+      block.data.phone = COMPANY_PHONE
+      changed = true
+    }
+  }
+  return { blocks: next, changed }
+}
+
 async function runDatenschutzMigration(applied: string[]) {
   if (applied.includes(DATENSCHUTZ_V126)) return
   const page = await prisma.page.findUnique({
@@ -1112,11 +1183,13 @@ export async function runHomeMigrations(pillarsHtml: LocalizedHtml) {
     { name: AI_OPERATOR_V129, apply: applyAiOperatorV129 },
     { name: DUET_V130, apply: applyDuetV130 },
     { name: BRAND_LOGOS_V131, apply: applyBrandLogosV131 },
+    { name: COMPANY_PHONE_V132, apply: applyContactPhoneV132 },
   ]
 
   const appliedBefore = await readApplied()
   await runDatenschutzMigration(appliedBefore)
   await runStyleMigration(await readApplied())
+  await runCompanyPhoneMigration(await readApplied())
   const applied = await readApplied()
   const pending = migrations.filter((m) => !applied.includes(m.name))
   if (pending.length === 0) return
